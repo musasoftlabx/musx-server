@@ -88,7 +88,7 @@ const scan = () =>
             async () => {
               // ? Insert record to DB
               try {
-                DB.prepare(
+                DB.query(
                   `INSERT INTO directory VALUES (?,DateTime('now'),?,?,?,?,?,?,?,0,?,?,?,?,?,?,?,?,?,NULL)`
                 ).run([
                   path,
@@ -141,41 +141,13 @@ const truncate = () => DB.query(`DELETE FROM directory`).run();
 
 const app = new Elysia()
   .use(html({ contentType: "text/html" }))
-  //.get("/scanner", () => scanner())
+  .get("/html", () => scanner())
   .get("/scanner", () => Bun.file("scanner.tsx"))
   .get("/scan", () => scan())
-  // .get(
-  //   "/scan",
-  //   () =>
-  //     new Stream(async (stream) => {
-  //       stream.send("hello");
-
-  //       await stream.wait(5000);
-  //       stream.send("world");
-
-  //       stream.close();
-  //     })
-  // )
   .get("/truncate", () => truncate())
   .get("/*", (params) => list(params))
-  // .ws("/ws", {
-  //   message(ws, message) {
-  //     ws.send("got:" + message);
-  //   },
-  // })
   .listen(6666);
 
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
 );
-
-// const app = createElement("scanner.tsx");
-
-//     // render the app component to a readable stream
-//     const stream = await renderToReadableStream(app, {
-//       bootstrapScripts: ["react.js"],
-//     });
-
-//     return new Response(stream, {
-//       headers: { "Content-Type": "text/html" },
-//     });

@@ -43,3 +43,7 @@ package-lock.json
 
 Music/
 Artwork/
+
+.sqlite
+.sqlite-shm
+.sqlite-wal
