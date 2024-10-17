@@ -163,7 +163,7 @@ const app = new Elysia()
   //     ws.send("got:" + message);
   //   },
   // })
-  .listen(3000);
+  .listen(3333);
 
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
