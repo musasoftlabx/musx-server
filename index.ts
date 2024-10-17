@@ -139,7 +139,10 @@ const list = ({ params }: { params: { "*": string } }) => {
   ];
 };
 
-const truncate = () => DB.query(`DELETE FROM directory`).run();
+const truncate = () => {
+  exec(`rm -rf ./Artwork/`, () => {});
+  return DB.query(`DELETE FROM directory`).run();
+};
 
 const app = new Elysia()
   .use(html({ contentType: "text/html" }))
