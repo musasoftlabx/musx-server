@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "@elysiajs/html": "^1.1.1",
-    "@elysiajs/static": "^1.1.1",
     "@elysiajs/stream": "^1.1.0",
     "elysia": "latest",
     "react": "^19.0.0-rc-77b637d6-20241016",

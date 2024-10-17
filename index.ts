@@ -7,8 +7,6 @@ const DB = new Database("musx.sqlite", { create: true });
 import { html, Html } from "@elysiajs/html";
 import { Stream } from "@elysiajs/stream";
 import { existsSync, mkdirSync } from "fs";
-//import { createElement } from "react";
-//import { renderToReadableStream } from "react-dom/server.browser";
 
 DB.exec("PRAGMA journal_mode = WAL;");
 
@@ -59,7 +57,6 @@ const scan = () =>
     for await (const file of glob.scan(".")) {
       count++;
 
-      await stream.wait(5000);
       stream.send(`${count}. ${file}`);
 
       exec(
