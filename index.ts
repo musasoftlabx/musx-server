@@ -5,8 +5,10 @@ import { Database } from "bun:sqlite";
 const DB = new Database("musx.sqlite", { create: true });
 
 import { html, Html } from "@elysiajs/html";
-import { createElement } from "react";
-import { renderToReadableStream } from "react-dom/server.browser";
+import { Stream } from "@elysiajs/stream";
+import { existsSync, mkdirSync } from "fs";
+//import { createElement } from "react";
+//import { renderToReadableStream } from "react-dom/server.browser";
 
 DB.exec("PRAGMA journal_mode = WAL;");
 
@@ -35,6 +37,8 @@ DB.query(
       lyrics TEXT
     )`
 ).run();
+// ? Create artowk directory if it doesn't exist
+!existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
 
 const scanner = () =>
   `<html lang='en'>
@@ -46,70 +50,79 @@ const scanner = () =>
     </body>
   </html>`;
 
-const scan = async () => {
-  let count = 0;
+const scan = () =>
+  new Stream(async (stream) => {
+    let count = 0;
 
-  const glob = new Glob("**/*.mp3");
+    const glob = new Glob("**/*.mp3");
 
-  for await (const file of glob.scan(".")) {
-    count++;
-    console.log(`${count}. ${file}`);
+    for await (const file of glob.scan(".")) {
+      count++;
 
-    exec(
-      `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.error(`error: ${error.message}`);
-          return;
-        }
-        // ? If no errors,
-        const { streams, format } = JSON.parse(stdout);
-        // ? Remove root directory from entry
-        const path = file.replace("Music/", "");
-        // ? Destructure
-        const { tags, bit_rate: bitrate, size, duration, format_name } = format;
-        // ? Get the path and rename it to make artwork
-        const artwork = `${path
-          .replace(`.${format_name}`, "")
-          .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`; //\W+ //const filename = path.split("/").slice(-1)[0];
-        // ? Execute ffmpeg to extract artwork
-        exec(
-          `ffmpeg -y -i "./${file}" -an -vcodec copy "./Artwork/${artwork}"`,
-          () => {
-            // ? Insert record to DB
-            try {
-              DB.prepare(
-                `INSERT INTO directory VALUES (?,DateTime('now'),?,?,?,?,?,?,?,0,?,?,?,?,?,?,?,?,?,NULL)`
-              ).run([
-                path,
-                tags?.title,
-                tags?.album,
-                tags?.album_artist,
-                tags?.artist,
-                tags?.genre,
-                tags?.date,
-                tags?.track,
-                bitrate,
-                size,
-                duration,
-                format_name,
-                streams[0].channels,
-                streams[0].channel_layout,
-                streams[0].sample_rate,
-                streams[0]?.tags?.encoder,
-                artwork,
-              ] as any);
-            } catch (err: any) {
-              console.log(err.message);
-            }
+      await stream.wait(5000);
+      stream.send(`${count}. ${file}`);
+
+      exec(
+        `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`,
+        (error, stdout, stderr) => {
+          if (error) {
+            console.error(`error: ${error.message}`);
+            return;
           }
-        );
-      }
-    );
-  }
+          // ? If no errors,
+          const { streams, format } = JSON.parse(stdout);
+          // ? Remove root directory from entry
+          const path = file.replace("Music/", "");
+          // ? Destructure
+          const {
+            tags,
+            bit_rate: bitrate,
+            size,
+            duration,
+            format_name,
+          } = format;
+          // ? Get the path and rename it to make artwork
+          const artwork = `${path
+            .replace(`.${format_name}`, "")
+            .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`; //\W+ //const filename = path.split("/").slice(-1)[0];
+          // ? Execute ffmpeg to extract artwork
+          exec(
+            `ffmpeg -y -i "./${file}" -an -vcodec copy "./Artwork/${artwork}"`,
+            async () => {
+              // ? Insert record to DB
+              try {
+                DB.prepare(
+                  `INSERT INTO directory VALUES (?,DateTime('now'),?,?,?,?,?,?,?,0,?,?,?,?,?,?,?,?,?,NULL)`
+                ).run([
+                  path,
+                  tags?.title,
+                  tags?.album,
+                  tags?.album_artist,
+                  tags?.artist,
+                  tags?.genre,
+                  tags?.date,
+                  tags?.track,
+                  bitrate,
+                  size,
+                  duration,
+                  format_name,
+                  streams[0].channels,
+                  streams[0].channel_layout,
+                  streams[0].sample_rate,
+                  streams[0]?.tags?.encoder,
+                  artwork,
+                ] as any);
+              } catch (err: any) {
+                console.log(err.message);
+              }
+            }
+          );
+        }
+      );
+    }
 
-  return "efgop";
-};
+    stream.close();
+  });
 
 const list = ({ params }: { params: { "*": string } }) => {
   const decoded = decodeURI(params["*"]);
@@ -132,30 +145,40 @@ const truncate = () => DB.query(`DELETE FROM directory`).run();
 const app = new Elysia()
   .use(html({ contentType: "text/html" }))
   //.get("/scanner", () => scanner())
-  .get("/scanner", async () => {
-    const app = createElement("scanner.tsx");
-
-    // render the app component to a readable stream
-    const stream = await renderToReadableStream(app, {
-      bootstrapScripts: ["react.js"],
-    });
-
-    return new Response(stream, {
-      headers: { "Content-Type": "text/html" },
-    });
-
-    //Bun.file("scanner.tsx");
-  })
+  .get("/scanner", () => Bun.file("scanner.tsx"))
   .get("/scan", () => scan())
+  // .get(
+  //   "/scan",
+  //   () =>
+  //     new Stream(async (stream) => {
+  //       stream.send("hello");
+
+  //       await stream.wait(5000);
+  //       stream.send("world");
+
+  //       stream.close();
+  //     })
+  // )
   .get("/truncate", () => truncate())
-  //.get("/*", (params) => list(params))
-  .ws("/ws", {
-    message(ws, message) {
-      ws.send("got:" + message);
-    },
-  })
+  .get("/*", (params) => list(params))
+  // .ws("/ws", {
+  //   message(ws, message) {
+  //     ws.send("got:" + message);
+  //   },
+  // })
   .listen(3000);
 
 console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
 );
+
+// const app = createElement("scanner.tsx");
+
+//     // render the app component to a readable stream
+//     const stream = await renderToReadableStream(app, {
+//       bootstrapScripts: ["react.js"],
+//     });
+
+//     return new Response(stream, {
+//       headers: { "Content-Type": "text/html" },
+//     });
