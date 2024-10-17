@@ -2,7 +2,7 @@ import { Glob } from "bun";
 import { exec } from "child_process";
 import { Elysia } from "elysia";
 import { Database } from "bun:sqlite";
-const DB = new Database("musx.sqlite", { create: true });
+const DB = new Database("musx.db", { create: true });
 
 import { html, Html } from "@elysiajs/html";
 import { Stream } from "@elysiajs/stream";
