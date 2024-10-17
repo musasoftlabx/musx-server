@@ -59,6 +59,8 @@ const scan = () =>
 
       stream.send(`${count}. ${file}`);
 
+      return;
+
       exec(
         `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`,
         (error, stdout, stderr) => {
