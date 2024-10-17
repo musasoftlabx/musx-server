@@ -1,0 +1,161 @@
+import { Glob } from "bun";
+import { exec } from "child_process";
+import { Elysia } from "elysia";
+import { Database } from "bun:sqlite";
+const DB = new Database("musx.sqlite", { create: true });
+
+import { html, Html } from "@elysiajs/html";
+import { createElement } from "react";
+import { renderToReadableStream } from "react-dom/server.browser";
+
+DB.exec("PRAGMA journal_mode = WAL;");
+
+// ? Create table if it doesn't exist
+DB.query(
+  `CREATE TABLE IF NOT EXISTS "directory" (
+      path VARCHAR(100) PRIMARY KEY,
+      sync_date DATETIME,
+      title VARCHAR (255),
+      album VARCHAR(255),
+      album_artist VARCHAR(255),
+      artist VARCHAR(255),
+      genre VARCHAR(20),
+      year INT,
+      track TINYINT(3),
+      rating TINYINT(1),
+      bitrate INT(10),
+      size MEDIUMINT,
+      duration DOUBLE,
+      format VARCHAR(5),
+      channels TINYINT(1),
+      channel_layout VARCHAR(15),
+      sample_rate INT(10),
+      encoder VARCHAR(20),
+      artwork VARCHAR(255),
+      lyrics TEXT
+    )`
+).run();
+
+const scanner = () =>
+  `<html lang='en'>
+    <head>
+      <title>Hello World</title>
+    </head>
+    <body>
+      <h1>Hello World</h1>
+    </body>
+  </html>`;
+
+const scan = async () => {
+  let count = 0;
+
+  const glob = new Glob("**/*.mp3");
+
+  for await (const file of glob.scan(".")) {
+    count++;
+    console.log(`${count}. ${file}`);
+
+    exec(
+      `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(`error: ${error.message}`);
+          return;
+        }
+        // ? If no errors,
+        const { streams, format } = JSON.parse(stdout);
+        // ? Remove root directory from entry
+        const path = file.replace("Music/", "");
+        // ? Destructure
+        const { tags, bit_rate: bitrate, size, duration, format_name } = format;
+        // ? Get the path and rename it to make artwork
+        const artwork = `${path
+          .replace(`.${format_name}`, "")
+          .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`; //\W+ //const filename = path.split("/").slice(-1)[0];
+        // ? Execute ffmpeg to extract artwork
+        exec(
+          `ffmpeg -y -i "./${file}" -an -vcodec copy "./Artwork/${artwork}"`,
+          () => {
+            // ? Insert record to DB
+            try {
+              DB.prepare(
+                `INSERT INTO directory VALUES (?,DateTime('now'),?,?,?,?,?,?,?,0,?,?,?,?,?,?,?,?,?,NULL)`
+              ).run([
+                path,
+                tags?.title,
+                tags?.album,
+                tags?.album_artist,
+                tags?.artist,
+                tags?.genre,
+                tags?.date,
+                tags?.track,
+                bitrate,
+                size,
+                duration,
+                format_name,
+                streams[0].channels,
+                streams[0].channel_layout,
+                streams[0].sample_rate,
+                streams[0]?.tags?.encoder,
+                artwork,
+              ] as any);
+            } catch (err: any) {
+              console.log(err.message);
+            }
+          }
+        );
+      }
+    );
+  }
+
+  return "efgop";
+};
+
+const list = ({ params }: { params: { "*": string } }) => {
+  const decoded = decodeURI(params["*"]);
+
+  const entry = decoded === "/" ? "" : decoded;
+
+  const paths = DB.prepare(
+    `SELECT path FROM directory WHERE path LIKE '%${entry}%'`
+  ).all();
+
+  return [
+    ...new Set( // ? new Set removes duplicates
+      paths.map(({ path }: any) => path.replace(entry, "").split("/")[0])
+    ),
+  ];
+};
+
+const truncate = () => DB.query(`DELETE FROM directory`).run();
+
+const app = new Elysia()
+  .use(html({ contentType: "text/html" }))
+  //.get("/scanner", () => scanner())
+  .get("/scanner", async () => {
+    const app = createElement("scanner.tsx");
+
+    // render the app component to a readable stream
+    const stream = await renderToReadableStream(app, {
+      bootstrapScripts: ["react.js"],
+    });
+
+    return new Response(stream, {
+      headers: { "Content-Type": "text/html" },
+    });
+
+    //Bun.file("scanner.tsx");
+  })
+  .get("/scan", () => scan())
+  .get("/truncate", () => truncate())
+  //.get("/*", (params) => list(params))
+  .ws("/ws", {
+    message(ws, message) {
+      ws.send("got:" + message);
+    },
+  })
+  .listen(3000);
+
+console.log(
+  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+);
