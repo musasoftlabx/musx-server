@@ -54,12 +54,12 @@ const scan = () =>
 
     const glob = new Glob("**/*.mp3");
 
-    for await (const file of glob.scan(".")) {
+    for await (const entry of glob.scan(".")) {
       count++;
 
-      stream.send(`${count}. ${file}`);
+      stream.send(`${count}. ${entry}`);
 
-      return;
+      const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
 
       exec(
         `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`,
