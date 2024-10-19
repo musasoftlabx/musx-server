@@ -71,7 +71,10 @@ const scan = () =>
           // ? If no errors,
           const { streams, format } = JSON.parse(stdout);
           // ? Remove root directory from entry
-          const path = file.replace("Music/", "");
+          const path = file
+            .replace("Music/", "")
+            .replaceAll("\\$", "$")
+            .replaceAll("\\`", "`");
           // ? Destructure
           const {
             tags,
@@ -151,7 +154,7 @@ const app = new Elysia()
   .get("/scan", () => scan())
   .get("/truncate", () => truncate())
   .get("/*", (params) => list(params))
-  .listen(6666);
+  .listen(3000);
 
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
