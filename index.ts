@@ -175,7 +175,7 @@ const app = new Elysia()
   .get("/scan", () => scan())
   .get("/truncate", () => truncate())
   .get("/*", (params) => list(params))
-  .listen(3000);
+  .listen(6666);
 
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
