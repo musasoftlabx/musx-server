@@ -146,6 +146,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
   const files = [];
 
   for await (const path of paths) {
+    console.log(path);
     if (!path.includes(".mp3")) {
       folders.push({ path, isFolder: true });
     } else {
