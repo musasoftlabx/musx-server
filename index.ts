@@ -149,7 +149,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
     if (!path.includes(".mp3"))
       folders.push({
         name: path,
-        path: path.split("/").slice(0, -1),
+        path: entry.split("/").slice(0, -1).join("/"),
       });
     else
       files.push(
