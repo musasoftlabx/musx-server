@@ -146,6 +146,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
   const files = [];
 
   for await (const path of paths) {
+    console.log(path);
     if (!path.includes(".mp3"))
       folders.push({
         name: path,
@@ -158,7 +159,6 @@ const list = async ({ params }: { params: { "*": string } }) => {
         ).get()
       );
   }
-  console.log(folders);
 
   const sortedFolders = folders.sort((a, b) => a.name - b.name);
   const sortedFiles = files.sort((a: any, b: any) => a.path - b.path);
