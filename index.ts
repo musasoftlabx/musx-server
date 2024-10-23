@@ -146,13 +146,13 @@ const list = async ({ params }: { params: { "*": string } }) => {
   const files = [];
 
   for await (const path of paths) {
-    console.log(path);
+    console.log(`${entry}${path}`);
     if (!path.includes(".mp3")) {
       folders.push({ path, isFolder: true });
     } else {
       files.push(
         DB.prepare(
-          `SELECT path, title, rating, plays, artists, artwork FROM directory WHERE path = '${path}'`
+          `SELECT path, title, rating, plays, artists, artwork FROM directory WHERE path = '${entry}${path}'`
         ).get()
       );
     }
