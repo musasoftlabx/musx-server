@@ -146,7 +146,8 @@ const list = async ({ params }: { params: { "*": string } }) => {
   const files = [];
 
   for await (const path of paths) {
-    if (!path.includes(".mp3")) folders.push({ name: path });
+    if (!path.includes(".mp3"))
+      folders.push({ name: path, path: path.split("/").pop().join("/") });
     else
       files.push(
         DB.prepare(
