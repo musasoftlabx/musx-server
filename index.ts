@@ -154,8 +154,8 @@ const list = async ({ params }: { params: { "*": string } }) => {
       });
     else
       files.push(
-        DB.prepare(
-          `SELECT path, title, rating, plays, artists, artwork FROM directory WHERE path = '${entry}${path}' LIMIT 5`
+        DB.query(
+          `SELECT path, title, rating, plays, artists, artwork FROM directory WHERE path = "${entry}${path}"`
         ).get()
       );
   }
