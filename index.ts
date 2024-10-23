@@ -136,8 +136,6 @@ const list = async ({ params }: { params: { "*": string } }) => {
     `SELECT path FROM directory WHERE path LIKE '%${entry}%'`
   ).all();
 
-  console.log(selection);
-
   const paths = [
     ...new Set( // ? new Set removes duplicates
       selection.map(({ path }: any) => path.replace(entry, "").split("/")[0])
@@ -164,6 +162,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
   const sortedFolders = folders.sort((a, b) => a.name - b.name);
   const sortedFiles = files.sort((a: any, b: any) => a.path - b.path);
 
+  console.log([...sortedFolders, ...sortedFiles]);
   return [...sortedFolders, ...sortedFiles];
 };
 
