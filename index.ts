@@ -136,6 +136,8 @@ const list = async ({ params }: { params: { "*": string } }) => {
     `SELECT path FROM directory WHERE path LIKE '%${entry}%'`
   ).all();
 
+  console.log(selection);
+
   const paths = [
     ...new Set( // ? new Set removes duplicates
       selection.map(({ path }: any) => path.replace(entry, "").split("/")[0])
