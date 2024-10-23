@@ -157,10 +157,11 @@ const list = async ({ params }: { params: { "*": string } }) => {
     }
   }
 
-  const sortedFolders = folders.sort((a, b) => a.path - b.path);
-  const sortedFiles = files.sort((a: any, b: any) => a.path - b.path);
+  //const sortedFolders = folders.sort((a, b) => a.path - b.path);
+  //const sortedFiles = files.sort((a: any, b: any) => a.path - b.path);
 
-  return [...sortedFolders, ...sortedFiles];
+  //return [...sortedFolders, ...sortedFiles];
+  return files;
 };
 
 const truncate = () => {
