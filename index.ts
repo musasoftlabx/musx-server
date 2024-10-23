@@ -151,7 +151,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
     } else {
       files.push(
         DB.prepare(
-          `SELECT path, title, rating, plays, artists, artwork FROM directory WHERE path LIKE '%${path}%'`
+          `SELECT path, title, rating, plays, artists, artwork FROM directory WHERE path LIKE '%Tanzania/Rayvanny/%'`
         ).get()
       );
     }
