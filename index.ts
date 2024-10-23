@@ -133,7 +133,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
   const entry = decoded === "/" ? "" : decoded;
 
   const selection = DB.prepare(
-    `SELECT path FROM directory WHERE path LIKE '%${entry}%'`
+    `SELECT path FROM directory WHERE path LIKE "%${entry}%"`
   ).all();
 
   const paths = [
