@@ -18,7 +18,7 @@ DB.query(
       title VARCHAR (255),
       album VARCHAR(255),
       album_artist VARCHAR(255),
-      artist VARCHAR(255),
+      artists VARCHAR(255),
       genre VARCHAR(20),
       year INT,
       track TINYINT(3),
@@ -151,7 +151,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
     } else {
       files.push(
         DB.prepare(
-          `SELECT path, title, rating, artwork FROM directory WHERE path LIKE '%${path}%'`
+          `SELECT path, title, rating, plays, artists, artwork FROM directory WHERE path LIKE '%${path}%'`
         ).get()
       );
     }
