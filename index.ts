@@ -151,17 +151,16 @@ const list = async ({ params }: { params: { "*": string } }) => {
     } else {
       files.push(
         DB.prepare(
-          `SELECT path, title, rating, plays, artists, artwork FROM directory WHERE path LIKE '%Tanzania/Rayvanny/%'`
+          `SELECT path, title, rating, plays, artists, artwork FROM directory WHERE path = '${path}'`
         ).get()
       );
     }
   }
 
-  //const sortedFolders = folders.sort((a, b) => a.path - b.path);
-  //const sortedFiles = files.sort((a: any, b: any) => a.path - b.path);
+  const sortedFolders = folders.sort((a, b) => a.path - b.path);
+  const sortedFiles = files.sort((a: any, b: any) => a.path - b.path);
 
-  //return [...sortedFolders, ...sortedFiles];
-  return files;
+  return [...sortedFolders, ...sortedFiles];
 };
 
 const truncate = () => {
