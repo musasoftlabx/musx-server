@@ -127,20 +127,40 @@ const scan = () =>
     stream.close();
   });
 
-const list = ({ params }: { params: { "*": string } }) => {
+const list = async ({ params }: { params: { "*": string } }) => {
   const decoded = decodeURI(params["*"]);
 
   const entry = decoded === "/" ? "" : decoded;
 
-  const paths = DB.prepare(
-    `SELECT path, title, rating, plays, artwork FROM directory WHERE path LIKE '%${entry}%'`
+  const selection = DB.prepare(
+    `SELECT path FROM directory WHERE path LIKE '%${entry}%'`
   ).all();
 
-  return [
+  const paths = [
     ...new Set( // ? new Set removes duplicates
-      paths.map(({ path }: any) => path.replace(entry, "").split("/")[0])
+      selection.map(({ path }: any) => path.replace(entry, "").split("/")[0])
     ),
   ];
+
+  const list = [];
+
+  for await (const path of paths) {
+    if (!path.includes(".mp3")) {
+      list.push({ path, isFolder: true });
+    } else {
+      list.push(
+        DB.prepare(
+          `SELECT path, title, rating, plays, artwork FROM directory WHERE path LIKE '%${path}%'`
+        ).get()
+      );
+    }
+  }
+
+  // const s = list.sort((a, b) => {
+  //   b.path - a.path;
+  // });
+
+  return list;
 };
 
 const truncate = () => {
@@ -155,7 +175,7 @@ const app = new Elysia()
   .get("/scan", () => scan())
   .get("/truncate", () => truncate())
   .get("/*", (params) => list(params))
-  .listen(6666);
+  .listen(3000);
 
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
