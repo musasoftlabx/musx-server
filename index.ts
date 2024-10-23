@@ -158,11 +158,11 @@ const list = async ({ params }: { params: { "*": string } }) => {
         ).get()
       );
   }
+  console.log(folders);
 
   const sortedFolders = folders.sort((a, b) => a.name - b.name);
   const sortedFiles = files.sort((a: any, b: any) => a.path - b.path);
 
-  console.log([...sortedFolders, ...sortedFiles]);
   return [...sortedFolders, ...sortedFiles];
 };
 
