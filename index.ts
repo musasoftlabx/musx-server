@@ -23,6 +23,7 @@ DB.query(
       year INT,
       track TINYINT(3),
       rating TINYINT(1),
+      plays TINYINT(4),
       bitrate INT(10),
       size MEDIUMINT,
       duration DOUBLE,
@@ -94,7 +95,7 @@ const scan = () =>
               // ? Insert record to DB
               try {
                 DB.query(
-                  `INSERT INTO directory VALUES (?,DateTime('now'),?,?,?,?,?,?,?,0,?,?,?,?,?,?,?,?,?,NULL)`
+                  `INSERT INTO directory VALUES (?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,NULL)`
                 ).run([
                   path,
                   tags?.title,
@@ -132,7 +133,7 @@ const list = ({ params }: { params: { "*": string } }) => {
   const entry = decoded === "/" ? "" : decoded;
 
   const paths = DB.prepare(
-    `SELECT path FROM directory WHERE path LIKE '%${entry}%'`
+    `SELECT path, title, rating, plays, artwork FROM directory WHERE path LIKE '%${entry}%'`
   ).all();
 
   return [
