@@ -142,13 +142,14 @@ const list = async ({ params }: { params: { "*": string } }) => {
     ),
   ];
 
-  const list = [];
+  const folders = [];
+  const files = [];
 
   for await (const path of paths) {
     if (!path.includes(".mp3")) {
-      list.push({ path, isFolder: true });
+      folders.push({ path, isFolder: true });
     } else {
-      list.push(
+      files.push(
         DB.prepare(
           `SELECT path, title, rating, plays, artwork FROM directory WHERE path LIKE '%${path}%'`
         ).get()
@@ -156,11 +157,10 @@ const list = async ({ params }: { params: { "*": string } }) => {
     }
   }
 
-  // const s = list.sort((a, b) => {
-  //   b.path - a.path;
-  // });
+  const sortedFolders = folders.sort((a, b) => a.path - b.path);
+  const sortedFiles = files.sort((a: any, b: any) => a.path - b.path);
 
-  return list;
+  return [...sortedFolders, ...sortedFiles];
 };
 
 const truncate = () => {
@@ -175,7 +175,7 @@ const app = new Elysia()
   .get("/scan", () => scan())
   .get("/truncate", () => truncate())
   .get("/*", (params) => list(params))
-  .listen(6666);
+  .listen(3030);
 
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
