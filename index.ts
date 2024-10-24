@@ -8,12 +8,13 @@ import { html, Html } from "@elysiajs/html";
 import { Stream } from "@elysiajs/stream";
 import { existsSync, mkdirSync } from "fs";
 
-DB.exec("PRAGMA journal_mode = WAL;");
+//DB.exec("PRAGMA journal_mode = WAL;");
 
 // ? Create table if it doesn't exist
 DB.query(
   `CREATE TABLE IF NOT EXISTS "directory" (
-      path VARCHAR(100) PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      path VARCHAR(100),
       sync_date DATETIME,
       title VARCHAR (255),
       album VARCHAR(255),
@@ -33,11 +34,16 @@ DB.query(
       sample_rate INT(10),
       encoder VARCHAR(20),
       artwork VARCHAR(255),
+      waveform VARCHAR(255),
       lyrics TEXT
     )`
 ).run();
+
+DB.query(`CREATE UNIQUE INDEX IF NOT EXISTS idxPath ON directory (path)`).run();
+
 // ? Create artowk directory if it doesn't exist
 !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
+!existsSync("./Waveform") && mkdirSync("./Waveform", { recursive: true });
 
 const scanner = () =>
   `<html lang='en'>
@@ -87,37 +93,47 @@ const scan = () =>
           // ? Get the path and rename it to make artwork
           const artwork = `${path
             .replace(`.${format_name}`, "")
-            .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`; //\W+ //const filename = path.split("/").slice(-1)[0];
+            .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`; //\W+
+          // ? Generate waveform
+          const waveform = `${path
+            .replace(`.${format_name}`, "")
+            .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
           // ? Execute ffmpeg to extract artwork
           exec(
             `ffmpeg -y -i "./${file}" -an -vcodec copy "./Artwork/${artwork}"`,
-            async () => {
-              // ? Insert record to DB
-              try {
-                DB.query(
-                  `INSERT INTO directory VALUES (?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,NULL)`
-                ).run([
-                  path,
-                  tags?.title,
-                  tags?.album,
-                  tags?.album_artist,
-                  tags?.artist,
-                  tags?.genre,
-                  tags?.date,
-                  tags?.track,
-                  bitrate,
-                  size,
-                  duration,
-                  format_name,
-                  streams[0].channels,
-                  streams[0].channel_layout,
-                  streams[0].sample_rate,
-                  streams[0]?.tags?.encoder,
-                  artwork,
-                ] as any);
-              } catch (err: any) {
-                console.log(err.message);
-              }
+            () => {
+              exec(
+                `ffmpeg -y -i "./${file}" -filter_complex showwavespic -frames:v 1 "./Waveform/${waveform}"`,
+                async () => {
+                  // ? Insert record to DB
+                  try {
+                    DB.query(
+                      `INSERT INTO directory VALUES (NULL,?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,?,NULL)`
+                    ).run([
+                      path,
+                      tags?.title,
+                      tags?.album,
+                      tags?.album_artist,
+                      tags?.artist,
+                      tags?.genre,
+                      tags?.date,
+                      tags?.track,
+                      bitrate,
+                      size,
+                      duration,
+                      format_name,
+                      streams[0].channels,
+                      streams[0].channel_layout,
+                      streams[0].sample_rate,
+                      streams[0]?.tags?.encoder,
+                      artwork,
+                      waveform,
+                    ] as any);
+                  } catch (err: any) {
+                    console.log(err.message);
+                  }
+                }
+              );
             }
           );
         }
@@ -146,7 +162,6 @@ const list = async ({ params }: { params: { "*": string } }) => {
   const files = [];
 
   for await (const path of paths) {
-    //console.log(`${entry}${path}`);
     if (!path.includes(".mp3"))
       folders.push({
         name: path,

@@ -43,6 +43,7 @@ package-lock.json
 
 Music/
 Artwork/
+Waveform/
 
 *.sqlite*
 *musx*
