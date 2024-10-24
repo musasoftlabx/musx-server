@@ -170,7 +170,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
     else
       files.push(
         DB.query(
-          `SELECT path, title, rating, plays, artists, artwork FROM directory WHERE path = "${entry}${path}"`
+          `SELECT id, path, title, rating, plays, artists, artwork FROM directory WHERE path = "${entry}${path}"`
         ).get()
       );
   }
