@@ -101,7 +101,7 @@ const scan = () =>
           // ? Execute ffmpeg to extract artwork
           exec(
             `ffmpeg -y -i "./${file}" -an -vcodec copy "./Artwork/${artwork}"`,
-            () => {
+            async () => {
               exec(
                 `ffmpeg -y -i "./${file}" -filter_complex showwavespic -frames:v 1 "./Waveform/${waveform}"`,
                 async () => {
@@ -183,6 +183,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
 
 const truncate = () => {
   exec(`rm -rf ./Artwork/`, () => {});
+  exec(`rm -rf ./Waveform/`, () => {});
   return DB.query(`DELETE FROM directory`).run();
 };
 
