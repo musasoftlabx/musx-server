@@ -235,8 +235,10 @@ const app = new Elysia()
   .get("/scan", () => scan())
   .get("/truncate", () => truncate())
   .get("/dashboard", () => dashboard())
-  .put("/rate", (params) => rate(params))
-  .put("/plays", (params) => plays(params))
+  .put("/rate", (params: { body: { id: number; rating: number } }) =>
+    rate(params)
+  )
+  .put("/plays", (params: { body: { id: number } }) => plays(params))
   .get("/*", (params) => list(params))
   .listen(3030);
 
