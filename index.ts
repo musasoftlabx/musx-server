@@ -9,6 +9,7 @@ import { Stream } from "@elysiajs/stream";
 import { existsSync, mkdirSync } from "fs";
 
 import { dashboard } from "./routes/dashboard";
+import { rate } from "./routes/rate";
 
 //DB.exec("PRAGMA journal_mode = WAL;");
 
@@ -233,6 +234,7 @@ const app = new Elysia()
   .get("/scan", () => scan())
   .get("/truncate", () => truncate())
   .get("/dashboard", () => dashboard())
+  .put("/rate", (params) => rate(params))
   .get("/*", (params) => list(params))
   .listen(3030);
 
