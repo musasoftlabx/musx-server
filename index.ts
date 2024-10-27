@@ -208,7 +208,9 @@ const list = async ({ params }: { params: { "*": string } }) => {
       });
     else
       files.push(
-        DB.query(`SELECT * FROM directory WHERE path = "${entry}${path}"`).get()
+        DB.query(
+          `SELECT *, album_artist AS albumArtist FROM directory WHERE path = "${entry}${path}"`
+        ).get()
       );
   }
 
