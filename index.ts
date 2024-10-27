@@ -10,6 +10,7 @@ import { existsSync, mkdirSync } from "fs";
 
 import { dashboard } from "./routes/dashboard";
 import { rate } from "./routes/rate";
+import { plays } from "./routes/plays";
 
 //DB.exec("PRAGMA journal_mode = WAL;");
 
@@ -235,6 +236,7 @@ const app = new Elysia()
   .get("/truncate", () => truncate())
   .get("/dashboard", () => dashboard())
   .put("/rate", (params) => rate(params))
+  .put("/plays", (params) => plays(params))
   .get("/*", (params) => list(params))
   .listen(3030);
 
