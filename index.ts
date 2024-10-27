@@ -2,44 +2,83 @@ import { Glob } from "bun";
 import { exec } from "child_process";
 import { Elysia } from "elysia";
 import { Database } from "bun:sqlite";
-const DB = new Database("musx.db", { create: true });
+export const DB = new Database("musx.db", { create: true });
 
 import { html, Html } from "@elysiajs/html";
 import { Stream } from "@elysiajs/stream";
 import { existsSync, mkdirSync } from "fs";
+
+import { dashboard } from "./routes/dashboard";
 
 //DB.exec("PRAGMA journal_mode = WAL;");
 
 // ? Create table if it doesn't exist
 DB.query(
   `CREATE TABLE IF NOT EXISTS "directory" (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      path VARCHAR(100),
-      sync_date DATETIME,
-      title VARCHAR (255),
-      album VARCHAR(255),
-      album_artist VARCHAR(255),
-      artists VARCHAR(255),
-      genre VARCHAR(20),
-      year INT,
-      track TINYINT(3),
-      rating TINYINT(1),
-      plays TINYINT(4),
-      bitrate INT(10),
-      size MEDIUMINT,
-      duration DOUBLE,
-      format VARCHAR(5),
-      channels TINYINT(1),
-      channel_layout VARCHAR(15),
-      sample_rate INT(10),
-      encoder VARCHAR(20),
-      artwork VARCHAR(255),
-      waveform VARCHAR(255),
-      lyrics TEXT
-    )`
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    path VARCHAR(100),
+    syncDate DATETIME,
+    title VARCHAR (255),
+    album VARCHAR(255),
+    albumArtist VARCHAR(255),
+    artists VARCHAR(255),
+    genre VARCHAR(20),
+    year INT,
+    track TINYINT(3),
+    rating TINYINT(1),
+    plays TINYINT(4),
+    bitrate INT(10),
+    size MEDIUMINT,
+    duration DOUBLE,
+    format VARCHAR(5),
+    channels TINYINT(1),
+    channelLayout VARCHAR(15),
+    sampleRate INT(10),
+    encoder VARCHAR(20),
+    artwork VARCHAR(255),
+    waveform VARCHAR(255),
+    lyrics TEXT
+  )`
 ).run();
 
 DB.query(`CREATE UNIQUE INDEX IF NOT EXISTS idxPath ON directory (path)`).run();
+
+DB.query(
+  `CREATE TABLE IF NOT EXISTS "plays" (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    directoryId INTEGER,
+    playedOn DATETIME,
+    FOREIGN KEY ("directoryId") REFERENCES "directory" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  )`
+).run();
+
+DB.query(`DROP TABLE IF EXISTS playlists`).run();
+
+DB.query(
+  `CREATE TABLE IF NOT EXISTS "playlists" (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(30),
+    artwork VARCHAR(50),
+    createdOn DATETIME,
+    modifiedOn DATETIME
+  )`
+).run();
+
+DB.query(
+  `CREATE TABLE IF NOT EXISTS "playlistTracks" (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    playlistId INTEGER,
+    trackId INTEGER,
+    name VARCHAR(30),
+    addedOn DATETIME,
+    startAt DOUBLE,
+    endsAt DOUBLE,
+    modifiedOn DATETIME,
+    FOREIGN KEY ("playlistId") REFERENCES "playlists" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  )`
+).run();
+
+//DB.query(`CREATE UNIQUE INDEX IF NOT EXISTS idxPath ON directory (path)`).run();
 
 // ? Create artowk directory if it doesn't exist
 !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
@@ -169,9 +208,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
       });
     else
       files.push(
-        DB.query(
-          `SELECT id, path, title, rating, plays, artists, artwork FROM directory WHERE path = "${entry}${path}"`
-        ).get()
+        DB.query(`SELECT * FROM directory WHERE path = "${entry}${path}"`).get()
       );
   }
 
@@ -193,6 +230,7 @@ const app = new Elysia()
   .get("/scanner", () => Bun.file("scanner.tsx"))
   .get("/scan", () => scan())
   .get("/truncate", () => truncate())
+  .get("/dashboard", () => dashboard())
   .get("/*", (params) => list(params))
   .listen(3030);
 
