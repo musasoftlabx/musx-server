@@ -9,14 +9,18 @@ import { Stream } from "@elysiajs/stream";
 import { existsSync, mkdirSync } from "fs";
 
 import { dashboard } from "./routes/dashboard";
-import { rate } from "./routes/rate";
-import { plays } from "./routes/plays";
+import rateTrack from "./routes/rateTrack";
+import updatePlayCount from "./routes/updatePlayCount";
+import deleteTrack from "./routes/deleteTrack";
+import addPlaylistTrack from "./routes/addPlaylistTrack";
+import playlists from "./routes/playlists";
+import createPlaylist from "./routes/createPlaylist";
 
 //DB.exec("PRAGMA journal_mode = WAL;");
 
 // ? Create table if it doesn't exist
 DB.query(
-  `CREATE TABLE IF NOT EXISTS "directory" (
+  `CREATE TABLE IF NOT EXISTS tracks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     path VARCHAR(100),
     syncDate DATETIME,
@@ -43,14 +47,14 @@ DB.query(
   )`
 ).run();
 
-DB.query(`CREATE UNIQUE INDEX IF NOT EXISTS idxPath ON directory (path)`).run();
+DB.query(`CREATE UNIQUE INDEX IF NOT EXISTS idxPath ON tracks (path)`).run();
 
 DB.query(
   `CREATE TABLE IF NOT EXISTS "plays" (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    directoryId INTEGER,
+    trackId INTEGER,
     playedOn DATETIME,
-    FOREIGN KEY ("directoryId") REFERENCES "directory" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY ("trackId") REFERENCES "tracks" ("id") ON DELETE CASCADE ON UPDATE CASCADE
   )`
 ).run();
 
@@ -71,18 +75,17 @@ DB.query(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     playlistId INTEGER,
     trackId INTEGER,
-    name VARCHAR(30),
-    addedOn DATETIME,
     startAt DOUBLE,
     endsAt DOUBLE,
-    modifiedOn DATETIME,
-    FOREIGN KEY ("playlistId") REFERENCES "playlists" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    addedOn DATETIME,
+    FOREIGN KEY ("playlistId") REFERENCES "playlists" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY ("trackId") REFERENCES "tracks" ("id") ON DELETE CASCADE ON UPDATE CASCADE
   )`
 ).run();
 
-//DB.query(`CREATE UNIQUE INDEX IF NOT EXISTS idxPath ON directory (path)`).run();
+//DB.query(`CREATE UNIQUE INDEX IF NOT EXISTS idxPath ON tracks (path)`).run();
 
-// ? Create artowk directory if it doesn't exist
+// ? Create artwork & waveform directories if it doesn't exist
 !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
 !existsSync("./Waveform") && mkdirSync("./Waveform", { recursive: true });
 
@@ -149,7 +152,7 @@ const scan = () =>
                   // ? Insert record to DB
                   try {
                     DB.query(
-                      `INSERT INTO directory VALUES (NULL,?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,?,NULL)`
+                      `INSERT INTO tracks VALUES (NULL,?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,?,NULL)`
                     ).run([
                       path,
                       tags?.title,
@@ -190,7 +193,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
   const entry = decoded === "/" ? "" : decoded;
 
   const selection = DB.prepare(
-    `SELECT path FROM directory WHERE path LIKE "%${entry}%"`
+    `SELECT path FROM tracks WHERE path LIKE "%${entry}%"`
   ).all();
 
   const paths = [
@@ -211,7 +214,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
     else
       files.push(
         DB.query(
-          `SELECT *, album_artist AS albumArtist FROM directory WHERE path = "${entry}${path}"`
+          `SELECT *, album_artist AS albumArtist FROM tracks WHERE path = "${entry}${path}"`
         ).get()
       );
   }
@@ -225,8 +228,10 @@ const list = async ({ params }: { params: { "*": string } }) => {
 const truncate = () => {
   exec(`rm -rf ./Artwork/`, () => {});
   exec(`rm -rf ./Waveform/`, () => {});
-  return DB.query(`DELETE FROM directory`).run();
+  return DB.query(`DELETE FROM tracks`).run();
 };
+
+const colorize = () => {};
 
 const app = new Elysia()
   .use(html({ contentType: "text/html" }))
@@ -235,10 +240,19 @@ const app = new Elysia()
   .get("/scan", () => scan())
   .get("/truncate", () => truncate())
   .get("/dashboard", () => dashboard())
-  .put("/rate", (params: { body: { id: number; rating: number } }) =>
-    rate(params)
+  .get("/playlists", (params) => playlists(params))
+  .post("/createPlaylist", (params) => createPlaylist(params))
+  .post("/addPlaylistTrack", (params) => addPlaylistTrack(params))
+  .put("/rateTrack", (params: { body: { id: number; rating: number } }) =>
+    rateTrack(params)
   )
-  .put("/plays", (params: { body: { id: number } }) => plays(params))
+  .put("/updatePlayCount", (params: { body: { id: number } }) =>
+    updatePlayCount(params)
+  )
+  .delete("/deleteTrack", (params) => deleteTrack(params))
+  .get("/colorize", (params: { body: { id: number; path: string } }) =>
+    colorize()
+  )
   .get("/*", (params) => list(params))
   .listen(3030);
 
