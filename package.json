@@ -8,9 +8,11 @@
   "dependencies": {
     "@elysiajs/html": "^1.1.1",
     "@elysiajs/stream": "^1.1.0",
+    "colorthief": "^2.6.0",
     "elysia": "latest",
     "react": "^19.0.0-rc-77b637d6-20241016",
-    "react-dom": "^19.0.0-rc-77b637d6-20241016"
+    "react-dom": "^19.0.0-rc-77b637d6-20241016",
+    "rgb-hex": "^4.1.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.11",
