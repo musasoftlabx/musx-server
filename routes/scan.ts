@@ -16,7 +16,7 @@ const colorsFromImage = async (path: string) => {
 };
 
 export default async function scan() {
-  new Stream(async (stream) => {
+  return new Stream(async (stream) => {
     let count = 0;
 
     const glob = new Glob("**/*.mp3");
