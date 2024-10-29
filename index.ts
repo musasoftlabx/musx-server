@@ -13,8 +13,6 @@ import createPlaylist from "./routes/createPlaylist";
 import scan from "./routes/scan";
 import reset from "./routes/reset";
 import init from "./routes/init";
-import waveform from "./routes/waveform";
-import artwork from "./routes/artwork";
 
 init();
 
@@ -73,8 +71,6 @@ const app = new Elysia()
   .get("/html", () => scanner())
   .get("/scanner", () => Bun.file("scanner.tsx"))
   .get("/scan", () => scan())
-  .get("/waveform", () => waveform())
-  .get("/artwork", () => artwork())
   .get("/reset", () => reset())
   .get("/dashboard", () => dashboard())
   .get("/playlists", (params) => playlists(params))
