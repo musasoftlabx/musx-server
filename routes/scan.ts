@@ -28,12 +28,12 @@ export default async function scan() {
       const stdout: any = execSync(
         `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`
       );
-      const buf = Buffer.from(stdout);
-      const base64Data = buf.toString("base64");
-      const res = atob(base64Data);
+      const buffer = Buffer.from(stdout);
+      const base64Data = buffer.toString("base64");
+      const jsonString = atob(base64Data);
 
       // ? If no errors,
-      const { streams, format } = JSON.parse(res);
+      const { streams, format } = JSON.parse(jsonString);
 
       // ? Remove root directory from entry
       const path = file
