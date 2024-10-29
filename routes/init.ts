@@ -65,6 +65,14 @@ export default async function init() {
   )`
   ).run();
 
+  DB.query(
+    `CREATE TABLE IF NOT EXISTS "scanErrors" (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      error TEXT,
+      scannedOn DATETIME
+    )`
+  ).run();
+
   // ? Create artwork & waveform directories if it doesn't exist
   !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
   !existsSync("./Waveform") && mkdirSync("./Waveform", { recursive: true });

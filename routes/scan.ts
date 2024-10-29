@@ -54,7 +54,7 @@ export default async function scan() {
         // ? Generate waveform
         const waveform = `${path
           .replace(`.${format_name}`, "")
-          .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
+          .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`;
 
         const trackPath = `./Music/${path
           .replaceAll("$", "\\$")
@@ -107,6 +107,10 @@ export default async function scan() {
 
         stream.send(`${count}. ${entry}`);
       } else {
+        DB.query(`INSERT INTO scanErrors VALUES (NULL,?,DateTime('now')`).run([
+          entry,
+        ] as any);
+
         stream.send(
           `${count}. ----------------------------------------------------- Error: ${entry}`
         );
