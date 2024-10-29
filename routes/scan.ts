@@ -29,10 +29,7 @@ export default async function scan() {
         `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`
       );
 
-      console.log("stdout ", stdout);
-      stream.send(`${count}. ${entry}`);
-
-      /* if (stdout) {
+      if (stdout) {
         const buffer = Buffer.from(stdout);
         const base64Data = buffer.toString("base64");
         const jsonString = atob(base64Data);
@@ -74,9 +71,9 @@ export default async function scan() {
 
         // ? Execute ffmpeg to extract artwork
         if (!existsSync(artworkPath)) {
-          execSync(
-            `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
-          );
+          // execSync(
+          //   `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
+          // );
         }
 
         // ? Insert record to DB
@@ -113,7 +110,7 @@ export default async function scan() {
         stream.send(
           `${count}. ----------------------------------------------------- Error: ${entry}`
         );
-      } */
+      }
     }
 
     /* const paths: any = DB.query(
