@@ -19,6 +19,8 @@ export default async function scan() {
   let count = 0;
   const glob = new Glob("**/*.mp3");
 
+  const x: number[] = [];
+
   return new Stream(async (stream) => {
     for await (const entry of glob.scan(".")) {
       stream.send(`${count}. ${entry}`);
@@ -63,11 +65,11 @@ export default async function scan() {
           .replace(`.${format_name}`, "")
           .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`;
 
-        const trackPath = `./Music/${path
-          .replaceAll("$", "\\$")
-          .replaceAll("`", "\\`")}`;
-        const artworkPath = `./Artwork/${artwork}`;
-        const waveformPath = `./Waveform/${waveform}`;
+        // const trackPath = `./Music/${path
+        //   .replaceAll("$", "\\$")
+        //   .replaceAll("`", "\\`")}`;
+        // const artworkPath = `./Artwork/${artwork}`;
+        // const waveformPath = `./Waveform/${waveform}`;
 
         // ? Execute ffmpeg to construct waveform
         // if (!existsSync(waveformPath)) {
@@ -130,11 +132,11 @@ export default async function scan() {
       }
     }
 
-    /* const paths: any = DB.query(
+    stream.close();
+
+    const paths: any = DB.query(
       `SELECT id, path, artwork, waveform FROM tracks`
     ).all();
-
-    console.log("paths:", paths);
 
     for await (const { id, path, artwork, waveform } of paths) {
       const trackPath = `./Music/${path
@@ -143,30 +145,27 @@ export default async function scan() {
       const artworkPath = `./Artwork/${artwork}`;
       const waveformPath = `./Waveform/${waveform}`;
 
-      // ? Execute ffmpeg to extract artwork
-      if (!existsSync(artworkPath)) {
-        exec(
-          `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`,
-          async (error, stdout, stderr) => {
-            if (error) {
-              console.error(`error: ${error.message}`);
-            } else {
-              DB.query(`UPDATE tracks SET palette = ? WHERE id = ${id}`).run([
-                await colorsFromImage(artworkPath),
-              ] as any);
-            }
-          }
-        );
-      }
-
       // ? Execute ffmpeg to construct waveform
-      if (!existsSync(waveformPath)) {
-        exec(
-          `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
-        );
-      }
-    } */
+      // if (!existsSync(waveformPath))
+      //   execSync(
+      //     `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
+      //   );
 
-    stream.close();
+      // ? Execute ffmpeg to extract artwork
+      if (!existsSync(artworkPath))
+        try {
+          execSync(
+            `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
+          );
+          DB.query(`UPDATE tracks SET palette = ? WHERE id = ${id}`).run([
+            await colorsFromImage(artworkPath),
+          ] as any);
+        } catch (err: any) {
+          console.log(`Error: ${err.message}`);
+          // DB.query(
+          //   `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
+          // ).run([file, "IMAGE_EXTRACTION", JSON.stringify(err.message)] as any);
+        }
+    }
   });
 }
