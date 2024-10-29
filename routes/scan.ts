@@ -70,9 +70,11 @@ export default async function scan() {
         // }
 
         // ? Execute ffmpeg to extract artwork
-        //if (!existsSync(artworkPath)) {
-        exec(`ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`);
-        //}
+        if (!existsSync(artworkPath)) {
+          execSync(
+            `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
+          );
+        }
 
         // ? Insert record to DB
         try {
@@ -97,7 +99,7 @@ export default async function scan() {
             streams[0]?.tags?.encoder,
             artwork,
             waveform,
-            null, //await colorsFromImage(artworkPath),
+            await colorsFromImage(artworkPath),
           ] as any);
         } catch (err: any) {
           console.log("DB:", err.message);
