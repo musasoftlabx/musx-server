@@ -29,7 +29,10 @@ export default async function scan() {
         `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`
       );
 
-      if (stdout) {
+      console.log("stdout ", stdout);
+      stream.send(`${count}. ${entry}`);
+
+      /* if (stdout) {
         const buffer = Buffer.from(stdout);
         const base64Data = buffer.toString("base64");
         const jsonString = atob(base64Data);
@@ -104,12 +107,13 @@ export default async function scan() {
         } catch (err: any) {
           console.log("DB:", err.message);
         }
+
         stream.send(`${count}. ${entry}`);
       } else {
         stream.send(
           `${count}. ----------------------------------------------------- Error: ${entry}`
         );
-      }
+      } */
     }
 
     /* const paths: any = DB.query(
