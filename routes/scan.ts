@@ -23,6 +23,8 @@ export default async function scan() {
     for await (const entry of glob.scan(".")) {
       count++;
 
+      stream.send(`${count}. ${entry}`);
+
       const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
 
       try {
@@ -99,19 +101,17 @@ export default async function scan() {
             streams[0]?.tags?.encoder,
             artwork,
             waveform,
-            await colorsFromImage(artworkPath),
+            (await colorsFromImage(artworkPath)) ?? null,
           ] as any);
         } catch (err: any) {
           console.log("DB:", err.message);
         }
-
-        stream.send(`${count}. ${entry}`);
       } catch (err: any) {
+        stream.send(`${count}. ${entry}: ${err.message}`);
+
         DB.query(`INSERT INTO scanErrors VALUES (NULL,?,DateTime('now')`).run([
           err.message,
         ] as any);
-
-        stream.send(`${count}. ${entry}: ${err.message}`);
       }
     }
 
