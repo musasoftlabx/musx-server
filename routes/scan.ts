@@ -103,12 +103,7 @@ export default async function scan() {
       const artworkPath = `./Artwork/${artwork}`;
       const waveformPath = `./Waveform/${waveform}`;
 
-      // ? Execute ffmpeg to construct waveform
-      if (!existsSync(waveformPath)) {
-        exec(
-          `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
-        );
-      }
+      console.log(artworkPath, waveformPath);
 
       // ? Execute ffmpeg to extract artwork
       if (!existsSync(artworkPath)) {
@@ -123,6 +118,13 @@ export default async function scan() {
               ] as any);
             }
           }
+        );
+      }
+
+      // ? Execute ffmpeg to construct waveform
+      if (!existsSync(waveformPath)) {
+        exec(
+          `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
         );
       }
     }
