@@ -63,11 +63,11 @@ export default async function scan() {
         const waveformPath = `./Waveform/${waveform}`;
 
         // ? Execute ffmpeg to construct waveform
-        // if (!existsSync(waveformPath)) {
-        //   execSync(
-        //     `ffmpeg -y -i "${trackPath}" -enable-encoder=png -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
-        //   );
-        // }
+        if (!existsSync(waveformPath)) {
+          execSync(
+            `ffmpeg -y -i "${trackPath}" -enable-encoder=png -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
+          );
+        }
 
         // ? Execute ffmpeg to extract artwork
         if (!existsSync(artworkPath)) {
