@@ -4,7 +4,7 @@ module.exports = {
       name: "Server",
       exec_mode: "cluster",
       instances: Math.ceil((require("os").cpus().length * 100) / 100),
-      script: "ts-node index.ts",
+      script: "ts-node-esm index.ts",
       args: "start",
       node_args: ["--max_old_space_size=16192"],
       watch: false,
