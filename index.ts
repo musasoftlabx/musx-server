@@ -58,7 +58,7 @@ DB.query(
   )`
 ).run();
 
-DB.query(`DROP TABLE IF EXISTS playlists`).run();
+//DB.query(`DROP TABLE IF EXISTS playlists`).run();
 
 DB.query(
   `CREATE TABLE IF NOT EXISTS "playlists" (
