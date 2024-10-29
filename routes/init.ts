@@ -68,6 +68,7 @@ export default async function init() {
   DB.query(
     `CREATE TABLE IF NOT EXISTS "scanErrors" (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      track VARCHAR(255),
       operation VARCHAR(20),
       error TEXT,
       scannedOn DATETIME

@@ -21,12 +21,11 @@ export default async function scan() {
 
   return new Stream(async (stream) => {
     for await (const entry of glob.scan(".")) {
+      stream.send(`${count}. ${entry}`);
+      const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
+
       try {
         count++;
-
-        stream.send(`${count}. ${entry}`);
-
-        const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
 
         const stdout: any = execSync(
           `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`
@@ -37,7 +36,7 @@ export default async function scan() {
         const jsonString = atob(base64Data);
 
         // ? If no errors,
-        const { streams, format } = JSON.parse(jsonString);
+        const metadata = JSON.parse(jsonString);
 
         // ? Remove root directory from entry
         const path = file
@@ -46,7 +45,13 @@ export default async function scan() {
           .replaceAll("\\`", "`");
 
         // ? Destructure
-        const { tags, bit_rate: bitrate, size, duration, format_name } = format;
+        const {
+          tags,
+          bit_rate: bitrate,
+          size,
+          duration,
+          format_name,
+        } = metadata.format;
 
         // ? Get the path and rename it to make artwork
         const artwork = `${path
@@ -79,8 +84,8 @@ export default async function scan() {
             );
           } catch (err: any) {
             DB.query(
-              `INSERT INTO scanErrors VALUES (NULL,?,?,DateTime('now'))`
-            ).run(["IMAGE_EXTRACTION", err.message] as any);
+              `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
+            ).run([file, "IMAGE_EXTRACTION", err.message] as any);
           }
         }
 
@@ -101,10 +106,10 @@ export default async function scan() {
             size,
             duration,
             format_name,
-            streams[0].channels,
-            streams[0].channel_layout,
-            streams[0].sample_rate,
-            streams[0]?.tags?.encoder,
+            metadata?.streams[0].channels ?? null,
+            metadata?.streams[0].channel_layout ?? null,
+            metadata?.streams[0].sample_rate ?? null,
+            metadata?.streams[0]?.tags?.encoder ?? null,
             artwork,
             waveform,
             (await colorsFromImage(artworkPath)) ?? null,
@@ -116,8 +121,8 @@ export default async function scan() {
         stream.send(`${count}. ${entry}: ${err.message}`);
 
         DB.query(
-          `INSERT INTO scanErrors VALUES (NULL,?,?,DateTime('now'))`
-        ).run(["METADATA_EXTRACTION", err.message] as any);
+          `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
+        ).run([file, "METADATA_EXTRACTION", err.message] as any);
       }
     }
 
