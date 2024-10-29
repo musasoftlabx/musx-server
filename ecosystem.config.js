@@ -1,9 +1,9 @@
 module.exports = {
   apps: [
     {
-      name: "Server",
+      name: "Music Server",
       exec_mode: "cluster",
-      instances: Math.ceil((require("os").cpus().length * 100) / 100),
+      instances: 5,
       script: "ts-node-esm index.ts",
       args: "start",
       node_args: ["--max_old_space_size=16192"],
