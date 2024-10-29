@@ -108,11 +108,13 @@ export default async function scan() {
         exec(
           `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`,
           async (error, stdout, stderr) => {
-            if (error) console.error(`error: ${error.message}`);
-            else
+            if (error) {
+              console.error(`error: ${error.message}`);
+            } else {
               DB.query(`UPDATE tracks SET palette = ? WHERE id = ${id}`).run([
                 await colorsFromImage(artworkPath),
               ] as any);
+            }
           }
         );
       }
