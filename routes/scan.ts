@@ -85,7 +85,7 @@ export default async function scan() {
         //   } catch (err: any) {
         //     DB.query(
         //       `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
-        //     ).run([file, "IMAGE_EXTRACTION", err.message] as any);
+        //     ).run([file, "IMAGE_EXTRACTION", JSON.stringify(err.message)] as any);
         //   }
         // }
 
@@ -118,11 +118,15 @@ export default async function scan() {
           console.log("DB:", err.message);
         }
       } catch (err: any) {
-        stream.send(`${count}. ${entry}: ${err.message}`);
+        stream.send(`Error. ${entry}: ${err.message}`);
 
-        DB.query(
-          `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
-        ).run([file, "METADATA_EXTRACTION", err.message] as any);
+        // DB.query(
+        //   `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
+        // ).run([
+        //   file,
+        //   "METADATA_EXTRACTION",
+        //   JSON.stringify(err.message),
+        // ] as any);
       }
     }
 
