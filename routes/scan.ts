@@ -109,7 +109,7 @@ export default async function scan() {
       } catch (err: any) {
         stream.send(`${count}. ${entry}: ${err.message}`);
 
-        DB.query(`INSERT INTO scanErrors VALUES (NULL,?,DateTime('now')`).run([
+        DB.query(`INSERT INTO scanErrors VALUES (NULL,?,DateTime('now'))`).run([
           entry,
         ] as any);
       }
