@@ -1,11 +1,8 @@
-import { Glob } from "bun";
-import { exec } from "child_process";
 import { Elysia } from "elysia";
 import { Database } from "bun:sqlite";
 export const DB = new Database("musx.db", { create: true });
 
 import { html, Html } from "@elysiajs/html";
-import { Stream } from "@elysiajs/stream";
 import { existsSync, mkdirSync } from "fs";
 
 import { dashboard } from "./routes/dashboard";
@@ -16,6 +13,7 @@ import addPlaylistTrack from "./routes/addPlaylistTrack";
 import playlists from "./routes/playlists";
 import createPlaylist from "./routes/createPlaylist";
 import scan from "./routes/scan";
+import reset from "./routes/reset";
 
 //DB.exec("PRAGMA journal_mode = WAL;");
 
@@ -139,18 +137,12 @@ const list = async ({ params }: { params: { "*": string } }) => {
   return [...sortedFolders, ...sortedFiles];
 };
 
-const truncate = () => {
-  exec(`rm -rf ./Artwork/`, () => {});
-  exec(`rm -rf ./Waveform/`, () => {});
-  return DB.query(`DELETE FROM tracks`).run();
-};
-
 const app = new Elysia()
   .use(html({ contentType: "text/html" }))
   .get("/html", () => scanner())
   .get("/scanner", () => Bun.file("scanner.tsx"))
   .get("/scan", () => scan())
-  .get("/truncate", () => truncate())
+  .get("/reset", () => reset())
   .get("/dashboard", () => dashboard())
   .get("/playlists", (params) => playlists(params))
   .post("/createPlaylist", (params) => createPlaylist(params))
