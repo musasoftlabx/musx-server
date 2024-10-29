@@ -29,7 +29,7 @@ export default async function scan() {
       const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
 
       exec(
-        `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`,
+        `ffprobe -show_entries 'stream:format' -output_format json "../${file}"`,
         (error, stdout, stderr) => {
           if (error) {
             console.error(`error: ${error.message}`);
@@ -60,10 +60,10 @@ export default async function scan() {
             .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
           // ? Execute ffmpeg to extract artwork
           exec(
-            `ffmpeg -y -i "./${file}" -an -vcodec copy "./Artwork/${artwork}"`,
+            `ffmpeg -y -i "../${file}" -an -vcodec copy "../Artwork/${artwork}"`,
             async () => {
               exec(
-                `ffmpeg -y -i "./${file}" -filter_complex showwavespic -frames:v 1 "./Waveform/${waveform}"`,
+                `ffmpeg -y -i "../${file}" -filter_complex showwavespic -frames:v 1 "../Waveform/${waveform}"`,
                 async () => {
                   // ? Insert record to DB
                   try {
@@ -88,7 +88,7 @@ export default async function scan() {
                       streams[0]?.tags?.encoder,
                       artwork,
                       waveform,
-                      await colorsFromImage(`./Artwork/${artwork}`),
+                      await colorsFromImage(`../Artwork/${artwork}`),
                     ] as any);
                   } catch (err: any) {
                     console.log(err.message);
