@@ -25,11 +25,11 @@ export default async function scan() {
 
       const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
 
-      const stdout: any = execSync(
-        `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`
-      );
+      try {
+        const stdout: any = execSync(
+          `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`
+        );
 
-      if (stdout) {
         const buffer = Buffer.from(stdout);
         const base64Data = buffer.toString("base64");
         const jsonString = atob(base64Data);
@@ -70,11 +70,11 @@ export default async function scan() {
         // }
 
         // ? Execute ffmpeg to extract artwork
-        // if (!existsSync(artworkPath)) {
-        //   execSync(
-        //     `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
-        //   );
-        // }
+        if (!existsSync(artworkPath)) {
+          execSync(
+            `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
+          );
+        }
 
         // ? Insert record to DB
         try {
@@ -99,21 +99,19 @@ export default async function scan() {
             streams[0]?.tags?.encoder,
             artwork,
             waveform,
-            null, //await colorsFromImage(artworkPath),
+            await colorsFromImage(artworkPath),
           ] as any);
         } catch (err: any) {
           console.log("DB:", err.message);
         }
 
         stream.send(`${count}. ${entry}`);
-      } else {
+      } catch (err: any) {
         DB.query(`INSERT INTO scanErrors VALUES (NULL,?,DateTime('now')`).run([
-          entry,
+          err.message,
         ] as any);
 
-        stream.send(
-          `${count}. ----------------------------------------------------- Error: ${entry}`
-        );
+        stream.send(`${count}. ${entry}: ${err.message}`);
       }
     }
 

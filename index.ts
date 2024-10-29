@@ -54,9 +54,7 @@ const list = async ({ params }: { params: { "*": string } }) => {
       });
     else
       files.push(
-        DB.query(
-          `SELECT *, album_artist AS albumArtist FROM tracks WHERE path = "${entry}${path}"`
-        ).get()
+        DB.query(`SELECT * FROM tracks WHERE path = "${entry}${path}"`).get()
       );
   }
 
