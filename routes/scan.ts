@@ -16,33 +16,34 @@ const colorsFromImage = async (path: string) => {
 };
 
 export default async function scan() {
+  let count = 0;
+  const glob = new Glob("**/*.mp3");
+
   return new Stream(async (stream) => {
-    let count = 0;
-
-    const glob = new Glob("**/*.mp3");
-
     for await (const entry of glob.scan(".")) {
       count++;
 
-      //if (count <= 10) {
       stream.send(`${count}. ${entry}`);
 
       const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
 
       exec(
         `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`,
-        async (error, stdout, stderr) => {
+        (error, stdout, stderr) => {
           if (error) {
             console.error(`error: ${error.message}`);
             return;
           }
+
           // ? If no errors,
           const { streams, format } = JSON.parse(stdout);
+
           // ? Remove root directory from entry
           const path = file
             .replace("Music/", "")
             .replaceAll("\\$", "$")
             .replaceAll("\\`", "`");
+
           // ? Destructure
           const {
             tags,
@@ -51,6 +52,7 @@ export default async function scan() {
             duration,
             format_name,
           } = format;
+
           // ? Get the path and rename it to make artwork
           const artwork = `${path
             .replace(`.${format_name}`, "")
@@ -86,11 +88,10 @@ export default async function scan() {
               waveform,
             ] as any);
           } catch (err: any) {
-            console.log("DB:", err.message);
+            console.log("DB: ", err.message);
           }
         }
       );
-      //}
     }
 
     /* const paths: any = DB.query(
