@@ -31,7 +31,7 @@ export default async function scan() {
 
         exec(
           `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`,
-          (error, stdout, stderr) => {
+          async (error, stdout, stderr) => {
             if (error) {
               console.error(`error: ${error.message}`);
               return;
@@ -60,41 +60,68 @@ export default async function scan() {
               .replace(`.${format_name}`, "")
               .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
 
-            // ? Insert record to DB
-            try {
-              DB.query(
-                `INSERT INTO tracks VALUES (NULL,?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,?,NULL,NULL)`
-              ).run([
-                path,
-                tags?.title,
-                tags?.album,
-                tags?.album_artist,
-                tags?.artist,
-                tags?.genre,
-                tags?.date,
-                tags?.track,
-                bitrate,
-                size,
-                duration,
-                format_name,
-                streams[0].channels,
-                streams[0].channel_layout,
-                streams[0].sample_rate,
-                streams[0]?.tags?.encoder,
-                artwork,
-                waveform,
-              ] as any);
-            } catch (err: any) {
-              console.log(err.message);
+            const trackPath = `./Music/${path
+              .replaceAll("$", "\\$")
+              .replaceAll("`", "\\`")}`;
+            const artworkPath = `./Artwork/${artwork}`;
+            const waveformPath = `./Waveform/${waveform}`;
+
+            // ? Execute ffmpeg to construct waveform
+            if (!existsSync(waveformPath)) {
+              exec(
+                `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
+              );
+            }
+
+            // ? Execute ffmpeg to extract artwork
+            if (!existsSync(artworkPath)) {
+              exec(
+                `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`,
+                async (error, stdout, stderr) => {
+                  if (error) console.error(`error: ${error.message}`);
+                  else {
+                    // ? Insert record to DB
+                    try {
+                      DB.query(
+                        `INSERT INTO tracks VALUES (NULL,?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,?,?,NULL)`
+                      ).run([
+                        path,
+                        tags?.title,
+                        tags?.album,
+                        tags?.album_artist,
+                        tags?.artist,
+                        tags?.genre,
+                        tags?.date,
+                        tags?.track,
+                        bitrate,
+                        size,
+                        duration,
+                        format_name,
+                        streams[0].channels,
+                        streams[0].channel_layout,
+                        streams[0].sample_rate,
+                        streams[0]?.tags?.encoder,
+                        artwork,
+                        waveform,
+                        await colorsFromImage(artworkPath),
+                      ] as any);
+                    } catch (err: any) {
+                      console.log("DB:", err.message);
+                    }
+                  }
+                }
+              );
             }
           }
         );
       }
     }
 
-    const paths: any = DB.query(
+    /* const paths: any = DB.query(
       `SELECT id, path, artwork, waveform FROM tracks`
     ).all();
+
+    console.log("paths:", paths);
 
     for await (const { id, path, artwork, waveform } of paths) {
       const trackPath = `./Music/${path
@@ -102,8 +129,6 @@ export default async function scan() {
         .replaceAll("`", "\\`")}`;
       const artworkPath = `./Artwork/${artwork}`;
       const waveformPath = `./Waveform/${waveform}`;
-
-      console.log(artworkPath, waveformPath);
 
       // ? Execute ffmpeg to extract artwork
       if (!existsSync(artworkPath)) {
@@ -127,7 +152,7 @@ export default async function scan() {
           `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
         );
       }
-    }
+    } */
 
     stream.close();
   });
