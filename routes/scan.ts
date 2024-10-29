@@ -65,15 +65,15 @@ export default async function scan() {
         // ? Execute ffmpeg to construct waveform
         if (!existsSync(waveformPath)) {
           execSync(
-            `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
+            `ffmpeg -y -i "${trackPath}" -enable-encoder=png -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
           );
         }
 
         // ? Execute ffmpeg to extract artwork
         if (!existsSync(artworkPath)) {
-          // execSync(
-          //   `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
-          // );
+          execSync(
+            `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
+          );
         }
 
         // ? Insert record to DB
