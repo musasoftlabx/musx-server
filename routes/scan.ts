@@ -28,82 +28,88 @@ export default async function scan() {
       const stdout: any = execSync(
         `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`
       );
-      const buffer = Buffer.from(stdout);
-      const base64Data = buffer.toString("base64");
-      const jsonString = atob(base64Data);
 
-      // ? If no errors,
-      const { streams, format } = JSON.parse(jsonString);
+      if (stdout) {
+        const buffer = Buffer.from(stdout);
+        const base64Data = buffer.toString("base64");
+        const jsonString = atob(base64Data);
 
-      // ? Remove root directory from entry
-      const path = file
-        .replace("Music/", "")
-        .replaceAll("\\$", "$")
-        .replaceAll("\\`", "`");
+        // ? If no errors,
+        const { streams, format } = JSON.parse(jsonString);
 
-      // ? Destructure
-      const { tags, bit_rate: bitrate, size, duration, format_name } = format;
+        // ? Remove root directory from entry
+        const path = file
+          .replace("Music/", "")
+          .replaceAll("\\$", "$")
+          .replaceAll("\\`", "`");
 
-      // ? Get the path and rename it to make artwork
-      const artwork = `${path
-        .replace(`.${format_name}`, "")
-        .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`; //\W+
+        // ? Destructure
+        const { tags, bit_rate: bitrate, size, duration, format_name } = format;
 
-      // ? Generate waveform
-      const waveform = `${path
-        .replace(`.${format_name}`, "")
-        .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
+        // ? Get the path and rename it to make artwork
+        const artwork = `${path
+          .replace(`.${format_name}`, "")
+          .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`; //\W+
 
-      const trackPath = `./Music/${path
-        .replaceAll("$", "\\$")
-        .replaceAll("`", "\\`")}`;
-      const artworkPath = `./Artwork/${artwork}`;
-      const waveformPath = `./Waveform/${waveform}`;
+        // ? Generate waveform
+        const waveform = `${path
+          .replace(`.${format_name}`, "")
+          .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
 
-      // ? Execute ffmpeg to construct waveform
-      if (!existsSync(waveformPath)) {
-        execSync(
-          `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
+        const trackPath = `./Music/${path
+          .replaceAll("$", "\\$")
+          .replaceAll("`", "\\`")}`;
+        const artworkPath = `./Artwork/${artwork}`;
+        const waveformPath = `./Waveform/${waveform}`;
+
+        // ? Execute ffmpeg to construct waveform
+        if (!existsSync(waveformPath)) {
+          execSync(
+            `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
+          );
+        }
+
+        // ? Execute ffmpeg to extract artwork
+        if (!existsSync(artworkPath)) {
+          execSync(
+            `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
+          );
+        }
+
+        // ? Insert record to DB
+        try {
+          DB.query(
+            `INSERT INTO tracks VALUES (NULL,?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,?,?,NULL)`
+          ).run([
+            path,
+            tags?.title,
+            tags?.album,
+            tags?.album_artist,
+            tags?.artist,
+            tags?.genre,
+            tags?.date,
+            tags?.track,
+            bitrate,
+            size,
+            duration,
+            format_name,
+            streams[0].channels,
+            streams[0].channel_layout,
+            streams[0].sample_rate,
+            streams[0]?.tags?.encoder,
+            artwork,
+            waveform,
+            await colorsFromImage(artworkPath),
+          ] as any);
+        } catch (err: any) {
+          console.log("DB:", err.message);
+        }
+        stream.send(`${count}. ${entry}`);
+      } else {
+        stream.send(
+          `${count}. ----------------------------------------------------- Error: ${entry}`
         );
       }
-
-      // ? Execute ffmpeg to extract artwork
-      if (!existsSync(artworkPath)) {
-        execSync(
-          `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
-        );
-      }
-
-      // ? Insert record to DB
-      try {
-        DB.query(
-          `INSERT INTO tracks VALUES (NULL,?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,?,?,NULL)`
-        ).run([
-          path,
-          tags?.title,
-          tags?.album,
-          tags?.album_artist,
-          tags?.artist,
-          tags?.genre,
-          tags?.date,
-          tags?.track,
-          bitrate,
-          size,
-          duration,
-          format_name,
-          streams[0].channels,
-          streams[0].channel_layout,
-          streams[0].sample_rate,
-          streams[0]?.tags?.encoder,
-          artwork,
-          waveform,
-          await colorsFromImage(artworkPath),
-        ] as any);
-      } catch (err: any) {
-        console.log("DB:", err.message);
-      }
-
-      stream.send(`${count}. ${entry}`);
     }
 
     /* const paths: any = DB.query(
