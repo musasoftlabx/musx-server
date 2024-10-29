@@ -70,11 +70,11 @@ export default async function scan() {
         // }
 
         // ? Execute ffmpeg to extract artwork
-        // if (!existsSync(artworkPath)) {
-        //   execSync(
-        //     `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
-        //   );
-        // }
+        if (!existsSync(artworkPath)) {
+          execSync(
+            `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
+          );
+        }
 
         // ? Insert record to DB
         try {
