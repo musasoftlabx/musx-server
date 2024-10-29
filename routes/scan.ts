@@ -77,17 +77,17 @@ export default async function scan() {
         // }
 
         // ? Execute ffmpeg to extract artwork
-        if (!existsSync(artworkPath)) {
-          try {
-            execSync(
-              `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
-            );
-          } catch (err: any) {
-            DB.query(
-              `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
-            ).run([file, "IMAGE_EXTRACTION", err.message] as any);
-          }
-        }
+        // if (!existsSync(artworkPath)) {
+        //   try {
+        //     execSync(
+        //       `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
+        //     );
+        //   } catch (err: any) {
+        //     DB.query(
+        //       `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
+        //     ).run([file, "IMAGE_EXTRACTION", err.message] as any);
+        //   }
+        // }
 
         // ? Insert record to DB
         try {
@@ -112,7 +112,7 @@ export default async function scan() {
             metadata?.streams[0]?.tags?.encoder ?? null,
             artwork,
             waveform,
-            (await colorsFromImage(artworkPath)) ?? null,
+            null, //(await colorsFromImage(artworkPath)) ?? null,
           ] as any);
         } catch (err: any) {
           console.log("DB:", err.message);

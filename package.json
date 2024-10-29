@@ -4,7 +4,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun --watch run index.ts",
-    "start": "pm2 start ecosystem.config.ts"
+    "start": "pm2 start index.ts -i 6 -exec-mode=\"cluster\"",
+    "start:pm2": "pm2 start ecosystem.config.ts"
   },
   "dependencies": {
     "@elysiajs/html": "^1.1.1",
