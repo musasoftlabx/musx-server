@@ -73,9 +73,15 @@ export default async function scan() {
 
         // ? Execute ffmpeg to extract artwork
         if (!existsSync(artworkPath)) {
-          execSync(
-            `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
-          );
+          try {
+            execSync(
+              `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
+            );
+          } catch (err: any) {
+            DB.query(
+              `INSERT INTO scanErrors VALUES (NULL,?,?,DateTime('now'))`
+            ).run(["IMAGE_EXTRACTION", err.message] as any);
+          }
         }
 
         // ? Insert record to DB
@@ -109,9 +115,9 @@ export default async function scan() {
       } catch (err: any) {
         stream.send(`${count}. ${entry}: ${err.message}`);
 
-        DB.query(`INSERT INTO scanErrors VALUES (NULL,?,DateTime('now'))`).run([
-          entry,
-        ] as any);
+        DB.query(
+          `INSERT INTO scanErrors VALUES (NULL,?,?,DateTime('now'))`
+        ).run(["METADATA_EXTRACTION", err.message] as any);
       }
     }
 
