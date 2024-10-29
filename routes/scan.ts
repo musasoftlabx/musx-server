@@ -21,13 +21,13 @@ export default async function scan() {
 
   return new Stream(async (stream) => {
     for await (const entry of glob.scan(".")) {
-      count++;
-
-      stream.send(`${count}. ${entry}`);
-
-      const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
-
       try {
+        count++;
+
+        stream.send(`${count}. ${entry}`);
+
+        const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
+
         const stdout: any = execSync(
           `ffprobe -show_entries 'stream:format' -output_format json "./${file}"`
         );
