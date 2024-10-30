@@ -21,9 +21,9 @@ export default async function scan() {
 
   return new Stream(async (stream) => {
     for await (const entry of glob.scan(".")) {
-      stream.send(`${count}. ${entry}`);
-
       const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
+
+      // ? Remove root directory from entry
       const path = file
         .replace("Music/", "")
         .replaceAll("\\$", "$")
@@ -33,8 +33,9 @@ export default async function scan() {
         `SELECT COUNT(path) FROM tracks WHERE path = "${path}"`
       ).values();
 
-      if (pathExists[0][0] === 0) {
-        console.error(path);
+      if (!Boolean(pathExists[0][0])) {
+        stream.send(`${count}. ${path}`);
+
         try {
           count++;
 
@@ -45,11 +46,7 @@ export default async function scan() {
           const buffer = Buffer.from(stdout);
           const base64Data = buffer.toString("base64");
           const jsonString = atob(base64Data);
-
-          // ? If no errors,
           const metadata = JSON.parse(jsonString);
-
-          // ? Remove root directory from entry
 
           // ? Destructure
           const {
@@ -68,33 +65,7 @@ export default async function scan() {
           // ? Generate waveform
           const waveform = `${path
             .replace(`.${format_name}`, "")
-            .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`;
-
-          // const trackPath = `./Music/${path
-          //   .replaceAll("$", "\\$")
-          //   .replaceAll("`", "\\`")}`;
-          // const artworkPath = `./Artwork/${artwork}`;
-          // const waveformPath = `./Waveform/${waveform}`;
-
-          // ? Execute ffmpeg to construct waveform
-          // if (!existsSync(waveformPath)) {
-          //   execSync(
-          //     `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
-          //   );
-          // }
-
-          // ? Execute ffmpeg to extract artwork
-          // if (!existsSync(artworkPath)) {
-          //   try {
-          //     execSync(
-          //       `ffmpeg -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
-          //     );
-          //   } catch (err: any) {
-          //     DB.query(
-          //       `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
-          //     ).run([file, "IMAGE_EXTRACTION", JSON.stringify(err.message)] as any);
-          //   }
-          // }
+            .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
 
           // ? Insert record to DB
           try {
@@ -127,13 +98,9 @@ export default async function scan() {
         } catch (err: any) {
           stream.send(`Error. ${entry}: ${err.message}`);
 
-          // DB.query(
-          //   `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
-          // ).run([
-          //   file,
-          //   "METADATA_EXTRACTION",
-          //   JSON.stringify(err.message),
-          // ] as any);
+          DB.query(
+            `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
+          ).run([file, "METADATA_EXTRACTION", null] as any);
         }
       }
     }
@@ -144,18 +111,11 @@ export default async function scan() {
       `SELECT id, path, artwork, waveform FROM tracks`
     ).all();
 
-    for await (const { id, path, artwork, waveform } of paths) {
+    for await (const { id, path, artwork } of paths) {
       const trackPath = `./Music/${path
         .replaceAll("$", "\\$")
         .replaceAll("`", "\\`")}`;
       const artworkPath = `./Artwork/${artwork}`;
-      const waveformPath = `./Waveform/${waveform}`;
-
-      // ? Execute ffmpeg to construct waveform
-      // if (!existsSync(waveformPath))
-      //   execSync(
-      //     `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
-      //   );
 
       // ? Execute ffmpeg to extract artwork
       if (!existsSync(artworkPath))
@@ -167,10 +127,28 @@ export default async function scan() {
             await colorsFromImage(artworkPath),
           ] as any);
         } catch (err: any) {
-          console.log(`Error: ${err.message}`);
-          // DB.query(
-          //   `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
-          // ).run([file, "IMAGE_EXTRACTION", JSON.stringify(err.message)] as any);
+          DB.query(
+            `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
+          ).run([path, "IMAGE_EXTRACTION", null] as any);
+        }
+    }
+
+    for await (const { path, waveform } of paths) {
+      const trackPath = `./Music/${path
+        .replaceAll("$", "\\$")
+        .replaceAll("`", "\\`")}`;
+      const waveformPath = `./Waveform/${waveform}`;
+
+      // ? Execute ffmpeg to construct waveform
+      if (!existsSync(waveformPath))
+        try {
+          execSync(
+            `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
+          );
+        } catch (err: any) {
+          DB.query(
+            `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
+          ).run([path, "WAVEFORM_EXTRACTION", null] as any);
         }
     }
   });
