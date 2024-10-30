@@ -145,7 +145,7 @@ export default async function scan() {
           execSync(
             `ffmpeg -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
           );
-        } catch (err: any) {
+        } catch (err) {
           DB.query(
             `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
           ).run([path, "WAVEFORM_EXTRACTION", null] as any);
