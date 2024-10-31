@@ -30,3 +30,10 @@ https://ffmpeg.org/releases/?C=M;O=D
 > make install
 
 Also check https://ultahost.com/knowledge-base/install-ffmpeg-on-ubuntu/ incase installation fails
+
+## Scanner
+
+11:33:00 - 1900files
+11:43:00 - 16200files
+11:50:50 - 27113files
+1:22:00 - artwork scan complete

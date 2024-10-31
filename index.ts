@@ -74,7 +74,7 @@ const app = new Elysia()
   .get("/playlists", (params) => playlists(params))
   .post("/createPlaylist", (params) => createPlaylist(params))
   .post("/addPlaylistTrack", (params) => addPlaylistTrack(params))
-  .put("/rateTrack", (params: { body: { id: number; rating: number } }) =>
+  .patch("/rateTrack", (params: { body: { id: number; rating: number } }) =>
     rateTrack(params)
   )
   .put("/updatePlayCount", (params: { body: { id: number } }) =>
