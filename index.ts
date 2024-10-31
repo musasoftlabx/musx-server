@@ -29,6 +29,8 @@ const scanner = () =>
   </html>`;
 
 const list = async ({ params }: { params: { "*": string } }) => {
+  console.log(params);
+
   const decoded = decodeURI(params["*"]);
 
   const entry = decoded === "/" ? "" : decoded;
