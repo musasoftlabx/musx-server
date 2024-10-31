@@ -77,7 +77,7 @@ const app = new Elysia()
   .patch("/rateTrack", (params: { body: { id: number; rating: number } }) =>
     rateTrack(params)
   )
-  .put("/updatePlayCount", (params: { body: { id: number } }) =>
+  .patch("/updatePlayCount", (params: { body: { id: number } }) =>
     updatePlayCount(params)
   )
   .delete("/deleteTrack", (params) => deleteTrack(params))
