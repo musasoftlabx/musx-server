@@ -1,6 +1,7 @@
 import { Elysia } from "elysia";
 import { Database } from "bun:sqlite";
 import { html, Html } from "@elysiajs/html";
+import { parse } from "clrc";
 export const DB = new Database("musx.db", { create: true });
 
 import { dashboard } from "./routes/dashboard";
@@ -13,6 +14,8 @@ import createPlaylist from "./routes/createPlaylist";
 import scan from "./routes/scan";
 import reset from "./routes/reset";
 import init from "./routes/init";
+import updateLyrics from "./routes/updateLyrics";
+import { Lyrics, PlayCount, RateTrack } from "./types";
 
 init();
 
@@ -76,13 +79,10 @@ const app = new Elysia()
   .get("/playlists", (params) => playlists(params))
   .post("/createPlaylist", (params) => createPlaylist(params))
   .post("/addPlaylistTrack", (params) => addPlaylistTrack(params))
-  .patch("/rateTrack", (params: { body: { id: number; rating: number } }) =>
-    rateTrack(params)
-  )
-  .patch("/updatePlayCount", (params: { body: { id: number } }) =>
-    updatePlayCount(params)
-  )
+  .patch("/rateTrack", (params: RateTrack) => rateTrack(params))
+  .patch("/updatePlayCount", (params: PlayCount) => updatePlayCount(params))
   .delete("/deleteTrack", (params) => deleteTrack(params))
+  .get("/updateLyrics", (params: Lyrics) => updateLyrics(params))
   .get("/*", (params) => list(params))
   .listen(3030);
 

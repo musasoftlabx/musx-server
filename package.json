@@ -11,6 +11,7 @@
   "dependencies": {
     "@elysiajs/html": "^1.1.1",
     "@elysiajs/stream": "^1.1.0",
+    "clrc": "^3.1.4",
     "colorthief": "^2.6.0",
     "elysia": "latest",
     "fs-extra": "^11.2.0",
