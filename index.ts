@@ -82,7 +82,7 @@ const app = new Elysia()
   .patch("/rateTrack", (params: RateTrack) => rateTrack(params))
   .patch("/updatePlayCount", (params: PlayCount) => updatePlayCount(params))
   .delete("/deleteTrack", (params) => deleteTrack(params))
-  .get("/updateLyrics", (params: Lyrics) => updateLyrics(params))
+  .put("/updateLyrics", (params: Lyrics) => updateLyrics(params))
   .get("/*", (params) => list(params))
   .listen(3030);
 
