@@ -4,6 +4,7 @@ import { html, Html } from "@elysiajs/html";
 export const DB = new Database("musx.db", { create: true });
 
 import { dashboard } from "./routes/dashboard";
+import artists from "./routes/artists";
 import rateTrack from "./routes/rateTrack";
 import updatePlayCount from "./routes/updatePlayCount";
 import deleteTrack from "./routes/deleteTrack";
@@ -91,6 +92,7 @@ const app = new Elysia()
   .get("/scan", () => scan())
   .get("/reset", () => reset())
   .get("/dashboard", () => dashboard())
+  .get("/artists", () => artists())
   .get("/playlists", (params) => playlists(params))
   .post("/createPlaylist", (params) => createPlaylist(params))
   .post("/addPlaylistTrack", (params) => addPlaylistTrack(params))
