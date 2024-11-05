@@ -1,7 +1,7 @@
 import { DB } from "..";
 
 export default function artists() {
-  DB.query(
-    `SELECT albumArtist FROM tracks GROUP BY albumArtist ORDER BY albumArtist`
+  return DB.query(
+    `SELECT albumArtist, COUNT(id) AS tracks FROM tracks GROUP BY albumArtist ORDER BY tracks`
   ).all();
 }
