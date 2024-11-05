@@ -1,7 +1,6 @@
 import { Elysia } from "elysia";
 import { Database } from "bun:sqlite";
 import { html, Html } from "@elysiajs/html";
-import { parse } from "clrc";
 export const DB = new Database("musx.db", { create: true });
 
 import { dashboard } from "./routes/dashboard";
@@ -15,7 +14,10 @@ import scan from "./routes/scan";
 import reset from "./routes/reset";
 import init from "./routes/init";
 import updateLyrics from "./routes/updateLyrics";
-import { Lyrics, PlayCount, RateTrack } from "./types";
+import updatePalette from "./routes/updatePalette";
+import frameExtraction from "./routes/frameExtraction";
+
+import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
 
 init();
 
@@ -69,6 +71,21 @@ const list = async ({ params }: { params: { "*": string } }) => {
   return [...sortedFolders, ...sortedFiles];
 };
 
+// const updatePalette = async () => {
+//   const palettes: any = DB.query(`SELECT palette FROM tracks`).run();
+//   for await (const palette of palettes) {
+//     const _palette = palette.map((color:string)=>({
+//       primary: color[5],
+//       secondary: color[1],
+//       tertiary: color[0],
+//       waveform: color[3],
+//       icons: color[0],
+//     }))
+
+//     ['Primary', 'Secondary', 'Tertiary', 'Waveform', 'Icons'];
+//   }
+// };
+
 const app = new Elysia()
   .use(html({ contentType: "text/html" }))
   .get("/html", () => scanner())
@@ -82,6 +99,8 @@ const app = new Elysia()
   .patch("/rateTrack", (params: RateTrack) => rateTrack(params))
   .patch("/updatePlayCount", (params: PlayCount) => updatePlayCount(params))
   .delete("/deleteTrack", (params) => deleteTrack(params))
+  .patch("/extract", (params) => frameExtraction())
+  .patch("/updatePalette", (params: Palette) => updatePalette(params))
   .put("/updateLyrics", (params: Lyrics) => updateLyrics(params))
   .get("/*", (params) => list(params))
   .listen(3030);
