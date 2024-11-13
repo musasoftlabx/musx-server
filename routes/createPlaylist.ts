@@ -11,7 +11,7 @@ export default async function createPlaylist(params: TParams) {
       `INSERT INTO playlists VALUES (NULL, "${name}", NULL, DateTime('now'), DateTime('now'))`
     ).run();
 
-    return DB.query(`SELECT * FROM playlists`).run();
+    return DB.query(`SELECT * FROM playlists`).all();
   } catch (err: any) {
     return error(500, {
       subject: "Playlist Creation Error",
