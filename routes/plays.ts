@@ -20,7 +20,7 @@ export default function playHistory(params: TParams) {
     ).all();
   } catch (err: any) {
     return error(500, {
-      subject: "Play History Retrieval Error",
+      subject: "Plays Retrieval Error",
       body: err.message,
     });
   }
