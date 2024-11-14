@@ -2,7 +2,7 @@ import { DB } from "..";
 
 type TParams = { error: any; params: { id: string } };
 
-export default function playHistory(params: TParams) {
+export default function plays(params: TParams) {
   const {
     error,
     params: { id },
@@ -14,9 +14,8 @@ export default function playHistory(params: TParams) {
         FROM plays
         JOIN tracks
         ON trackId = tracks.id
-        ORDER BY id DESC
-        LIMIT 50
-        OFFSET 1`
+        ORDER BY plays.id DESC
+        LIMIT 50`
     ).all();
   } catch (err: any) {
     return error(500, {
