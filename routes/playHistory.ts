@@ -14,7 +14,9 @@ export default function playHistory(params: TParams) {
         FROM plays
         JOIN tracks
         ON trackId = tracks.id
-        ORDER BY id DESC`
+        ORDER BY id DESC
+        LIMIT 100
+        OFFSET 0`
     ).all();
   } catch (err: any) {
     return error(500, {
