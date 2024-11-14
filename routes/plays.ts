@@ -5,12 +5,12 @@ type TParams = { error: any; params: { id: string } };
 export default function plays(params: TParams) {
   const {
     error,
-    params: { id },
+    //params: { id },
   } = params;
 
   try {
     return DB.query(
-      `SELECT tracks.id AS id, path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette, playedOn
+      `SELECT plays.id AS id, path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette, playedOn
         FROM plays
         JOIN tracks
         ON trackId = tracks.id
