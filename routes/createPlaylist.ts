@@ -28,13 +28,15 @@ export default async function createPlaylist(params: TParams) {
       `INSERT INTO playlistTracks VALUES (NULL, ${lastInsertRowid}, ${trackId}, NULL, NULL, DateTime('now'))`
     );
 
+    // ? Get playlists
     let playlists: PlaylistsProps = <PlaylistsProps>(
       DB.query(`SELECT * FROM playlists ORDER BY id DESC`).all()
     );
 
+    // ? Get playlist tracks for each playlist
     playlists.forEach(({ id }, i) => {
       playlists[i].tracks = DB.query(
-        `SELECT playlistTracks.id AS trackId, artwork 
+        `SELECT title, artwork 
             FROM playlistTracks
             JOIN tracks
             ON playlistTracks.id = tracks.id
