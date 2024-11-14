@@ -37,10 +37,10 @@ export default async function createPlaylist(params: TParams) {
     playlists.forEach(({ id }, i) => {
       playlists[i].tracks = DB.query(
         `SELECT title, artwork 
-            FROM playlistTracks
-            JOIN tracks
-            ON playlistTracks.id = tracks.id
-            WHERE playlistId = ${id}`
+          FROM playlistTracks
+          JOIN tracks
+          ON trackId = tracks.id
+          WHERE playlistId = ${id}`
       ).all();
     });
 

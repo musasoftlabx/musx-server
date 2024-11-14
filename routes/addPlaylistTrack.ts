@@ -7,9 +7,9 @@ export default async function addPlaylistTrack(params: TParams) {
   const { playlistId, trackId, startsAt, endsAt } = body;
 
   try {
-    return DB.query(
+    return DB.run(
       `INSERT INTO playlistTracks VALUES (NULL, ${playlistId}, ${trackId}, ${startsAt}, ${endsAt}, DateTime('now'))`
-    ).run();
+    );
   } catch (err: any) {
     return error(500, {
       subject: "Playlist Track Insertion Error",

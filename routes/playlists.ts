@@ -25,7 +25,7 @@ export default async function playlists() {
       `SELECT title, artwork 
           FROM playlistTracks
           JOIN tracks
-          ON playlistTracks.id = tracks.id
+          ON trackId = tracks.id
           WHERE playlistId = ${id}`
     ).all();
   });
