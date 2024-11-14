@@ -57,7 +57,7 @@ export default async function init() {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     playlistId INTEGER,
     trackId INTEGER,
-    startAt DOUBLE,
+    startsAt DOUBLE,
     endsAt DOUBLE,
     addedOn DATETIME,
     FOREIGN KEY ("playlistId") REFERENCES "playlists" ("id") ON DELETE CASCADE ON UPDATE CASCADE,

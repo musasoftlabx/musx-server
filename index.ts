@@ -19,6 +19,7 @@ import updatePalette from "./routes/updatePalette";
 import frameExtraction from "./routes/frameExtraction";
 
 import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
+import playlist from "./routes/playlist";
 
 init();
 
@@ -94,6 +95,7 @@ const app = new Elysia()
   .get("/dashboard", () => dashboard())
   .get("/artists", artists)
   .get("/playlists", () => playlists())
+  .get("/playlist/:id", (params) => playlist(params))
   .post("/createPlaylist", (params) => createPlaylist(params))
   .post("/addPlaylistTrack", (params) => addPlaylistTrack(params))
   .patch("/rateTrack", (params: RateTrack) => rateTrack(params))
