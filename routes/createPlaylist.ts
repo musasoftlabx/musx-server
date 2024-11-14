@@ -23,8 +23,6 @@ export default async function createPlaylist(params: TParams) {
       `INSERT INTO playlists VALUES (NULL, "${name}", NULL, DateTime('now'), DateTime('now'))`
     );
 
-    console.log(lastInsertRowid);
-
     // ? Add initial track to playlist
     DB.run(
       `INSERT INTO playlistTracks VALUES (NULL, ${lastInsertRowid}, ${trackId}, NULL, NULL, DateTime('now'))`

@@ -13,10 +13,7 @@ type PlaylistProps = {
 
 type PlaylistsProps = PlaylistProps[];
 
-export default async function playlists(params: TParams) {
-  const { body, set, error } = params;
-  const { name } = body;
-
+export default async function playlists() {
   // ? Get playlists
   let playlists: PlaylistsProps = <PlaylistsProps>(
     DB.query(`SELECT * FROM playlists ORDER BY id DESC`).all()
