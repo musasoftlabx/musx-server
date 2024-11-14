@@ -11,10 +11,10 @@ export default async function artist(params: TParams) {
   try {
     return DB.query(
       `SELECT * FROM tracks WHERE albumArtist = ? AND album = ?`
-    ).all([artist, decodeURIComponent(album)] as any);
+    ).all([artist, decodeURI(album)] as any);
   } catch (err: any) {
     return error(500, {
-      subject: "Artist Album Retrieval Error",
+      subject: "Album Retrieval Error",
       body: err.message,
     });
   }
