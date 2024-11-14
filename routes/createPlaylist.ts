@@ -8,7 +8,7 @@ type PlaylistProps = {
   artwork: string;
   createdOn: string;
   modifiedOn: string;
-  tracks: {}[];
+  tracks: any;
 };
 
 type PlaylistsProps = PlaylistProps[];
@@ -25,7 +25,7 @@ export default async function createPlaylist(params: TParams) {
 
     // ? Add initial track to playlist
     DB.run(
-      `INSERT INTO playlistsTracks VALUES (NULL, ${lastInsertRowid}, ${trackId}, NULL, NULL, DateTime('now'))`
+      `INSERT INTO playlistTracks VALUES (NULL, ${lastInsertRowid}, ${trackId}, NULL, NULL, DateTime('now'))`
     );
 
     let playlists: PlaylistsProps = <PlaylistsProps>(
@@ -34,9 +34,15 @@ export default async function createPlaylist(params: TParams) {
 
     playlists.forEach(({ id }, i) => {
       playlists[i].tracks = DB.query(
-        `SELECT * FROM playlistsTracks WHERE playlistId = ${id}`
+        `SELECT playlistTracks.id AS trackId, artwork 
+            FROM playlistTracks
+            JOIN tracks
+            ON playlistTracks.id = tracks.id
+            WHERE playlistId = ${id}`
       ).all();
     });
+
+    return playlists;
   } catch (err: any) {
     return error(500, {
       subject: "Playlist Creation Error",
