@@ -3,8 +3,10 @@ import { DB } from "..";
 type TParams = { error: any; params: { id: string } };
 
 export default function playlist(params: TParams) {
-  const { error, params: _params } = params;
-  const { id } = _params;
+  const {
+    error,
+    params: { id },
+  } = params;
 
   try {
     return DB.query(
