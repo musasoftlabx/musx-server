@@ -9,5 +9,6 @@ export default function libraryCount() {
       .map((artist) => artist[0]).length,
     tracks: DB.query(`SELECT COUNT(id) FROM tracks`).values()[0][0],
     playlists: DB.query(`SELECT COUNT(id) FROM playlists`).values()[0][0],
+    plays: DB.query(`SELECT COUNT(id) FROM plays`).values()[0][0],
   };
 }
