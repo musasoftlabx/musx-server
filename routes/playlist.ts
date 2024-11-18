@@ -1,4 +1,4 @@
-import { DB } from "..";
+import { DB, tracksTableColumns } from "..";
 
 type TParams = { error: any; params: { id: string } };
 
@@ -10,7 +10,7 @@ export default function playlist(params: TParams) {
 
   try {
     return DB.query(
-      `SELECT tracks.id AS id, path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette, startsAt, endsAt, addedOn
+      `SELECT tracks.id AS id, ${tracksTableColumns}
         FROM playlistTracks
         JOIN tracks
         ON trackId = tracks.id
