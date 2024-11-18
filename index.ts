@@ -27,8 +27,7 @@ import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
 
 init();
 
-export const tracksTableColumns =
-  "path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette, startsAt, endsAt, addedOn";
+export const tracksTableColumns = `path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette, startsAt, endsAt, addedOn`;
 
 //DB.exec("PRAGMA journal_mode = WAL;");
 

@@ -1,4 +1,4 @@
-import { DB, tracksTableColumns } from "../";
+import { DB } from "../";
 
 export const dashboard = () => {
   const mostPlayed = DB.query(
@@ -10,7 +10,7 @@ export const dashboard = () => {
   ).all();
 
   const recentlyPlayed = DB.query(
-    `SELECT DISTINCT ${tracksTableColumns}
+    `SELECT DISTINCT path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette
      FROM plays
      INNER JOIN tracks
      ON plays.trackId = tracks.id
