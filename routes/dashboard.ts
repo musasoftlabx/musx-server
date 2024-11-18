@@ -2,15 +2,15 @@ import { DB } from "../";
 
 export const dashboard = () => {
   const mostPlayed = DB.query(
-    `SELECT id, path, title, rating, plays, artists, artwork FROM tracks ORDER BY plays DESC LIMIT 10`
+    `SELECT id, path, title, rating, plays, artists, artwork, bitrate, format FROM tracks ORDER BY plays DESC LIMIT 10`
   ).all();
 
   const recentlyAdded = DB.query(
-    `SELECT id, path, title, rating, plays, artists, artwork FROM tracks ORDER BY id DESC LIMIT 10`
+    `SELECT id, path, title, rating, plays, artists, artwork, bitrate, format FROM tracks ORDER BY id DESC LIMIT 10`
   ).all();
 
   const recentlyPlayed = DB.query(
-    `SELECT DISTINCT path, title, rating, plays, artists, albumArtist, artwork
+    `SELECT DISTINCT path, title, rating, plays, artists, albumArtist, artwork, bitrate, format
      FROM plays
      INNER JOIN tracks
      ON plays.trackId = tracks.id
