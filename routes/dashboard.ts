@@ -18,9 +18,9 @@ export const dashboard = () => {
      LIMIT 10`
   ).all();
 
-  const favoriteArtists = DB.query(
+  const favouriteArtists = DB.query(
     `SELECT albumArtist, SUM(rating) AS cumulativeRating FROM tracks GROUP BY albumArtist ORDER BY cumulativeRating DESC LIMIT 10`
   ).all();
 
-  return { mostPlayed, recentlyAdded, recentlyPlayed, favoriteArtists };
+  return { mostPlayed, recentlyAdded, recentlyPlayed, favouriteArtists };
 };
