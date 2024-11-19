@@ -8,7 +8,7 @@ export default function updatePlayCount(params: TParams) {
     params: { id },
   } = params;
 
-  console.log(typeof id);
+  console.log("id", typeof id);
 
   try {
     DB.query(`UPDATE tracks SET plays = plays + 1 WHERE id = ${id}`).run();
