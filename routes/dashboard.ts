@@ -1,4 +1,5 @@
 import { DB } from "../";
+import libraryCount from "./libraryCount";
 
 export const dashboard = () => {
   const mostPlayed = DB.query(
@@ -27,5 +28,6 @@ export const dashboard = () => {
     recentlyAdded,
     recentlyPlayed: [...new Set(recentlyPlayed)],
     mostPlayed,
+    stats: libraryCount(),
   };
 };
