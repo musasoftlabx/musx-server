@@ -10,7 +10,7 @@ export const dashboard = () => {
   ).all();
 
   const recentlyPlayed = DB.query(
-    `SELECT path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette, playedOn, DISTINCT trackId AS id
+    `SELECT DISTINCT tracks.id, path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette, playedOn
      FROM plays
      INNER JOIN tracks
      ON plays.trackId = tracks.id
