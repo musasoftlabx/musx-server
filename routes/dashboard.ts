@@ -14,7 +14,6 @@ export const dashboard = () => {
      FROM plays
      INNER JOIN tracks
      ON plays.trackId = tracks.id
-     GROUP BY trackId
      ORDER BY playedOn DESC
      LIMIT 10`
   ).all();
@@ -23,5 +22,10 @@ export const dashboard = () => {
     `SELECT path, albumArtist, (AVG(rating) + AVG(plays)) AS rating FROM tracks GROUP BY albumArtist ORDER BY rating DESC LIMIT 10`
   ).all();
 
-  return { favouriteArtists, recentlyAdded, recentlyPlayed, mostPlayed };
+  return {
+    favouriteArtists,
+    recentlyAdded,
+    recentlyPlayed: [...new Set(recentlyPlayed)],
+    mostPlayed,
+  };
 };
