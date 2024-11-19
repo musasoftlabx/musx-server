@@ -6,7 +6,7 @@ export const dashboard = () => {
   ).all();
 
   const recentlyAdded = DB.query(
-    `SELECT * FROM tracks ORDER BY id DESC LIMIT 10`
+    `SELECT * FROM tracks ORDER BY id DESC LIMIT 20`
   ).all();
 
   const recentlyPlayed = DB.query(
@@ -15,11 +15,11 @@ export const dashboard = () => {
      INNER JOIN tracks
      ON plays.trackId = tracks.id
      ORDER BY playedOn DESC
-     LIMIT 10`
+     LIMIT 20`
   ).all();
 
   const favouriteArtists = DB.query(
-    `SELECT path, albumArtist, (AVG(rating) + AVG(plays)) AS rating FROM tracks GROUP BY albumArtist ORDER BY rating DESC LIMIT 10`
+    `SELECT path, albumArtist, (AVG(rating) + AVG(plays)) AS rating FROM tracks GROUP BY albumArtist ORDER BY rating DESC LIMIT 20`
   ).all();
 
   return {
