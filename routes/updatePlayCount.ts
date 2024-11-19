@@ -1,8 +1,7 @@
 import { DB } from "..";
+import { PlayCount } from "../types";
 
-type TParams = { error: any; body: { id: string } };
-
-export default function updatePlayCount(params: TParams) {
+export default function updatePlayCount(params: PlayCount) {
   const {
     error,
     body: { id },
