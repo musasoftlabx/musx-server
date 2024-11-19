@@ -15,7 +15,6 @@ export const dashboard = () => {
      INNER JOIN tracks
      ON plays.trackId = tracks.id
      GROUP BY trackId
-     HAVING COUNT(trackId) > 1
      ORDER BY plays.id DESC
      LIMIT 10`
   ).all();
