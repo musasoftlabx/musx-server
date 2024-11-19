@@ -10,10 +10,12 @@ export const dashboard = () => {
   ).all();
 
   const recentlyPlayed = DB.query(
-    `SELECT DISTINCT tracks.id, path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette, playedOn
+    `SELECT trackId AS id, path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette, playedOn
      FROM plays
      INNER JOIN tracks
      ON plays.trackId = tracks.id
+     GROUP BY trackId
+     HAVING COUNT(trackId) > 1
      ORDER BY plays.id DESC
      LIMIT 10`
   ).all();
