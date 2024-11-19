@@ -15,7 +15,7 @@ export const dashboard = () => {
      INNER JOIN tracks
      ON plays.trackId = tracks.id
      GROUP BY trackId
-     ORDER BY plays.id DESC
+     ORDER BY playedOn DESC
      LIMIT 10`
   ).all();
 
