@@ -1,16 +1,12 @@
 import { DB } from "..";
 
-type TParams = { error: any; params: { body: { id: string } } };
+type TParams = { error: any; body: { id: string } };
 
 export default function updatePlayCount(params: TParams) {
   const {
     error,
-    params: {
-      body: { id },
-    },
+    body: { id },
   } = params;
-
-  console.log(id);
 
   try {
     DB.query(`UPDATE tracks SET plays = plays + 1 WHERE id = ${id}`).run();
