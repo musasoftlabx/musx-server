@@ -2,7 +2,7 @@ import { DB } from "..";
 import { existsSync, mkdirSync } from "fs";
 
 export default async function init() {
-  DB.exec("PRAGMA timezone = 'Asia/Vientiane';");
+  //DB.exec("PRAGMA timezone = 'Asia/Vientiane';");
 
   DB.query(
     `CREATE TABLE IF NOT EXISTS tracks (

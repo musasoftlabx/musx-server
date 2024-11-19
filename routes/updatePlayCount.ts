@@ -10,6 +10,8 @@ export default function updatePlayCount(params: TParams) {
     },
   } = params;
 
+  console.log(id);
+
   try {
     DB.query(`UPDATE tracks SET plays = plays + 1 WHERE id = ${id}`).run();
     DB.query(`INSERT INTO plays VALUES (NULL, ${id}, DateTime('now'))`).run();
