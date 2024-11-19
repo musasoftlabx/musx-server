@@ -1,11 +1,13 @@
 import { DB } from "..";
 
-type TParams = { error: any; params: { id: string } };
+type TParams = { error: any; params: { body: { id: string } } };
 
 export default function updatePlayCount(params: TParams) {
   const {
     error,
-    params: { id },
+    params: {
+      body: { id },
+    },
   } = params;
 
   try {
@@ -13,7 +15,6 @@ export default function updatePlayCount(params: TParams) {
     DB.query(`INSERT INTO plays VALUES (NULL, ${id}, DateTime('now'))`).run();
     return true;
   } catch (err: any) {
-    console.log("err", err.message);
     return error(500, {
       subject: "Update Error",
       body: err.message,
