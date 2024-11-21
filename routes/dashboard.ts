@@ -15,7 +15,7 @@ export const dashboard = () => {
      FROM plays
      INNER JOIN tracks
      ON plays.trackId = tracks.id
-     ORDER BY playedOn DESC
+     ORDER BY plays.id DESC
      LIMIT 20`
   ).all();
 
