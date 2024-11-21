@@ -11,11 +11,11 @@ export default async function artist(params: TParams) {
   try {
     const albums = DB.query(
       `SELECT album, artwork, COUNT(album) AS tracks FROM tracks WHERE albumArtist = ? GROUP BY album HAVING COUNT(album) > 1`
-    ).all([artist] as any);
+    ).all([decodeURIComponent(artist)] as any);
 
     const singles = DB.query(
       `SELECT * FROM tracks WHERE albumArtist = ? GROUP BY album HAVING COUNT(album) = 1`
-    ).all([artist] as any);
+    ).all([decodeURIComponent(artist)] as any);
 
     return { albums, singles };
   } catch (err: any) {
