@@ -15,7 +15,7 @@ export default async function artist(params: TParams) {
     ).all([decodeURIComponent(artist)] as any);
 
     const singles = DB.query(
-      `SELECT * FROM tracks WHERE albumArtist = ? GROUP BY album HAVING COUNT(album) = 1`
+      `SELECT * FROM tracks WHERE albumArtist = ? GROUP BY album HAVING COUNT(album) = 1 ORDER BY rating, plays`
     ).all([decodeURIComponent(artist)] as any);
 
     return {
