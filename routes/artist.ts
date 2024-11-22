@@ -10,7 +10,7 @@ export default async function artist(params: TParams) {
 
   try {
     const albums = DB.query(
-      `SELECT album, artwork, COUNT(album) AS tracks FROM tracks WHERE albumArtist = ? GROUP BY album HAVING COUNT(album) > 1`
+      `SELECT album, artwork, COUNT(album) AS tracks, SUM(size) AS size FROM tracks WHERE albumArtist = ? GROUP BY album HAVING COUNT(album) > 1`
     ).all([decodeURIComponent(artist)] as any);
 
     const singles = DB.query(
