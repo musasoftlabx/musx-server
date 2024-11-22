@@ -11,6 +11,7 @@
   "dependencies": {
     "@elysiajs/html": "^1.1.1",
     "@elysiajs/stream": "^1.1.0",
+    "byte-size": "^9.0.0",
     "colorthief": "^2.6.0",
     "elysia": "latest",
     "fs-extra": "^11.2.0",
@@ -19,6 +20,7 @@
     "rgb-hex": "^4.1.0"
   },
   "devDependencies": {
+    "@types/byte-size": "^8.1.2",
     "@types/fs-extra": "^11.0.4",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
