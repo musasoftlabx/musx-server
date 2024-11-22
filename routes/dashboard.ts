@@ -20,7 +20,7 @@ export const dashboard = () => {
   ).all();
 
   const favouriteArtists = DB.query(
-    `SELECT path, albumArtist, (AVG(rating) + AVG(plays)) AS rating FROM tracks GROUP BY albumArtist ORDER BY rating DESC LIMIT 20`
+    `SELECT path, albumArtist, (AVG(rating) + AVG(plays)) AS rating, COUNT(path) AS tracks FROM tracks GROUP BY albumArtist ORDER BY rating DESC LIMIT 20`
   ).all();
 
   return {
