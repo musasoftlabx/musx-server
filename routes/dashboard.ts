@@ -35,7 +35,7 @@ export const dashboard = () => {
               `SELECT artwork FROM tracks WHERE path LIKE "%Various Artists (${artist.genre})%" LIMIT 4`
             )
               .all()
-              .map(({ artwork }) => artwork),
+              .map(({ artwork }: { artwork: string }) => artwork),
             //CONCAT('http://75.119.137.255/Artwork/', artwork)
           };
         else return artist;
