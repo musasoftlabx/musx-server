@@ -24,7 +24,20 @@ export const dashboard = () => {
   ).all();
 
   return {
-    favouriteArtists,
+    favouriteArtists: favouriteArtists.map(
+      //(artist: { albumArtist: string; genre: string }) => {
+      (artist: any) => {
+        if (artist.albumArtist) {
+          if (artist.albumArtist.includes("Various"))
+            return {
+              ...artist,
+              artworks: DB.query(
+                `SELECT artwork FROM tracks WHERE path LIKE "%Various Artists (${artist.genre})%" LIMIT 4`
+              ).all(),
+            };
+        } else return artist;
+      }
+    ),
     recentlyAdded,
     recentlyPlayed,
     //recentlyPlayed: [...new Set(recentlyPlayed)],
