@@ -34,6 +34,7 @@ export const dashboard = () => {
               artworks: DB.query(
                 `SELECT artwork FROM tracks WHERE path LIKE "%Various Artists (${artist.genre})%" LIMIT 4`
               ).all(),
+              //CONCAT('http://75.119.137.255/Artwork/', artwork)
             };
         } else return artist;
       }
