@@ -27,16 +27,17 @@ export const dashboard = () => {
     favouriteArtists: favouriteArtists.map(
       //(artist: { albumArtist: string; genre: string }) => {
       (artist: any) => {
-        if (artist.albumArtist) {
-          if (artist.albumArtist.includes("Various"))
-            return {
-              ...artist,
-              artworks: DB.query(
-                `SELECT artwork FROM tracks WHERE path LIKE "%Various Artists (${artist.genre})%" LIMIT 4`
-              ).all(),
-              //CONCAT('http://75.119.137.255/Artwork/', artwork)
-            };
-        } else return artist;
+        //if (artist.albumArtist) {
+        if (artist.albumArtist?.includes("Various"))
+          return {
+            ...artist,
+            artworks: DB.query(
+              `SELECT artwork FROM tracks WHERE path LIKE "%Various Artists (${artist.genre})%" LIMIT 4`
+            ).all(),
+            //CONCAT('http://75.119.137.255/Artwork/', artwork)
+          };
+        else return artist;
+        //}
       }
     ),
     recentlyAdded,
