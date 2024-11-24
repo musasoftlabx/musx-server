@@ -10,6 +10,8 @@ export default async function deleteTrack(params: TParams) {
     error,
   } = params;
 
+  console.log(id);
+
   const { path, artwork, waveform }: any = DB.query(
     `SELECT path, artwork, waveform FROM tracks WHERE id = ${id}`
   ).get();
