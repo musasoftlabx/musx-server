@@ -15,7 +15,8 @@ export default async function deleteTrack(params: TParams) {
   ).get();
 
   try {
-    return true;
+    console.log({ path, artwork, waveform });
+    return { path, artwork, waveform };
     // await unlink(`./Music/${path}`);
     // await unlink(`./Artwork/${artwork}`);
     // await unlink(`./Waveform/${waveform}`);
