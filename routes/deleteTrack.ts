@@ -15,12 +15,10 @@ export default async function deleteTrack(params: TParams) {
   ).get();
 
   try {
-    console.log({ path, artwork, waveform });
-    return { path, artwork, waveform };
-    // await unlink(`./Music/${path}`);
-    // await unlink(`./Artwork/${artwork}`);
-    // await unlink(`./Waveform/${waveform}`);
-    // return DB.query(`DELETE FROM tracks WHERE id = ${id}`).run();
+    await unlink(`./Music/${path}`);
+    await unlink(`./Artwork/${artwork}`);
+    await unlink(`./Waveform/${waveform}`);
+    return DB.query(`DELETE FROM tracks WHERE id = ${id}`).run();
   } catch (err: any) {
     return error(500, `${err.message}: ${path}`);
   }
