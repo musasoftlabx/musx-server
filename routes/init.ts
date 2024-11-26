@@ -87,7 +87,7 @@ export default async function init() {
     )`
   );
 
-  DB.exec(`ALTER TABLE deletedTracks ADD COLUMN deletedOn DATETIME`);
+  //DB.exec(`ALTER TABLE deletedTracks ADD COLUMN deletedOn DATETIME`);
 
   // ? Create artwork & waveform directories if it doesn't exist
   !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });

@@ -19,11 +19,10 @@ export default async function deleteTrack(params: TParams) {
     await unlink(`./Artwork/${artwork}`);
     await unlink(`./Waveform/${waveform}`);
     DB.exec(`DELETE FROM tracks WHERE id = ${id}`);
-    DB.exec(`INSERT INTO deletedTracks (NULL, ?, ?, ?, DateTime('now'))`, [
-      path,
-      title,
-      artists,
-    ]);
+    DB.exec(
+      `INSERT INTO deletedTracks VALUES (NULL, ?, ?, ?, DateTime('now'))`,
+      [path, title, artists]
+    );
     return true;
   } catch (err: any) {
     return error(500, `${err.message}: ${path}`);
