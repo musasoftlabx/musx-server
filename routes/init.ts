@@ -77,6 +77,15 @@ export default async function init() {
     )`
   ).run();
 
+  DB.query(
+    `CREATE TABLE IF NOT EXISTS deletedTracks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      path VARCHAR(100),
+      title VARCHAR (255),
+      artists VARCHAR(255)
+    )`
+  ).run();
+
   // ? Create artwork & waveform directories if it doesn't exist
   !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
   !existsSync("./Waveform") && mkdirSync("./Waveform", { recursive: true });

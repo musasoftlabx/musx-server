@@ -10,15 +10,17 @@ export default async function deleteTrack(params: TParams) {
     error,
   } = params;
 
-  const { path, artwork, waveform }: any = DB.query(
-    `SELECT path, artwork, waveform FROM tracks WHERE id = ${id}`
+  const { path, title, artists, artwork, waveform }: any = DB.query(
+    `SELECT path, title, artists, artwork, waveform FROM tracks WHERE id = ${id}`
   ).get();
 
   try {
     await unlink(`./Music/${path}`);
     await unlink(`./Artwork/${artwork}`);
     await unlink(`./Waveform/${waveform}`);
-    return DB.query(`DELETE FROM tracks WHERE id = ${id}`).run();
+    DB.exec(`DELETE FROM tracks WHERE id = ${id}`);
+    DB.exec(`INSERT INTO deletedTracks (NULL, path, title, artists)`);
+    return true;
   } catch (err: any) {
     return error(500, `${err.message}: ${path}`);
   }
