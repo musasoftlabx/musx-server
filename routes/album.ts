@@ -11,7 +11,7 @@ export default async function artist(params: TParams) {
   try {
     return DB.query(
       `SELECT * FROM tracks WHERE albumArtist = ? AND album = ?`
-    ).all([artist, decodeURIComponent(album)] as any);
+    ).all([decodeURIComponent(artist), decodeURIComponent(album)] as any);
   } catch (err: any) {
     return error(500, {
       subject: "Album Retrieval Error",
