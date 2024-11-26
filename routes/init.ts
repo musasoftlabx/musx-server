@@ -82,7 +82,8 @@ export default async function init() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       path VARCHAR(100),
       title VARCHAR (255),
-      artists VARCHAR(255)
+      artists VARCHAR(255),
+      deletedOn DATETIME
     )`
   );
 
