@@ -5,11 +5,29 @@ import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
 
 export default function dashboard() {
   const mostPlayed = DB.query(
-    `SELECT * FROM tracks ORDER BY plays DESC LIMIT 10`
+    `SELECT
+      id,
+      ('${AUDIO_URL}' || path) AS path,
+      syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
+      ('${ARTWORK_URL}' || artwork) AS artwork,
+      ('${WAVEFORM_URL}' || waveform) AS waveform,
+      palette
+    FROM tracks
+    ORDER BY plays DESC
+    LIMIT 10`
   ).all();
 
   const recentlyAdded = DB.query(
-    `SELECT * FROM tracks ORDER BY id DESC LIMIT 20`
+    `SELECT
+      id,
+      ('${AUDIO_URL}' || path) AS path,
+      syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
+      ('${ARTWORK_URL}' || artwork) AS artwork,
+      ('${WAVEFORM_URL}' || waveform) AS waveform,
+      palette
+    FROM tracks
+    ORDER BY id DESC
+    LIMIT 20`
   ).all();
 
   const recentlyPlayed = DB.query(
