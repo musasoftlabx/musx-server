@@ -4,7 +4,7 @@ import { html, Html } from "@elysiajs/html";
 export const DB = new Database("musx.db", { create: true });
 import ip from "ip";
 
-import { dashboard } from "./routes/dashboard";
+import dashboard from "./routes/dashboard";
 import album from "./routes/album";
 import artist from "./routes/artist";
 import artists from "./routes/artists";

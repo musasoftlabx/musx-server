@@ -1,7 +1,9 @@
 import { DB } from "../";
 import libraryCount from "./libraryCount";
 
-export const dashboard = () => {
+import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
+
+export default function dashboard() {
   const mostPlayed = DB.query(
     `SELECT * FROM tracks ORDER BY plays DESC LIMIT 10`
   ).all();
@@ -11,7 +13,13 @@ export const dashboard = () => {
   ).all();
 
   const recentlyPlayed = DB.query(
-    `SELECT DISTINCT trackId AS id, path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette
+    `SELECT
+     DISTINCT trackId AS id, 
+     ('${AUDIO_URL}' || path) AS path,
+     title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
+     ('${ARTWORK_URL}' || artwork) AS artwork,
+     ('${WAVEFORM_URL}' || waveform) AS waveform,
+     palette
      FROM plays
      INNER JOIN tracks
      ON plays.trackId = tracks.id
@@ -20,7 +28,12 @@ export const dashboard = () => {
   ).all();
 
   const favouriteArtists = DB.query(
-    `SELECT path, genre, albumArtist, (AVG(rating) + AVG(plays)) AS rating, COUNT(path) AS tracks FROM tracks GROUP BY albumArtist ORDER BY rating DESC LIMIT 20`
+    `SELECT ('${AUDIO_URL}' || path) AS path,
+     genre, albumArtist, (AVG(rating) + AVG(plays)) AS rating, COUNT(path) AS tracks
+     FROM tracks
+     GROUP BY albumArtist
+     ORDER BY rating DESC
+     LIMIT 20`
   ).all();
 
   return {
@@ -32,7 +45,11 @@ export const dashboard = () => {
           return {
             ...artist,
             artworks: DB.query(
-              `SELECT artwork FROM tracks WHERE path LIKE "%Various Artists (${artist.genre})%" LIMIT 4`
+              `SELECT 
+               ('${ARTWORK_URL}' || artwork) AS artwork
+               FROM tracks
+               WHERE path LIKE "%Various Artists (${artist.genre})%"
+               LIMIT 4`
             )
               .all()
               .map(({ artwork }: { artwork: string }) => artwork),
@@ -48,4 +65,4 @@ export const dashboard = () => {
     mostPlayed,
     stats: libraryCount(),
   };
-};
+}
