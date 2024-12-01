@@ -2,6 +2,7 @@ import { Elysia } from "elysia";
 import { Database } from "bun:sqlite";
 import { html, Html } from "@elysiajs/html";
 export const DB = new Database("musx.db", { create: true });
+import ip from "ip";
 
 import { dashboard } from "./routes/dashboard";
 import album from "./routes/album";
@@ -28,6 +29,8 @@ import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
 
 init();
 
+export const IP = ip.address();
+export const URL = `http://${ip.address()}:3030`;
 export const tracksTableColumns = `path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette`;
 export const playlistTableColumns = `${tracksTableColumns}, startsAt, endsAt, addedOn`;
 

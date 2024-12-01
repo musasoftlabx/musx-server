@@ -1,9 +1,4 @@
 import { DB } from "..";
-import { URL } from "url";
-import os from "os";
-import ip from "ip";
-
-console.log(ip.address());
 
 export default async function list({ params }: { params: { "*": string } }) {
   const decoded = decodeURI(params["*"]);
@@ -32,7 +27,7 @@ export default async function list({ params }: { params: { "*": string } }) {
     else
       files.push(
         DB.query(
-          `SELECT id, ('http' || path) AS path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette FROM tracks WHERE path = "${entry}${path}"`
+          `SELECT id, (${URL} || path) AS path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette FROM tracks WHERE path = "${entry}${path}"`
         ).get()
       );
   }
