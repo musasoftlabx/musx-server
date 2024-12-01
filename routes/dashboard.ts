@@ -7,10 +7,10 @@ export default function dashboard() {
   const mostPlayed = DB.query(
     `SELECT
       id,
-      ('${AUDIO_URL}' || path) AS url,
+      ('${AUDIO_URL}' || path) url,
       path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
-      ('${ARTWORK_URL}' || artwork) AS artwork,
-      ('${WAVEFORM_URL}' || waveform) AS waveform,
+      ('${ARTWORK_URL}' || artwork) artwork,
+      ('${WAVEFORM_URL}' || waveform) waveform,
       palette
     FROM tracks
     ORDER BY plays DESC
@@ -20,10 +20,10 @@ export default function dashboard() {
   const recentlyAdded = DB.query(
     `SELECT
       id,
-      ('${AUDIO_URL}' || path) AS url,
+      ('${AUDIO_URL}' || path) url,
       path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
-      ('${ARTWORK_URL}' || artwork) AS artwork,
-      ('${WAVEFORM_URL}' || waveform) AS waveform,
+      ('${ARTWORK_URL}' || artwork) artwork,
+      ('${WAVEFORM_URL}' || waveform) waveform,
       palette
     FROM tracks
     ORDER BY id DESC
@@ -32,12 +32,12 @@ export default function dashboard() {
 
   const recentlyPlayed = DB.query(
     `SELECT
-     DISTINCT trackId AS id, 
-     ('${AUDIO_URL}' || path) AS url,
+     DISTINCT trackId id,
+     ('${AUDIO_URL}' || path) url,
      path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
-     ('${ARTWORK_URL}' || artwork) AS artwork,
-     ('${WAVEFORM_URL}' || waveform) AS waveform,
-     JSON_EXTRACT(palette, '$[0]') palette,
+     ('${ARTWORK_URL}' || artwork) artwork,
+     ('${WAVEFORM_URL}' || waveform) waveform,
+     palette
      FROM plays
      INNER JOIN tracks
      ON plays.trackId = tracks.id
@@ -46,8 +46,8 @@ export default function dashboard() {
   ).all();
 
   const favouriteArtists = <{ albumArtist: string; genre: string }[]>DB.query(
-    `SELECT ('${AUDIO_URL}' || path) AS path,
-     genre, albumArtist, (AVG(rating) + AVG(plays)) AS rating, COUNT(path) AS tracks
+    `SELECT ('${AUDIO_URL}' || path) url,
+     path, genre, albumArtist, (AVG(rating) + AVG(plays)) rating, COUNT(path) tracks
      FROM tracks
      GROUP BY albumArtist
      ORDER BY rating DESC
@@ -60,8 +60,8 @@ export default function dashboard() {
         return {
           ...artist,
           artworks: DB.query(
-            `SELECT 
-               ('${ARTWORK_URL}' || artwork) AS artwork
+            `SELECT
+               ('${ARTWORK_URL}' || artwork) artwork
                FROM tracks
                WHERE path LIKE "%Various Artists (${artist.genre})%"
                LIMIT 4`
@@ -73,7 +73,7 @@ export default function dashboard() {
     }),
     recentlyAdded,
     recentlyPlayed,
-    //recentlyPlayed: [...new Set(recentlyPlayed)],
+    // //recentlyPlayed: [...new Set(recentlyPlayed)],
     mostPlayed,
     stats: libraryCount(),
   };
