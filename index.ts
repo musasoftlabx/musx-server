@@ -30,7 +30,10 @@ import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
 init();
 
 export const IP = ip.address();
-export const URL = `http://${ip.address()}:3030`;
+export const URL = `http://${ip.address()}`;
+export const AUDIO_URL = `${URL}/Music/`;
+export const ARTWORK_URL = `${URL}/Artwork/`;
+export const WAVEFORM_URL = `${URL}/Waveform/`;
 export const tracksTableColumns = `path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette`;
 export const playlistTableColumns = `${tracksTableColumns}, startsAt, endsAt, addedOn`;
 

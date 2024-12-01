@@ -1,5 +1,7 @@
 import { DB } from "..";
 
+import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
+
 export default async function list({ params }: { params: { "*": string } }) {
   const decoded = decodeURI(params["*"]);
 
@@ -27,7 +29,14 @@ export default async function list({ params }: { params: { "*": string } }) {
     else
       files.push(
         DB.query(
-          `SELECT id, (${URL} || path) AS path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette FROM tracks WHERE path = "${entry}${path}"`
+          `SELECT id,
+            ('${AUDIO_URL}' || path) AS path,
+            syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
+            ('${ARTWORK_URL}' || artwork) AS artwork,
+            ('${WAVEFORM_URL}' || waveform) AS waveform,
+            palette
+          FROM tracks
+          WHERE path = "${entry}${path}"`
         ).get()
       );
   }
