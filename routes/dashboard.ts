@@ -7,8 +7,8 @@ export default function dashboard() {
   const mostPlayed = DB.query(
     `SELECT
       id,
-      ('${AUDIO_URL}' || path) AS path,
-      syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
+      ('${AUDIO_URL}' || path) AS url,
+      path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
       ('${ARTWORK_URL}' || artwork) AS artwork,
       ('${WAVEFORM_URL}' || waveform) AS waveform,
       palette
@@ -20,8 +20,8 @@ export default function dashboard() {
   const recentlyAdded = DB.query(
     `SELECT
       id,
-      ('${AUDIO_URL}' || path) AS path,
-      syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
+      ('${AUDIO_URL}' || path) AS url,
+      path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
       ('${ARTWORK_URL}' || artwork) AS artwork,
       ('${WAVEFORM_URL}' || waveform) AS waveform,
       palette
@@ -33,11 +33,11 @@ export default function dashboard() {
   const recentlyPlayed = DB.query(
     `SELECT
      DISTINCT trackId AS id, 
-     ('${AUDIO_URL}' || path) AS path,
-     title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
+     ('${AUDIO_URL}' || path) AS url,
+     path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
      ('${ARTWORK_URL}' || artwork) AS artwork,
      ('${WAVEFORM_URL}' || waveform) AS waveform,
-     palette
+     JSON_EXTRACT(palette, '$[0]') palette,
      FROM plays
      INNER JOIN tracks
      ON plays.trackId = tracks.id
@@ -45,7 +45,7 @@ export default function dashboard() {
      LIMIT 20`
   ).all();
 
-  const favouriteArtists = DB.query(
+  const favouriteArtists = <{ albumArtist: string; genre: string }[]>DB.query(
     `SELECT ('${AUDIO_URL}' || path) AS path,
      genre, albumArtist, (AVG(rating) + AVG(plays)) AS rating, COUNT(path) AS tracks
      FROM tracks
@@ -55,28 +55,22 @@ export default function dashboard() {
   ).all();
 
   return {
-    favouriteArtists: favouriteArtists.map(
-      //(artist: { albumArtist: string; genre: string }) => {
-      (artist: any) => {
-        //if (artist.albumArtist) {
-        if (artist.albumArtist?.includes("Various"))
-          return {
-            ...artist,
-            artworks: DB.query(
-              `SELECT 
+    favouriteArtists: favouriteArtists.map((artist) => {
+      if (artist.albumArtist?.includes("Various"))
+        return {
+          ...artist,
+          artworks: DB.query(
+            `SELECT 
                ('${ARTWORK_URL}' || artwork) AS artwork
                FROM tracks
                WHERE path LIKE "%Various Artists (${artist.genre})%"
                LIMIT 4`
-            )
-              .all()
-              .map(({ artwork }: { artwork: string }) => artwork),
-            //CONCAT('http://75.119.137.255/Artwork/', artwork)
-          };
-        else return artist;
-        //}
-      }
-    ),
+          )
+            .all()
+            .map(({ artwork }: any) => artwork),
+        };
+      else return artist;
+    }),
     recentlyAdded,
     recentlyPlayed,
     //recentlyPlayed: [...new Set(recentlyPlayed)],

@@ -24,6 +24,7 @@ import playlist from "./routes/playlist";
 import plays from "./routes/plays";
 import libraryCount from "./routes/libraryCount";
 import list from "./routes/list";
+import refreshMetadata from "./routes/refreshMetadata";
 
 import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
 
@@ -69,6 +70,7 @@ const app = new Elysia()
   .get("/html", () => scanner())
   .get("/scanner", () => Bun.file("scanner.tsx"))
   .get("/scan", () => scan())
+  .get("/refreshMetadata", () => refreshMetadata())
   .get("/reset", () => reset())
   .get("/dashboard", () => dashboard())
   .get("/artists", artists)
