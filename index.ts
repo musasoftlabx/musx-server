@@ -15,6 +15,7 @@ import addPlaylistTrack from "./routes/addPlaylistTrack";
 import playlists from "./routes/playlists";
 import createPlaylist from "./routes/createPlaylist";
 import scan from "./routes/scan";
+import rescan from "./routes/rescan";
 import reset from "./routes/reset";
 import init from "./routes/init";
 import updateLyrics from "./routes/updateLyrics";
@@ -71,6 +72,7 @@ const app = new Elysia()
   .get("/html", () => scanner())
   .get("/scanner", () => Bun.file("scanner.tsx"))
   .get("/scan", () => scan())
+  .get("/rescan", () => rescan())
   .get("/reset", () => reset())
   .get("/dashboard", () => dashboard())
   .get("/artists", artists)
