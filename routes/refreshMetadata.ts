@@ -74,6 +74,7 @@ export default async function refreshMetadata(params: TParams) {
                 channelLayout = ?,
                 sampleRate = ?,
                 encoder = ?
+              WHERE path = ?
               `
             ).run([
               bitrate,
@@ -84,7 +85,8 @@ export default async function refreshMetadata(params: TParams) {
               metadata?.streams[0].channel_layout ?? null,
               metadata?.streams[0].sample_rate ?? null,
               metadata?.streams[0]?.tags?.encoder ?? null,
-            ] as any);
+              path,
+            ] as {});
           } catch (err: any) {
             console.log("DB:", err.message);
           }
