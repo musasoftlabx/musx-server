@@ -10,7 +10,7 @@ export default async function search(params: TParams) {
   } = params;
 
   try {
-    return DB.query(
+    const results = DB.query(
       `SELECT
         id,
         ('${AUDIO_URL}' || path) AS url,
@@ -22,10 +22,13 @@ export default async function search(params: TParams) {
       WHERE (title || " " || albumArtist || " " || artists || " " || album) LIKE ?
       LIMIT 20`
     ).all([`%${decodeURIComponent(word)}%`] as {});
+
+    return {
+      tracks: results,
+      artists: [], //results.filter((result)=>result.albumArtist === )
+      albums: [],
+    };
   } catch (err: any) {
-    return error(500, {
-      subject: "Search Error",
-      body: err.message,
-    });
+    return error(500, { subject: "Search Error", body: err.message });
   }
 }
