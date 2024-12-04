@@ -2,7 +2,7 @@ import { DB } from "..";
 
 type TParams = { error: any; params: { id: string } };
 
-export default function track(params: TParams) {
+export default function trackMetadata(params: TParams) {
   const {
     error,
     params: { id },

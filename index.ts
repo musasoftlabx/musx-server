@@ -26,6 +26,7 @@ import plays from "./routes/plays";
 import libraryCount from "./routes/libraryCount";
 import list from "./routes/list";
 import refreshMetadata from "./routes/refreshMetadata";
+import search from "./routes/search";
 import trackMetadata from "./routes/trackMetadata";
 
 import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
@@ -83,6 +84,7 @@ const app = new Elysia()
   .get("/playlist/:id", (params) => playlist(params))
   .get("/plays", (params) => plays(params))
   .get("/libraryCount", libraryCount)
+  .get("/search/:word", (params) => search(params))
   .post("/refreshMetadata", (params) => refreshMetadata(params))
   .post("/createPlaylist", (params) => createPlaylist(params))
   .post("/addPlaylistTrack", (params) => addPlaylistTrack(params))
