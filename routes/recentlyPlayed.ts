@@ -22,8 +22,7 @@ export default async function recentlyPlayed(params: TParams) {
       INNER JOIN tracks
       ON plays.trackId = tracks.id
       ORDER BY plays.id DESC
-      LIMIT 20
-      OFFSET ?`
+      LIMIT 20`
     ).all([offset] as {});
   } catch (err: any) {
     return error(500, { subject: "Retrieval Error", body: err.message });
