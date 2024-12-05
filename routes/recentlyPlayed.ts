@@ -34,10 +34,10 @@ export default async function recentlyPlayed(params: RecentlyPlayed) {
     ).all([limit, offset] as {});
 
     return {
-      plays,
       count: DB.query(
         `SELECT COUNT(DISTINCT trackId) FROM plays`
       ).values()[0][0],
+      plays,
     };
   } catch (err: any) {
     return error(500, { subject: "Retrieval Error", body: err.message });
