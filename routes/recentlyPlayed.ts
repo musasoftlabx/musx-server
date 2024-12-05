@@ -14,7 +14,8 @@ export default async function recentlyPlayed(params: RecentlyPlayed) {
   } = params;
 
   const _limit = Number(limit);
-  //const _offset = Number(startAt) - 1;
+  const _from = Number(from);
+  const _to = Number(to);
 
   try {
     const plays = DB.query(
@@ -30,8 +31,8 @@ export default async function recentlyPlayed(params: RecentlyPlayed) {
       ON plays.trackId = tracks.id
       ORDER BY plays.id DESC
       LIMIT ?
-      OFFSET ?`
-    ).all([_limit, from, to] as {});
+      OFFSET ?, ?`
+    ).all([_limit, _from, _to] as {});
 
     return {
       count: DB.query(
