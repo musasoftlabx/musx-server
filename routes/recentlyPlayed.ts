@@ -17,6 +17,8 @@ export default async function recentlyPlayed(params: RecentlyPlayed) {
   const _from = Number(from);
   const _to = Number(to);
 
+  console.log(_limit, _from, _to);
+
   try {
     const plays = DB.query(
       `SELECT
