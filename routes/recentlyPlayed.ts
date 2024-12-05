@@ -17,7 +17,7 @@ export default async function recentlyPlayed(params: RecentlyPlayed) {
   const offset = Number(startAt) - 1;
 
   try {
-    return DB.query(
+    const plays = DB.query(
       `SELECT
         DISTINCT trackId id,
         ('${AUDIO_URL}' || path) url,
@@ -32,6 +32,13 @@ export default async function recentlyPlayed(params: RecentlyPlayed) {
       LIMIT ?
       OFFSET ?`
     ).all([limit, offset] as {});
+
+    return {
+      plays,
+      count: DB.query(
+        `SELECT COUNT(DISTINCT trackId) FROM plays`
+      ).values()[0][0],
+    };
   } catch (err: any) {
     return error(500, { subject: "Retrieval Error", body: err.message });
   }
