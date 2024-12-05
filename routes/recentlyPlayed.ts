@@ -1,13 +1,20 @@
 import { DB } from "..";
 import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
 
-type TParams = { set: any; error: any; params: { offset: string } };
+export type RecentlyPlayed = {
+  set: any;
+  error: any;
+  query: { pluck: string; startAt: string };
+};
 
-export default async function recentlyPlayed(params: TParams) {
+export default async function recentlyPlayed(params: RecentlyPlayed) {
   const {
     error,
-    params: { offset },
+    query: { pluck, startAt },
   } = params;
+
+  const limit = Number(pluck);
+  const offset = Number(startAt) - 1;
 
   try {
     return DB.query(
@@ -22,9 +29,9 @@ export default async function recentlyPlayed(params: TParams) {
       INNER JOIN tracks
       ON plays.trackId = tracks.id
       ORDER BY plays.id DESC
-      LIMIT 20
+      LIMIT ?
       OFFSET ?`
-    ).all([offset] as {});
+    ).all([limit, offset] as {});
   } catch (err: any) {
     return error(500, { subject: "Retrieval Error", body: err.message });
   }
