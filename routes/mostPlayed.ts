@@ -28,7 +28,7 @@ export default function mostPlayed(params: MostPlayed) {
       INNER JOIN tracks
       ON plays.trackId = tracks.id
       WHERE STRFTIME("%Y%m", playedOn) = ?
-      ORDER BY plays.id DESC
+      ORDER BY plays DESC
       LIMIT ?
       OFFSET ?`
     ).all([
