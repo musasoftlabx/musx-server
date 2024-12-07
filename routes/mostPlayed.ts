@@ -6,13 +6,13 @@ import dayjs from "dayjs";
 export type MostPlayed = {
   set: any;
   error: any;
-  query: { limit: string; offset: string };
+  query: { limit: string; offset: string; date: string };
 };
 
 export default function mostPlayed(params: MostPlayed) {
   const {
     error,
-    query: { limit, offset },
+    query: { limit, offset, date },
   } = params;
 
   try {
@@ -32,7 +32,7 @@ export default function mostPlayed(params: MostPlayed) {
       LIMIT ?
       OFFSET ?`
     ).all([
-      dayjs().subtract(1, "month").format("YYYYMM"),
+      dayjs(date).format("YYYYMM"),
       Number(limit),
       Number(offset) * Number(limit),
     ] as {});
