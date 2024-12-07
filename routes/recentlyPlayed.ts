@@ -4,20 +4,14 @@ import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
 export type RecentlyPlayed = {
   set: any;
   error: any;
-  query: { limit: string; from: string; to: string };
+  query: { limit: string; offset: string };
 };
 
 export default async function recentlyPlayed(params: RecentlyPlayed) {
   const {
     error,
-    query: { limit, from, to },
+    query: { limit, offset },
   } = params;
-
-  const _limit = Number(limit);
-  const _from = _limit * Number(from);
-  //const _to = Number(to);
-
-  //console.log(_limit, _from);
 
   try {
     const plays = DB.query(
@@ -34,7 +28,7 @@ export default async function recentlyPlayed(params: RecentlyPlayed) {
       ORDER BY plays.id DESC
       LIMIT ?
       OFFSET ?`
-    ).all([_limit, _from] as {});
+    ).all([Number(limit), Number(offset) * Number(limit)] as {});
 
     return {
       count: DB.query(
