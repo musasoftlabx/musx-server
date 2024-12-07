@@ -1,13 +1,13 @@
 import { DB } from "..";
 import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
 
-export type RecentlyPlayed = {
+export type RecentlyAdded = {
   set: any;
   error: any;
   query: { limit: string; offset: string };
 };
 
-export default function recentlyPlayed(params: RecentlyPlayed) {
+export default function recentlyAdded(params: RecentlyAdded) {
   const {
     error,
     query: { limit, offset },
@@ -16,16 +16,14 @@ export default function recentlyPlayed(params: RecentlyPlayed) {
   try {
     const plays = DB.query(
       `SELECT
-        DISTINCT trackId id,
+        id,
         ('${AUDIO_URL}' || path) url,
-        path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
+        path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
         ('${ARTWORK_URL}' || artwork) artwork,
         ('${WAVEFORM_URL}' || waveform) waveform,
         palette
-      FROM plays
-      INNER JOIN tracks
-      ON plays.trackId = tracks.id
-      ORDER BY plays.id DESC
+      FROM tracks
+      ORDER BY id DESC
       LIMIT ?
       OFFSET ?`
     ).all([Number(limit), Number(offset) * Number(limit)] as {});
