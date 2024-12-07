@@ -27,12 +27,12 @@ export default function mostPlayed(params: MostPlayed) {
       FROM plays
       INNER JOIN tracks
       ON plays.trackId = tracks.id
-      WHERE DATE_FORMAT(playedOn, "%Y%m") = ?
+      WHERE STRFTIME("%Y%m", playedOn) = ?
       ORDER BY plays.id DESC
       LIMIT ?
       OFFSET ?`
     ).all([
-      dayjs().format("YYYYMMM"),
+      dayjs().format("YYYYMM"),
       Number(limit),
       Number(offset) * Number(limit),
     ] as {});
