@@ -30,6 +30,7 @@ import search from "./routes/search";
 import trackMetadata from "./routes/trackMetadata";
 import recentlyAdded, { RecentlyAdded } from "./routes/recentlyAdded";
 import recentlyPlayed, { RecentlyPlayed } from "./routes/recentlyPlayed";
+import mostPlayed, { MostPlayed } from "./routes/mostPlayed";
 
 import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
 
@@ -87,19 +88,18 @@ const app = new Elysia()
   .get("/plays", (params) => plays(params))
   .get("/libraryCount", libraryCount)
   .get("/search/:word", (params) => search(params))
-  //.get("/recentlyPlayed?limit=:limit&offset=:offset", (params) =>recentlyPlayed(params)
   .post("/refreshMetadata", (params) => refreshMetadata(params))
   .post("/createPlaylist", (params) => createPlaylist(params))
   .post("/addPlaylistTrack", (params) => addPlaylistTrack(params))
   .patch("/rateTrack", (params: RateTrack) => rateTrack(params))
   .patch("/updatePlayCount", (params: PlayCount) => updatePlayCount(params))
-  //.delete("/deleteTrack?:track=:id", (params) => deleteTrack(params))
   .delete("/deleteTrack/:id", (params) => deleteTrack(params))
   .patch("/extract", (params) => frameExtraction())
   .patch("/updatePalette", (params: Palette) => updatePalette(params))
   .put("/updateLyrics", (params: Lyrics) => updateLyrics(params))
   .get("/recentlyAdded*", (params: RecentlyAdded) => recentlyAdded(params))
   .get("/recentlyPlayed*", (params: RecentlyPlayed) => recentlyPlayed(params))
+  .get("/mostPlayed*", (params: MostPlayed) => mostPlayed(params))
   .get("/*", (params) => list(params))
   .listen(3030);
 

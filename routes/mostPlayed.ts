@@ -1,13 +1,15 @@
 import { DB } from "..";
 import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
 
-export type RecentlyAdded = {
+import dayjs from "dayjs";
+
+export type MostPlayed = {
   set: any;
   error: any;
   query: { limit: string; offset: string };
 };
 
-export default function recentlyAdded(params: RecentlyAdded) {
+export default function mostPlayed(params: MostPlayed) {
   const {
     error,
     query: { limit, offset },
@@ -16,17 +18,24 @@ export default function recentlyAdded(params: RecentlyAdded) {
   try {
     const plays = DB.query(
       `SELECT
-        id,
+        DISTINCT trackId id,
         ('${AUDIO_URL}' || path) url,
-        path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
+        path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
         ('${ARTWORK_URL}' || artwork) artwork,
         ('${WAVEFORM_URL}' || waveform) waveform,
         palette
-      FROM tracks
-      ORDER BY id DESC
+      FROM plays
+      INNER JOIN tracks
+      ON plays.trackId = tracks.id
+      WHERE DATE_FORMAT(playedOn, "%Y%m") = ?
+      ORDER BY plays.id DESC
       LIMIT ?
       OFFSET ?`
-    ).all([Number(limit), Number(offset) * Number(limit)] as {});
+    ).all([
+      dayjs().format("YYYYMMM"),
+      Number(limit),
+      Number(offset) * Number(limit),
+    ] as {});
 
     return {
       count: DB.query(`SELECT COUNT(id) FROM tracks`).values()[0][0],

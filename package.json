@@ -13,6 +13,7 @@
     "@elysiajs/stream": "^1.1.0",
     "byte-size": "^9.0.0",
     "colorthief": "^2.6.0",
+    "dayjs": "^1.11.13",
     "elysia": "latest",
     "fs-extra": "^11.2.0",
     "ip": "^2.0.1",
