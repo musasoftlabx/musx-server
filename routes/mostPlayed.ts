@@ -32,7 +32,7 @@ export default function mostPlayed(params: MostPlayed) {
       LIMIT ?
       OFFSET ?`
     ).all([
-      dayjs().format("YYYYMM"),
+      dayjs().subtract(1, "month").format("YYYYMM"),
       Number(limit),
       Number(offset) * Number(limit),
     ] as {});
