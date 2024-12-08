@@ -1,12 +1,14 @@
 import { DB } from "..";
 import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
 
-type TParams = { set: any; error: any; params: { word: string } };
+import dayjs from "dayjs";
 
-export default async function search(params: TParams) {
+export type Search = { set: any; error: any; query: { query: string } };
+
+export default async function search(params: Search) {
   const {
     error,
-    params: { word },
+    query: { query },
   } = params;
 
   try {
@@ -21,7 +23,13 @@ export default async function search(params: TParams) {
       FROM tracks
       WHERE (title || " " || albumArtist || " " || artists || " " || album) LIKE ?
       LIMIT 20`
-    ).all([`%${decodeURIComponent(word)}%`] as {});
+    ).all([`%${decodeURIComponent(query)}%`] as {});
+
+    // ? Insert into searches
+    DB.exec(`INSERT INTO searchHistory VALUES (NULL, ?, ?)`, [
+      query,
+      dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    ]);
 
     return {
       tracks: results,

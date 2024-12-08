@@ -87,12 +87,21 @@ export default async function init() {
     )`
   );
 
+  DB.exec(
+    `CREATE TABLE IF NOT EXISTS searchHistory (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      query VARCHAR(100),
+      searchedOn DATETIME
+    )`
+  );
+
   //DB.exec(`ALTER TABLE deletedTracks ADD COLUMN deletedOn DATETIME`);
 
   // ? Create artwork & waveform directories if it doesn't exist
   !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
   !existsSync("./Waveform") && mkdirSync("./Waveform", { recursive: true });
+
+  //DB.query(`DROP TABLE IF EXISTS searchHistory`).run();
 }
 
 //DB.query(`CREATE UNIQUE INDEX IF NOT EXISTS idxPath ON tracks (path)`).run();
-//DB.query(`DROP TABLE IF EXISTS playlists`).run();
