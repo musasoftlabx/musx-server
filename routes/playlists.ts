@@ -1,4 +1,4 @@
-import { DB } from "..";
+import { ARTWORK_URL, DB } from "..";
 
 type TParams = { body: any; set: any; error: any };
 
@@ -22,11 +22,13 @@ export default async function playlists() {
   // ? Get playlist tracks for each playlist
   playlists.forEach(({ id }, i) => {
     playlists[i].tracks = DB.query(
-      `SELECT title, artwork 
-          FROM playlistTracks
-          JOIN tracks
-          ON trackId = tracks.id
-          WHERE playlistId = ${id}`
+      `SELECT 
+        title,
+        ('${ARTWORK_URL}' || artwork) AS artwork, 
+      FROM playlistTracks
+      JOIN tracks
+      ON trackId = tracks.id
+      WHERE playlistId = ${id}`
     ).all();
   });
 

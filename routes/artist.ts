@@ -1,7 +1,6 @@
-import { DB } from "..";
-import byteSize from "byte-size";
+import { DB, AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
 
-import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
+import byteSize from "byte-size";
 
 type TParams = { error: any; params: { artist: string } };
 
