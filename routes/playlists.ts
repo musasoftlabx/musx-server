@@ -1,7 +1,5 @@
 import { ARTWORK_URL, DB } from "..";
 
-type TParams = { body: any; set: any; error: any };
-
 type PlaylistProps = {
   id: number;
   name: string;
@@ -13,7 +11,7 @@ type PlaylistProps = {
 
 type PlaylistsProps = PlaylistProps[];
 
-export default async function playlists() {
+export default function playlists() {
   // ? Get playlists
   let playlists: PlaylistsProps = <PlaylistsProps>(
     DB.query(`SELECT * FROM playlists ORDER BY id DESC`).all()
@@ -24,7 +22,7 @@ export default async function playlists() {
     playlists[i].tracks = DB.query(
       `SELECT 
         title,
-        ('${ARTWORK_URL}' || artwork) AS artwork, 
+        ('${ARTWORK_URL}' || artwork) artwork
       FROM playlistTracks
       JOIN tracks
       ON trackId = tracks.id
