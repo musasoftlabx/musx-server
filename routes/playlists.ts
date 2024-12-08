@@ -5,10 +5,10 @@ import byteSize from "byte-size";
 type PlaylistProps = {
   id: number;
   name: string;
-  artwork: string;
   createdOn: string;
   modifiedOn: string;
-  tracks: any;
+  tracks: number;
+  artworks: string[];
   duration: string;
   size: string;
 };
@@ -33,6 +33,14 @@ export default function playlists() {
 
   // ? Get playlist tracks for each playlist
   playlists.forEach(({ id }, i) => {
+    playlists[i].tracks = DB.query(
+      `SELECT COUNT(trackId) tracks
+      FROM playlistTracks
+      JOIN tracks
+      ON trackId = tracks.id
+      WHERE playlistId = ${id}`
+    ).values()[0][0] as number;
+
     playlists[i].size = `${byteSize(
       DB.query(
         `SELECT SUM(size) size
@@ -53,7 +61,7 @@ export default function playlists() {
       ).values()[0][0] as number
     );
 
-    playlists[i].tracks = DB.query(
+    playlists[i].artworks = DB.query(
       `SELECT ('${ARTWORK_URL}' || artwork) artwork
       FROM playlistTracks
       JOIN tracks
