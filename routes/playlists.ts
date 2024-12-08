@@ -9,11 +9,21 @@ type PlaylistProps = {
   createdOn: string;
   modifiedOn: string;
   tracks: any;
-  duration: number;
+  duration: string;
   size: string;
 };
 
 type PlaylistsProps = PlaylistProps[];
+
+function formatTime(seconds: number) {
+  return [
+    Math.floor(seconds / 60 / 60),
+    Math.floor((seconds / 60) % 60),
+    Math.floor(seconds % 60),
+  ]
+    .join(":")
+    .replace(/\b(\d)\b/g, "0$1");
+}
 
 export default function playlists() {
   // ? Get playlists
@@ -33,23 +43,26 @@ export default function playlists() {
       ).values()[0][0] as number
     )}`;
 
-    playlists[i].duration = DB.query(
-      `SELECT SUM(duration) duration
+    playlists[i].duration = formatTime(
+      DB.query(
+        `SELECT SUM(duration) duration
       FROM playlistTracks
       JOIN tracks
       ON trackId = tracks.id
       WHERE playlistId = ${id}`
-    ).values()[0][0] as number;
+      ).values()[0][0] as number
+    );
 
     playlists[i].tracks = DB.query(
-      `SELECT 
-        title,
-        ('${ARTWORK_URL}' || artwork) artwork
+      `SELECT ('${ARTWORK_URL}' || artwork) artwork
       FROM playlistTracks
       JOIN tracks
       ON trackId = tracks.id
-      WHERE playlistId = ${id}`
-    ).all();
+      WHERE playlistId = ${id}
+      LIMIT 4`
+    )
+      .all()
+      .map(({ artwork }: any) => artwork);
   });
 
   return playlists;
