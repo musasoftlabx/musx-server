@@ -15,6 +15,15 @@ type PlaylistProps = {
 
 type PlaylistsProps = PlaylistProps[];
 
+const formatTime2 = (seconds: number) =>
+  new Date(seconds * 1000).toLocaleTimeString("en-GB", {
+    timeZone: "Etc/UTC",
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
 function formatTime(seconds: number) {
   return [
     Math.floor(seconds / 60 / 60),
@@ -51,7 +60,7 @@ export default function playlists() {
       ).values()[0][0] as number
     )}`;
 
-    playlists[i].duration = formatTime(
+    playlists[i].duration = formatTime2(
       DB.query(
         `SELECT SUM(duration) duration
       FROM playlistTracks
