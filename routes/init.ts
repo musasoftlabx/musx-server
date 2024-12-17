@@ -95,8 +95,27 @@ export default async function init() {
     )`
   );
 
-  DB.exec(`ALTER TABLE playlistTracks ADD COLUMN position INTEGER`);
+  //DB.exec(`ALTER TABLE playlistTracks ADD COLUMN position INTEGER`);
   //DB.exec(`ALTER TABLE playlistTracks DROP COLUMN priority`);
+
+  DB.exec(`
+    BEGIN;
+    CREATE TABLE playlistTracks_tmp (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      playlistId INTEGER,
+      trackId INTEGER,
+      position INTEGER,
+      startsAt DOUBLE,
+      endsAt DOUBLE,
+      addedOn DATETIME,
+      FOREIGN KEY ("playlistId") REFERENCES "playlists" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+      FOREIGN KEY ("trackId") REFERENCES "tracks" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    );
+    INSERT INTO playlistTracks_tmp (id, playlistId, trackId, position, startsAt, endsAt, addedOn) SELECT id, playlistId, trackId, position, startsAt, endsAt, addedOn FROM playlistTracks;
+    DROP TABLE playlistTracks;
+    ALTER TABLE playlistTracks_tmp RENAME TO playlistTracks;
+    COMMIT;
+  `);
 
   // ? Create artwork & waveform directories if it doesn't exist
   !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
