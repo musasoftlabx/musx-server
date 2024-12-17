@@ -95,11 +95,6 @@ export default async function init() {
     )`
   );
 
-  const tracksCount = DB.query(
-    `SELECT position FROM playlistTracks WHERE playlistId = ${13}`
-  ).values();
-  console.log("ewf", tracksCount[0][0]);
-
   //DB.exec(`ALTER TABLE playlistTracks ADD COLUMN position INTEGER`);
   //DB.exec(`ALTER TABLE playlistTracks DROP COLUMN priority`);
 
