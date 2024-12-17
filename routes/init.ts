@@ -95,7 +95,8 @@ export default async function init() {
     )`
   );
 
-  DB.exec(`ALTER TABLE playlistTracks ADD COLUMN priority INTEGER`);
+  DB.exec(`ALTER TABLE playlistTracks ADD COLUMN position INTEGER`);
+  //DB.exec(`ALTER TABLE playlistTracks DROP COLUMN priority`);
 
   // ? Create artwork & waveform directories if it doesn't exist
   !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
