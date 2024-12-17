@@ -48,11 +48,11 @@ export default function rearrangePlaylist(params: RearrangePlaylist) {
   } = params;
 
   DB.exec(
-    `UPDATE playlistTracks SET position = ${from.position} WHERE trackId = ${from.id} AND playlistId = ${playlistId}`
+    `UPDATE playlistTracks SET position = ${to.position} WHERE trackId = ${from.id} AND playlistId = ${playlistId}`
   );
 
   DB.exec(
-    `UPDATE playlistTracks SET position = ${to.position} WHERE trackId = ${to.id} AND playlistId = ${playlistId}`
+    `UPDATE playlistTracks SET position = ${from.position} WHERE trackId = ${to.id} AND playlistId = ${playlistId}`
   );
 
   return { playlistId, from, to };
