@@ -90,5 +90,5 @@ export default function rearrangePlaylist(params: RearrangePlaylist) {
   //     .map(({ artwork }: any) => artwork);
   // });
 
-  return { from, to };
+  return { playlistId, from, to };
 }
