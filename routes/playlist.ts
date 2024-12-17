@@ -20,7 +20,8 @@ export default function playlist(params: TParams) {
       FROM playlistTracks
       JOIN tracks
       ON trackId = tracks.id
-      WHERE playlistId = ${Number(id)}`
+      WHERE playlistId = ${Number(id)}
+      ORDER BY position`
     ).all();
   } catch (err: any) {
     return error(500, {
