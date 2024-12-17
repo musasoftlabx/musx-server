@@ -6,9 +6,13 @@ export default async function addPlaylistTrack(params: TParams) {
   const { body, set, error } = params;
   const { playlistId, trackId, startsAt, endsAt } = body;
 
+  const tracksCount = DB.query(
+    `SELECT COUNT(id) AS count FROM playlistTracks WHERE playlistId = playlistId`
+  ).values();
+
   try {
     return DB.run(
-      `INSERT INTO playlistTracks VALUES (NULL, ${playlistId}, ${trackId}, ${startsAt}, ${endsAt}, DateTime('now'))`
+      `INSERT INTO playlistTracks VALUES (NULL, ${playlistId}, ${trackId}, ${tracksCount[0][0]}, ${startsAt}, ${endsAt}, DateTime('now'))`
     );
   } catch (err: any) {
     return error(500, {
