@@ -7,7 +7,7 @@ export default async function addPlaylistTrack(params: TParams) {
   const { playlistId, trackId, startsAt, endsAt } = body;
 
   const _tracksCount = DB.query(
-    `SELECT COUNT(id) AS count FROM playlistTracks WHERE playlistId = ${playlistId}`
+    `SELECT position FROM playlistTracks WHERE playlistId = ${playlistId}`
   ).values();
 
   const tracksCount = Number(_tracksCount[0][0]) + 1;
