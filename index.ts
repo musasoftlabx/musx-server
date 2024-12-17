@@ -26,6 +26,9 @@ import plays from "./routes/plays";
 import libraryCount from "./routes/libraryCount";
 import list from "./routes/list";
 import refreshMetadata from "./routes/refreshMetadata";
+import rearrangePlaylist, {
+  RearrangePlaylist,
+} from "./routes/rearrangePlaylist";
 import search, { Search } from "./routes/search";
 import searchHistory from "./routes/searchHistory";
 import trackMetadata from "./routes/trackMetadata";
@@ -94,6 +97,9 @@ const app = new Elysia()
   .patch("/rateTrack", (params: RateTrack) => rateTrack(params))
   .patch("/updatePlayCount", (params: PlayCount) => updatePlayCount(params))
   .delete("/deleteTrack/:id", (params) => deleteTrack(params))
+  .put("/rearrangePlaylist", (params: RearrangePlaylist) =>
+    rearrangePlaylist(params)
+  )
   .patch("/extract", (params) => frameExtraction())
   .patch("/updatePalette", (params: Palette) => updatePalette(params))
   .put("/updateLyrics", (params: Lyrics) => updateLyrics(params))
