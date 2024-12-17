@@ -10,13 +10,12 @@ export default async function addPlaylistTrack(params: TParams) {
     `SELECT COUNT(id) AS count FROM playlistTracks WHERE playlistId = ${playlistId}`
   ).values();
 
-  let tracksCount = Number(_tracksCount[0][0]);
-
-  console.log("tracksCount", tracksCount);
+  const tracksCount = Number(_tracksCount[0][0]) + 1;
 
   try {
     return DB.run(
-      `INSERT INTO playlistTracks VALUES (NULL, ${playlistId}, ${trackId}, ${tracksCount++}, ${startsAt}, ${endsAt}, DateTime('now'))`
+      `INSERT INTO playlistTracks
+       VALUES (NULL, ${playlistId}, ${trackId}, ${tracksCount}, ${startsAt}, ${endsAt}, DateTime('now'))`
     );
   } catch (err: any) {
     return error(500, {
