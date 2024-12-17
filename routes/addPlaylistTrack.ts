@@ -12,6 +12,8 @@ export default async function addPlaylistTrack(params: TParams) {
 
   let tracksCount = Number(_tracksCount[0][0]);
 
+  console.log("tracksCount", tracksCount);
+
   try {
     return DB.run(
       `INSERT INTO playlistTracks VALUES (NULL, ${playlistId}, ${trackId}, ${tracksCount++}, ${startsAt}, ${endsAt}, DateTime('now'))`
