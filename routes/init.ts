@@ -98,6 +98,17 @@ export default async function init() {
   //DB.exec(`ALTER TABLE playlistTracks ADD COLUMN position INTEGER`);
   //DB.exec(`ALTER TABLE playlistTracks DROP COLUMN priority`);
 
+  // ? Create artwork & waveform directories if it doesn't exist
+  !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
+  !existsSync("./Waveform") && mkdirSync("./Waveform", { recursive: true });
+
+  //DB.query(`DROP TABLE IF EXISTS searchHistory`).run();
+}
+
+//DB.query(`CREATE UNIQUE INDEX IF NOT EXISTS idxPath ON tracks (path)`).run();
+
+/* 
+  // ? Move columns
   DB.exec(`
     BEGIN;
     CREATE TABLE playlistTracks_tmp (
@@ -115,13 +126,4 @@ export default async function init() {
     DROP TABLE playlistTracks;
     ALTER TABLE playlistTracks_tmp RENAME TO playlistTracks;
     COMMIT;
-  `);
-
-  // ? Create artwork & waveform directories if it doesn't exist
-  !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
-  !existsSync("./Waveform") && mkdirSync("./Waveform", { recursive: true });
-
-  //DB.query(`DROP TABLE IF EXISTS searchHistory`).run();
-}
-
-//DB.query(`CREATE UNIQUE INDEX IF NOT EXISTS idxPath ON tracks (path)`).run();
+  `); */

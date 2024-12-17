@@ -25,7 +25,7 @@ export default async function createPlaylist(params: TParams) {
 
     // ? Add initial track to playlist
     DB.run(
-      `INSERT INTO playlistTracks VALUES (NULL, ${lastInsertRowid}, ${trackId}, NULL, NULL, DateTime('now'))`
+      `INSERT INTO playlistTracks VALUES (NULL, ${lastInsertRowid}, ${trackId}, 1, NULL, NULL, DateTime('now'))`
     );
 
     // ? Get playlists
@@ -36,7 +36,7 @@ export default async function createPlaylist(params: TParams) {
     // ? Get playlist tracks for each playlist
     playlists.forEach(({ id }, i) => {
       playlists[i].tracks = DB.query(
-        `SELECT title, artwork 
+        `SELECT title, artwork, position 
           FROM playlistTracks
           JOIN tracks
           ON trackId = tracks.id
