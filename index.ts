@@ -37,6 +37,9 @@ import recentlyPlayed, { RecentlyPlayed } from "./routes/recentlyPlayed";
 import mostPlayed, { MostPlayed } from "./routes/mostPlayed";
 
 import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
+import deletePlaylistTrack, {
+  DeletePlaylistTrack,
+} from "./routes/deletePlaylistTrack";
 
 init();
 
@@ -107,6 +110,9 @@ const app = new Elysia()
   .get("/search*", (params: Search) => search(params))
   .get("/recentlyAdded*", (params: RecentlyAdded) => recentlyAdded(params))
   .get("/recentlyPlayed*", (params: RecentlyPlayed) => recentlyPlayed(params))
+  .get("/deletePlaylistTrack*", (params: DeletePlaylistTrack) =>
+    deletePlaylistTrack(params)
+  )
   .get("/mostPlayed*", (params: MostPlayed) => mostPlayed(params))
   .get("/*", (params) => list(params))
   .listen(3030);
