@@ -7,7 +7,7 @@ export default async function addPlaylistTrack(params: TParams) {
   const { playlistId, trackId, startsAt, endsAt } = body;
 
   const _tracksCount = DB.query(
-    `SELECT position FROM playlistTracks WHERE playlistId = ${playlistId} ORDER BY id DESC LIMIT 1`
+    `SELECT MAX(position) FROM playlistTracks WHERE playlistId = ${playlistId}`
   ).values();
 
   const tracksCount = Number(_tracksCount[0][0]) + 1;
