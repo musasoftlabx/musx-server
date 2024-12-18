@@ -5,7 +5,7 @@ export type DeletePlaylistTrack = {
   error: any;
 };
 
-export default async function deletePlaylistTrack(params: DeletePlaylistTrack) {
+export default function deletePlaylistTrack(params: DeletePlaylistTrack) {
   const {
     query: { playlistId, trackId },
   } = params;
