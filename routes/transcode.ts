@@ -23,7 +23,7 @@ export default async function transcode(params: Transcode) {
 
   try {
     // ? Convert the track and store it in the directory
-    execSync(`ffmpeg -i "${mp3Path}" -c:a libopus -b:a 64k "${oggPath}"`);
+    execSync(`ffmpeg -i "${mp3Path}" -c:a "${oggPath}"`);
     // ? Send file to client
     return Bun.file(oggPath);
   } catch (err: any) {
