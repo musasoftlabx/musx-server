@@ -11,7 +11,7 @@ export default async function transcode(params: Transcode) {
 
   const transcodeDir = "Transcodes";
   const mp3Path = `Music/${path}`;
-  const oggPath = `./${transcodeDir}/${path.split("/").slice(-1)}`.replace(
+  const oggPath = `${transcodeDir}/${path.split("/").slice(-1)}`.replace(
     ".mp3",
     ".opus"
   );
@@ -19,12 +19,11 @@ export default async function transcode(params: Transcode) {
   // ? Check if Transcodes directory exists. If not create it
   !existsSync(transcodeDir) && mkdirSync(transcodeDir, { recursive: true });
   // ? Empty the directory
-  emptyDirSync(`${transcodeDir}`);
+  //emptyDirSync(`${transcodeDir}`);
 
   try {
     // ? Convert the track and store it in the directory
-    //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
-    //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
+    execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
     // ? Send file to client
     return Bun.file(oggPath);
   } catch (err: any) {
