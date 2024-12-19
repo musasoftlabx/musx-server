@@ -26,8 +26,7 @@ export default async function transcode(params: Transcode) {
     //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
     //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
     // ? Send file to client
-    return Bun.file(mp3Path);
-    //return Bun.file("Music/Kenya/Bahati/artist.jpg");
+    return Bun.file(oggPath);
   } catch (err: any) {
     return err.message;
   }
