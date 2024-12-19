@@ -40,6 +40,7 @@ import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
 import deletePlaylistTrack, {
   DeletePlaylistTrack,
 } from "./routes/deletePlaylistTrack";
+import transcode, { Transcode } from "./routes/transcode";
 
 init();
 
@@ -114,6 +115,7 @@ const app = new Elysia()
     deletePlaylistTrack(params)
   )
   .get("/mostPlayed*", (params: MostPlayed) => mostPlayed(params))
+  .get("/transcode*", (params: Transcode) => transcode(params))
   .get("/*", (params) => list(params))
   .listen(3030);
 
