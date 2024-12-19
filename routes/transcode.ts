@@ -13,7 +13,7 @@ export default async function transcode(params: Transcode) {
   const mp3Path = `Music/${path}`;
   const oggPath = `${transcodeDir}/${path.split("/").slice(-1)}`.replace(
     ".mp3",
-    ".mp3"
+    ".opus"
   );
 
   // ? Check if Transcodes directory exists. If not create it
@@ -26,7 +26,7 @@ export default async function transcode(params: Transcode) {
     //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
     execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
     // ? Send file to client
-    return Bun.file(oggPath);
+    return Bun.file(mp3Path);
   } catch (err: any) {
     return err.message;
   }
