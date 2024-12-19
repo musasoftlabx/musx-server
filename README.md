@@ -31,6 +31,10 @@ https://ffmpeg.org/releases/?C=M;O=D
 
 Also check https://ultahost.com/knowledge-base/install-ffmpeg-on-ubuntu/ incase installation fails
 
+Install opus
+
+opus-tools
+
 ## Scanner
 
 11:33:00 - 1900files
