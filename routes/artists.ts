@@ -14,7 +14,7 @@ export default function artists() {
     `
   )
     .all()
-    .map((artist: any) => {
+    .filter((artist: any) => {
       if (artist.albumArtist)
         if (artist.albumArtist.includes("Various"))
           return {
