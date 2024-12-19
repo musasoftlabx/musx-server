@@ -26,6 +26,7 @@ export default async function transcode(params: Transcode) {
     //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
     //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
     // ? Send file to client
+    console.log(oggPath);
     return Bun.file(oggPath);
   } catch (err: any) {
     return err.message;
