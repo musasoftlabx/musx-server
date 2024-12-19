@@ -20,10 +20,15 @@ export default async function transcode(params: Transcode) {
   !existsSync(transcodeDir) && mkdirSync(transcodeDir, { recursive: true });
   // ? Empty the directory
   emptyDirSync(`${transcodeDir}`);
-  // ? Convert the track and store it in the directory
-  execSync(`ffmpeg -i "${mp3Path}" -c:a libopus -b:a 64k "${oggPath}"`);
-  // ? Send file to client
-  return Bun.file(oggPath);
+
+  try {
+    // ? Convert the track and store it in the directory
+    execSync(`ffmpeg -i "${mp3Path}" -c:a libopus -b:a 64k "${oggPath}"`);
+    // ? Send file to client
+    return Bun.file(oggPath);
+  } catch (err: any) {
+    return err.message;
+  }
 }
 
 //libvorbis libopus libmp3lame
