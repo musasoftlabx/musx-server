@@ -15,19 +15,20 @@ export default function artists() {
   )
     .all()
     .map((artist: any) => {
-      if (artist.albumArtist?.includes("Various"))
-        return {
-          ...artist,
-          artworks: DB.query(
-            `SELECT
+      if (artist.albumArtist)
+        if (artist.albumArtist.includes("Various"))
+          return {
+            ...artist,
+            artworks: DB.query(
+              `SELECT
              ('${ARTWORK_URL}' || artwork) artwork
              FROM tracks
              WHERE path LIKE "%Various Artists (${artist.genre})%"
              LIMIT 4`
-          )
-            .all()
-            .map(({ artwork }: any) => artwork),
-        };
-      else return artist;
+            )
+              .all()
+              .map(({ artwork }: any) => artwork),
+          };
+        else return artist;
     });
 }
