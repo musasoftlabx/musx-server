@@ -44,7 +44,7 @@ package-lock.json
 Music/
 Artwork/
 Waveform/
-Transodes/
+Transcodes/
 
 *.sqlite*
 *musx*
