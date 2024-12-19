@@ -13,7 +13,7 @@ export default async function transcode(params: Transcode) {
   const mp3Path = `Music/${path}`;
   const oggPath = `${transcodeDir}/${path.split("/").slice(-1)}`.replace(
     ".mp3",
-    ".mp3"
+    ".opus"
   );
 
   // ? Check if Transcodes directory exists. If not create it
@@ -21,9 +21,9 @@ export default async function transcode(params: Transcode) {
   // ? Empty the directory
   emptyDirSync(`${transcodeDir}`);
   // ? Convert the track and store it in the directory
-  execSync(`ffmpeg -i "${mp3Path}" -c:a libmp3lame -b:a 64k "${oggPath}"`);
+  execSync(`ffmpeg -i "${mp3Path}" -c:a libopus -b:a 64k "${oggPath}"`);
   // ? Send file to client
   return Bun.file(oggPath);
 }
 
-//libvorbis libopus
+//libvorbis libopus libmp3lame
