@@ -11,7 +11,7 @@ export default async function transcode(params: Transcode) {
 
   const transcodeDir = "Transcodes";
   const mp3Path = `Music/${path}`;
-  const oggPath = `${transcodeDir}/${path.split("/").slice(-1)}`.replace(
+  const oggPath = `./${transcodeDir}/${path.split("/").slice(-1)}`.replace(
     ".mp3",
     ".opus"
   );
@@ -26,7 +26,6 @@ export default async function transcode(params: Transcode) {
     //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
     //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
     // ? Send file to client
-    console.log(oggPath);
     return Bun.file(oggPath);
   } catch (err: any) {
     return err.message;
