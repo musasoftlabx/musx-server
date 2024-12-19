@@ -13,7 +13,7 @@ export default async function transcode(params: Transcode) {
   const mp3Path = `Music/${path}`;
   const oggPath = `${transcodeDir}/${path.split("/").slice(-1)}`.replace(
     ".mp3",
-    ".mp3"
+    ".ogg"
   );
 
   // ? Check if Transcodes directory exists. If not create it
