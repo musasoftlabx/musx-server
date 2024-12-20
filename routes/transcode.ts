@@ -30,6 +30,7 @@ export default async function transcode(params: Transcode) {
     // ? Convert into HLS chunks
     execSync(`ffmpeg -i "${mp3Path}" \
               -map 0:a \
+              -preset veryfast \
               ${conversion} \
               -hls_time 1 \
               -hls_flags independent_segments \
@@ -45,10 +46,13 @@ export default async function transcode(params: Transcode) {
   }
 }
 
-// ? Convert to single file
-//execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
-
-//-hls_segment_filename ${transcodeDir}/stream_%v/data%03d.ts \
-// -codec: copy \ > // will preserve the video & audio codecs of the original
-//-c:a libopus -b:a 64k
-//libvorbis libopus libmp3lame
+// execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`); // * Convert to single file
+// -map 0:a \ // ? Selects the first stream from the input file (first stream is audio, second is album art)
+// -preset veryfast \ // ? Encoding preset which determines the trade-off between encoding speed and compression efficiency. The medium preset is a balance between speed and compression. Other presets include veryslow, slow, fast, veryfast
+// -hls_time 1 \ // ? Duration of each segment in the HLS playlist. In this case, each segment will be 1 second long.
+// -f hls // ? Format of the output file, which in this case is HLS (HTTP Live Streaming).
+// -hls_segment_filename ${transcodeDir}/stream_%v/data%03d.ts \ // ? Specifies the filename and chunks file names
+// -codec: copy \ // ? Will preserve the video & audio codecs of the original
+// -b:a 64k \ // ? Set bitrate to 64kbps
+// -c:a libopus // ? Specify encoder
+// libvorbis libopus libmp3lame // ? Encoders

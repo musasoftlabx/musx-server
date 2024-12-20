@@ -1,7 +1,6 @@
-import { DB } from "../";
+import { DB, AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "../";
 import libraryCount from "./libraryCount";
-
-import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
+import playlists from "./playlists";
 
 export default function dashboard() {
   const mostPlayed = DB.query(
@@ -73,7 +72,8 @@ export default function dashboard() {
     }),
     recentlyAdded,
     recentlyPlayed,
-    // //recentlyPlayed: [...new Set(recentlyPlayed)],
+    //recentlyPlayed: [...new Set(recentlyPlayed)],
+    playlists: playlists({ limit: 10 }),
     mostPlayed,
     stats: libraryCount(),
   };

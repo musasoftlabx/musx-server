@@ -34,10 +34,14 @@ function formatTime(seconds: number) {
     .replace(/\b(\d)\b/g, "0$1");
 }
 
-export default function playlists() {
+export default function playlists({ limit = 0 }: { limit: number }) {
   // ? Get playlists
   let playlists: PlaylistsProps = <PlaylistsProps>(
-    DB.query(`SELECT * FROM playlists ORDER BY id DESC`).all()
+    DB.query(
+      `SELECT * FROM playlists ORDER BY id DESC${
+        limit > 0 && " LIMIT " + limit
+      }`
+    ).all()
   );
 
   // ? Get playlist tracks for each playlist
