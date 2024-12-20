@@ -1,3 +1,4 @@
+import Stream from "@elysiajs/stream";
 import { execSync } from "child_process";
 import { existsSync, mkdirSync } from "fs";
 import { emptyDirSync } from "fs-extra";
@@ -13,7 +14,8 @@ export default async function transcode(params: Transcode) {
   const mp3Path = `Music/${path}`;
   const oggPath = `${transcodeDir}/${path.split("/").slice(-1)}`.replace(
     ".mp3",
-    ".opus"
+    ".m3u8"
+    //".opus"
   );
 
   // ? Check if Transcodes directory exists. If not create it
@@ -23,9 +25,18 @@ export default async function transcode(params: Transcode) {
 
   try {
     // ? Convert the track and store it in the directory
-    execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
+    //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
+    execSync(`ffmpeg -i "${mp3Path}" \
+              -codec: copy \
+              -hls_time 1 \
+              -hls_list_size 0 \
+              -f hls \
+              "${oggPath}"
+            `);
     // ? Send file to client
     return Bun.file(oggPath);
+    //return new Stream(async (stream) => {});
+    //return true;
   } catch (err: any) {
     return err.message;
   }
