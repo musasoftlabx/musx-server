@@ -2,11 +2,15 @@ import { execSync } from "child_process";
 import { existsSync, mkdirSync } from "fs";
 import { emptyDirSync } from "fs-extra";
 
-export type Transcode = { query: { path: string; duration: number } };
+export type Transcode = {
+  error: any;
+  query: { path: string; duration: number; bitrate: number };
+};
 
 export default async function transcode(params: Transcode) {
   const {
-    query: { path, duration },
+    error,
+    query: { path, duration, bitrate },
   } = params;
 
   const transcodeDir = "Transcodes";
@@ -17,28 +21,33 @@ export default async function transcode(params: Transcode) {
 
   // ? Check if Transcodes directory exists. If not create it
   !existsSync(transcodeDir) && mkdirSync(transcodeDir, { recursive: true });
+
   // ? Empty the directory
   emptyDirSync(`${transcodeDir}`);
 
   try {
-    // ? Convert the track and store it in the directory
-    //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
+    // ? Convert into HLS chunks
     execSync(`ffmpeg -i "${mp3Path}" \
               -map 0:a \
-              -codec: copy \
+              -b:a ${bitrate}k \
               -hls_time 1 \
               -hls_flags independent_segments \
-              -hls_segment_filename ${transcodeDir}/data%03d.ts \
+              -hls_segment_filename ${transcodeDir}/chunk%03d.ts \
               -hls_list_size ${duration} \
               -f hls \
               "${transcodeHeaderFile}"
             `);
-    //-hls_segment_filename ${transcodeDir}/stream_%v/data%03d.ts \
-    // ? Send file to client
+    // ? Show file contents to client
     return Bun.file(transcodeHeaderFile);
   } catch (err: any) {
-    return err.message;
+    return error(502, err.message);
   }
 }
+
+// ? Convert to single file
+//execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
+
+//-hls_segment_filename ${transcodeDir}/stream_%v/data%03d.ts \
+// -codec: copy \
 //-c:a libopus -b:a 64k
 //libvorbis libopus libmp3lame
