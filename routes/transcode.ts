@@ -1,4 +1,4 @@
-import Stream from "@elysiajs/stream";
+import { SERVER_URL } from "./../../../mobile/musx/app/store";
 import { execSync } from "child_process";
 import { existsSync, mkdirSync } from "fs";
 import { emptyDirSync } from "fs-extra";
@@ -12,11 +12,9 @@ export default async function transcode(params: Transcode) {
 
   const transcodeDir = "Transcodes";
   const mp3Path = `Music/${path}`;
-  const oggPath = `${transcodeDir}/${path.split("/").slice(-1)}`.replace(
-    ".mp3",
-    ".m3u8"
-    //".opus"
-  );
+  const transcodeURL = `${SERVER_URL}${transcodeDir}/${path
+    .split("/")
+    .slice(-1)}`.replace(".mp3", ".m3u8");
 
   // ? Check if Transcodes directory exists. If not create it
   !existsSync(transcodeDir) && mkdirSync(transcodeDir, { recursive: true });
@@ -34,14 +32,11 @@ export default async function transcode(params: Transcode) {
               -hls_segment_filename ${transcodeDir}/data%03d.ts \
               -hls_list_size 180 \
               -f hls \
-              "${oggPath}"
+              "${transcodeURL}"
             `);
     //-hls_segment_filename ${transcodeDir}/stream_%v/data%03d.ts \
     // ? Send file to client
-    return Bun.file(oggPath);
-    // return new Stream(async (stream) => {
-    //   stream.send(`${count}. ${path}`);
-    // });
+    return;
   } catch (err: any) {
     return err.message;
   }
