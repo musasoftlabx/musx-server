@@ -14,7 +14,7 @@ export default async function transcode(params: Transcode) {
   const mp3Path = `Music/${path}`;
   const oggPath = `${transcodeDir}/${path.split("/").slice(-1)}`.replace(
     ".mp3",
-    ".ts"
+    ".m3u8"
     //".opus"
   );
 
