@@ -12,7 +12,7 @@ export default async function transcode(params: Transcode) {
 
   const transcodeDir = "Transcodes";
   const mp3Path = `Music/${path}`;
-  const transcodeURL = `${SERVER_URL}${transcodeDir}/${path
+  const transcodeHeaderFile = `${transcodeDir}/${path
     .split("/")
     .slice(-1)}`.replace(".mp3", ".m3u8");
 
@@ -32,11 +32,11 @@ export default async function transcode(params: Transcode) {
               -hls_segment_filename ${transcodeDir}/data%03d.ts \
               -hls_list_size 180 \
               -f hls \
-              "${transcodeURL}"
+              "${transcodeHeaderFile}"
             `);
     //-hls_segment_filename ${transcodeDir}/stream_%v/data%03d.ts \
     // ? Send file to client
-    return;
+    return Bun.file(transcodeHeaderFile);
   } catch (err: any) {
     return err.message;
   }
