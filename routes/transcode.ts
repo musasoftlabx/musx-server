@@ -18,6 +18,7 @@ export default async function transcode(params: Transcode) {
   const transcodeHeaderFile = `${transcodeDir}/${path
     .split("/")
     .slice(-1)}`.replace(".mp3", ".m3u8");
+  const conversion = !bitrate ? "-codec: copy" : `-b:a ${bitrate}k`;
 
   // ? Check if Transcodes directory exists. If not create it
   !existsSync(transcodeDir) && mkdirSync(transcodeDir, { recursive: true });
@@ -29,7 +30,7 @@ export default async function transcode(params: Transcode) {
     // ? Convert into HLS chunks
     execSync(`ffmpeg -i "${mp3Path}" \
               -map 0:a \
-              -b:a ${bitrate}k \
+              ${conversion} \
               -hls_time 1 \
               -hls_flags independent_segments \
               -hls_segment_filename ${transcodeDir}/chunk%03d.ts \
@@ -48,6 +49,6 @@ export default async function transcode(params: Transcode) {
 //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
 
 //-hls_segment_filename ${transcodeDir}/stream_%v/data%03d.ts \
-// -codec: copy \
+// -codec: copy \ > // will preserve the video & audio codecs of the original
 //-c:a libopus -b:a 64k
 //libvorbis libopus libmp3lame
