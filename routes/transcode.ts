@@ -21,22 +21,27 @@ export default async function transcode(params: Transcode) {
   // ? Check if Transcodes directory exists. If not create it
   !existsSync(transcodeDir) && mkdirSync(transcodeDir, { recursive: true });
   // ? Empty the directory
-  //emptyDirSync(`${transcodeDir}`);
+  emptyDirSync(`${transcodeDir}`);
 
   try {
     // ? Convert the track and store it in the directory
     //execSync(`ffmpeg -i "${mp3Path}" -strict -2 "${oggPath}"`);
     execSync(`ffmpeg -i "${mp3Path}" \
+              -map 0:a \
               -codec: copy \
               -hls_time 1 \
-              -hls_list_size 0 \
+              -hls_flags independent_segments \
+              -hls_segment_filename ${transcodeDir}/data%03d.ts \
+              -hls_list_size 180 \
               -f hls \
               "${oggPath}"
             `);
+    //-hls_segment_filename ${transcodeDir}/stream_%v/data%03d.ts \
     // ? Send file to client
     return Bun.file(oggPath);
-    //return new Stream(async (stream) => {});
-    //return true;
+    // return new Stream(async (stream) => {
+    //   stream.send(`${count}. ${path}`);
+    // });
   } catch (err: any) {
     return err.message;
   }
