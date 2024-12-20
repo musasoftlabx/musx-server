@@ -1,13 +1,12 @@
-import { SERVER_URL } from "./../../../mobile/musx/app/store";
 import { execSync } from "child_process";
 import { existsSync, mkdirSync } from "fs";
 import { emptyDirSync } from "fs-extra";
 
-export type Transcode = { query: { path: string } };
+export type Transcode = { query: { path: string; duration: number } };
 
 export default async function transcode(params: Transcode) {
   const {
-    query: { path },
+    query: { path, duration },
   } = params;
 
   const transcodeDir = "Transcodes";
@@ -30,7 +29,7 @@ export default async function transcode(params: Transcode) {
               -hls_time 1 \
               -hls_flags independent_segments \
               -hls_segment_filename ${transcodeDir}/data%03d.ts \
-              -hls_list_size 180 \
+              -hls_list_size ${duration} \
               -f hls \
               "${transcodeHeaderFile}"
             `);
