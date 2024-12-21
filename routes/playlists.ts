@@ -34,54 +34,57 @@ function formatTime(seconds: number) {
     .replace(/\b(\d)\b/g, "0$1");
 }
 
-export const playlistsQuery = (limit: number) =>
-  DB.query(
-    `SELECT * FROM playlists ORDER BY id DESC${
-      limit > 0 ? " LIMIT " + limit : ""
-    }`
-  ).all();
-
-export default function playlists() {
+export default function playlists(limit: number) {
   // ? Get playlists
-  let playlists: PlaylistsProps = <PlaylistsProps>playlistsQuery(0);
+  let playlists: PlaylistsProps = <PlaylistsProps>(
+    DB.query(
+      `SELECT * FROM playlists ORDER BY id DESC${
+        limit > 0 ? " LIMIT " + limit : ""
+      }`
+    ).all()
+  );
 
   // ? Get playlist tracks for each playlist
   playlists.forEach(({ id }, i) => {
     playlists[i].tracks = DB.query(
       `SELECT COUNT(trackId) tracks
-      FROM playlistTracks
-      JOIN tracks
-      ON trackId = tracks.id
-      WHERE playlistId = ${id}`
+        FROM playlistTracks
+        JOIN tracks
+        ON trackId = tracks.id
+        WHERE playlistId = ${id}
+      `
     ).values()[0][0] as number;
 
     playlists[i].size = `${byteSize(
       DB.query(
         `SELECT SUM(size) size
-      FROM playlistTracks
-      JOIN tracks
-      ON trackId = tracks.id
-      WHERE playlistId = ${id}`
+          FROM playlistTracks
+          JOIN tracks
+          ON trackId = tracks.id
+          WHERE playlistId = ${id}
+        `
       ).values()[0][0] as number
     )}`;
 
     playlists[i].duration = formatTime2(
       DB.query(
         `SELECT SUM(duration) duration
-      FROM playlistTracks
-      JOIN tracks
-      ON trackId = tracks.id
-      WHERE playlistId = ${id}`
+          FROM playlistTracks
+          JOIN tracks
+          ON trackId = tracks.id
+          WHERE playlistId = ${id}
+        `
       ).values()[0][0] as number
     );
 
     playlists[i].artworks = DB.query(
       `SELECT ('${ARTWORK_URL}' || artwork) artwork
-      FROM playlistTracks
-      JOIN tracks
-      ON trackId = tracks.id
-      WHERE playlistId = ${id}
-      LIMIT 4`
+        FROM playlistTracks
+        JOIN tracks
+        ON trackId = tracks.id
+        WHERE playlistId = ${id}
+        LIMIT 4
+      `
     )
       .all()
       .map(({ artwork }: any) => artwork);

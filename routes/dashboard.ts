@@ -1,5 +1,5 @@
 import { DB, AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "../";
-import { playlistsQuery } from "./playlists";
+import playlists from "./playlists";
 import libraryCount from "./libraryCount";
 
 export default function dashboard() {
@@ -73,7 +73,7 @@ export default function dashboard() {
     recentlyAdded,
     recentlyPlayed,
     //recentlyPlayed: [...new Set(recentlyPlayed)],
-    playlists: playlistsQuery(10),
+    playlists: playlists(10),
     mostPlayed,
     stats: libraryCount(),
   };
