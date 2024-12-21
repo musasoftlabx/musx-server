@@ -34,15 +34,16 @@ function formatTime(seconds: number) {
     .replace(/\b(\d)\b/g, "0$1");
 }
 
-export default function playlists({ limit = 0 }: { limit: number }) {
+export const playlistsQuery = (limit: number) =>
+  DB.query(
+    `SELECT * FROM playlists ORDER BY id DESC${
+      limit > 0 ? " LIMIT " + limit : ""
+    }`
+  ).all();
+
+export default function playlists() {
   // ? Get playlists
-  let playlists: PlaylistsProps = <PlaylistsProps>(
-    DB.query(
-      `SELECT * FROM playlists ORDER BY id DESC${
-        limit > 0 ? " LIMIT " + limit : ""
-      }`
-    ).all()
-  );
+  let playlists: PlaylistsProps = <PlaylistsProps>playlistsQuery(0);
 
   // ? Get playlist tracks for each playlist
   playlists.forEach(({ id }, i) => {
