@@ -25,7 +25,7 @@ export default async function transcode(params: Transcode) {
   !existsSync(transcodeDir) && mkdirSync(transcodeDir, { recursive: true });
 
   // ? Empty the directory
-  emptyDirSync(`${transcodeDir}`);
+  //emptyDirSync(`${transcodeDir}`);
 
   try {
     // ? Convert into HLS chunks
