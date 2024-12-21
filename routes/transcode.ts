@@ -4,7 +4,7 @@ import { emptyDirSync } from "fs-extra";
 
 export type Transcode = {
   error: any;
-  query: { path: string; duration: number; bitrate: number };
+  query: { path: string; duration: number; bitrate: string };
 };
 
 export default async function transcode(params: Transcode) {
@@ -18,7 +18,8 @@ export default async function transcode(params: Transcode) {
   const transcodeHeaderFile = `${transcodeDir}/${path
     .split("/")
     .slice(-1)}`.replace(".mp3", ".m3u8");
-  const conversion = !bitrate ? "-codec: copy" : `-b:a ${bitrate}k`;
+  const conversion =
+    bitrate === "Max" ? "-codec: copy" : `-b:a ${Number(bitrate)}k`;
 
   // ? Check if Transcodes directory exists. If not create it
   !existsSync(transcodeDir) && mkdirSync(transcodeDir, { recursive: true });
