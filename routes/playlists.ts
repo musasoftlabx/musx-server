@@ -39,7 +39,7 @@ export default function playlists({ limit = 0 }: { limit: number }) {
   let playlists: PlaylistsProps = <PlaylistsProps>(
     DB.query(
       `SELECT * FROM playlists ORDER BY id DESC${
-        limit > 0 && " LIMIT " + limit
+        limit > 0 ? " LIMIT " + limit : ""
       }`
     ).all()
   );
