@@ -31,7 +31,6 @@ export default async function transcode(params: Transcode) {
     // ? Convert into HLS chunks
     execSync(`ffmpeg -i "${mp3Path}" \
               -map 0:a \
-              -preset veryfast \
               ${conversion} \
               -hls_time 1 \
               -hls_flags independent_segments \
