@@ -41,6 +41,7 @@ import deletePlaylistTrack, {
   DeletePlaylistTrack,
 } from "./routes/deletePlaylistTrack";
 import transcode, { Transcode } from "./routes/transcode";
+import lastPlaylist from "./routes/lastPlaylist";
 
 init();
 
@@ -91,6 +92,7 @@ const app = new Elysia()
   .get("/artist/:artist", (params) => artist(params))
   .get("/artist/:artist/album/:album", (params) => album(params))
   .get("/playlists", () => playlists)
+  .get("/lastPlaylist", () => lastPlaylist)
   .get("/trackMetadata/:id", (params) => trackMetadata(params))
   .get("/playlist/:id", (params) => playlist(params))
   .get("/plays", (params) => plays(params))
