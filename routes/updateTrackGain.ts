@@ -13,11 +13,13 @@ export default function updateTrackGain(params: TrackGain) {
     params: { trackId, path, decibels },
   } = params;
 
+  console.log(params);
+
   const audioPath = `./Music/${path}`;
 
   try {
     execSync(`ffmpeg -i ${audioPath} -af "volume=${decibels}dB" ${audioPath}`);
-    return "ok";
+    return params;
     // return DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
     //   trackId,
     //   decibels,
