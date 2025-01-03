@@ -95,6 +95,17 @@ export default async function init() {
     )`
   );
 
+  DB.exec(
+    `CREATE TABLE IF NOT EXISTS trackGains (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      trackId INTEGER,
+      decibels INTEGER,
+      alteredBy VARCHAR(20),
+      alteredOn DATETIME,
+      FOREIGN KEY ("trackId") REFERENCES "tracks" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    )`
+  );
+
   //DB.exec(`ALTER TABLE playlistTracks ADD COLUMN position INTEGER`);
   //DB.exec(`ALTER TABLE playlistTracks DROP COLUMN priority`);
 
