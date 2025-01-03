@@ -4,13 +4,13 @@ import dayjs from "dayjs";
 
 export type TrackGain = {
   error: any;
-  query: { trackId: number; path: string; decibels: number };
+  params: { trackId: number; path: string; decibels: number };
 };
 
 export default function updateTrackGain(params: TrackGain) {
   const {
     error,
-    query: { trackId, path, decibels },
+    params: { trackId, path, decibels },
   } = params;
 
   const audioPath = `./Music/${path}`;
