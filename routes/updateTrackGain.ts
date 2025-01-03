@@ -17,9 +17,11 @@ export default function updateTrackGain(params: TrackGain) {
 
   try {
     execSync(
-      `ffmpeg -i "${audioPath}" -codec: libopus -af "volume=${decibels}dB" "${audioPath}"`
+      `ffmpeg -i "${audioPath}" \
+      -codec: libmp3lame \
+      -af "volume=${decibels}dB" \
+      "${audioPath}"`
     );
-    return params.body;
     // return DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
     //   trackId,
     //   decibels,
