@@ -13,17 +13,17 @@ export default function updateTrackGain(params: TrackGain) {
     body: { trackId, path, decibels },
   } = params;
 
-  console.log(params);
-
   const audioPath = `./Music/${path}`;
 
   try {
-    execSync(`ffmpeg -i ${audioPath} -af "volume=${decibels}dB" ${audioPath}`);
-    // return DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
-    //   trackId,
-    //   decibels,
-    //   dayjs().format("YYYY-MM-DD HH:mm:ss"),
-    // ]);
+    execSync(
+      `ffmpeg -i "${audioPath}" -af "volume=${decibels}dB" "${audioPath}"`
+    );
+    return DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
+      trackId,
+      decibels,
+      dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    ]);
   } catch (err: any) {
     return error(404, err.message);
   }
