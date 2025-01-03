@@ -2,12 +2,12 @@ import { execSync } from "child_process";
 import { DB } from "..";
 import dayjs from "dayjs";
 
-export type Transcode = {
+export type TrackGain = {
   error: any;
   query: { trackId: number; path: string; decibels: number };
 };
 
-export default function updateTrackGain(params: Transcode) {
+export default function updateTrackGain(params: TrackGain) {
   const {
     error,
     query: { trackId, path, decibels },

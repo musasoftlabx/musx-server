@@ -42,6 +42,7 @@ import deletePlaylistTrack, {
 } from "./routes/deletePlaylistTrack";
 import transcode, { Transcode } from "./routes/transcode";
 import lastPlaylist from "./routes/lastPlaylist";
+import updateTrackGain, { TrackGain } from "./routes/updateTrackGain";
 
 init();
 
@@ -109,6 +110,7 @@ const app = new Elysia()
   .patch("/extract", (params) => frameExtraction())
   .patch("/updatePalette", (params: Palette) => updatePalette(params))
   .put("/updateLyrics", (params: Lyrics) => updateLyrics(params))
+  .put("/updateTrackGain", (params: TrackGain) => updateTrackGain(params))
   .get("/searchHistory", searchHistory)
   .get("/search*", (params: Search) => search(params))
   .get("/recentlyAdded*", (params: RecentlyAdded) => recentlyAdded(params))
