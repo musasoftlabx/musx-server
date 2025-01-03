@@ -13,7 +13,7 @@ export default function updateTrackGain(params: TrackGain) {
     query: { trackId, path, decibels },
   } = params;
 
-  const audioPath = `Music/${path}`;
+  const audioPath = `./Music/${path}`;
 
   try {
     execSync(`ffmpeg -i ${audioPath} -af "volume=${decibels}dB" ${audioPath}`);
@@ -23,6 +23,6 @@ export default function updateTrackGain(params: TrackGain) {
       dayjs().format("YYYY-MM-DD HH:mm:ss"),
     ]);
   } catch (err: any) {
-    return error(502, err.message);
+    return error(404, err.message);
   }
 }
