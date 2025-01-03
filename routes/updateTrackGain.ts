@@ -4,13 +4,15 @@ import dayjs from "dayjs";
 
 export type TrackGain = {
   error: any;
-  params: { trackId: number; path: string; decibels: number };
+  params: { body: { trackId: number; path: string; decibels: number } };
 };
 
 export default function updateTrackGain(params: TrackGain) {
   const {
     error,
-    params: { trackId, path, decibels },
+    params: {
+      body: { trackId, path, decibels },
+    },
   } = params;
 
   console.log(params);
