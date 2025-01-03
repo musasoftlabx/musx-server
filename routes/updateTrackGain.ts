@@ -17,7 +17,7 @@ export default function updateTrackGain(params: TrackGain) {
 
   try {
     execSync(`ffmpeg -i ${audioPath} -af "volume=${decibels}dB" ${audioPath}`);
-    DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
+    return DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
       trackId,
       decibels,
       dayjs().format("YYYY-MM-DD HH:mm:ss"),
