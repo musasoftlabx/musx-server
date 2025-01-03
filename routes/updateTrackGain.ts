@@ -17,7 +17,7 @@ export default function updateTrackGain(params: TrackGain) {
 
   try {
     execSync(
-      `ffmpeg -i "${audioPath}" -af "volume=${decibels}dB" "${audioPath}_"`
+      `ffmpeg -i "${audioPath}" -af "volume=${decibels}dB" "${audioPath}"`
     );
     return params.body;
     // return DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
