@@ -40,7 +40,7 @@ export default async function transcode(params: Transcode) {
               -hls_flags independent_segments \
               -hls_segment_filename "${transcodeHeader.replace(
                 ".mp3",
-                ""
+                " - "
               )}%03d.ts" \
               -hls_list_size ${duration} \
               -f hls \
