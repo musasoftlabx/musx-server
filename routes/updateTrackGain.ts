@@ -1,6 +1,7 @@
 import { DB } from "..";
 import { execSync } from "child_process";
 import dayjs from "dayjs";
+import { renameSync, unlinkSync } from "fs";
 
 export type TrackGain = {
   error: any;
@@ -14,6 +15,7 @@ export default function updateTrackGain(params: TrackGain) {
   } = params;
 
   const trackPath = `./Music/${path}`;
+  const trackPathTemp = `./Music/${path.replace(`.mp3`, "_.mp3")}`;
   const waveformPath = `./Waveform/${path
     .replace(`.mp3`, "")
     .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
@@ -29,17 +31,23 @@ export default function updateTrackGain(params: TrackGain) {
       -id3v2_version 3 \
       -map 0:0 \
       -map 0:1 \
-      "${trackPath}"`
+      "${trackPathTemp}"`
     );
 
     // ? Regenerate the waveform
     execSync(
       `ffmpeg \
       -y \
-      -i "${trackPath}" \
+      -i "${trackPathTemp}" \
       -filter_complex showwavespic \
       -frames:v 1 "${waveformPath}"`
     );
+
+    // ? Delete the original track
+    unlinkSync(trackPath);
+
+    // ? Rename the temporary track
+    renameSync(trackPathTemp, trackPath);
 
     // ? Save adjusted track to DB
     return DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
