@@ -13,15 +13,29 @@ export default function updateTrackGain(params: TrackGain) {
     body: { trackId, path, decibels },
   } = params;
 
-  const audioPath = `./Music/${path}`;
+  const trackPath = `./Music/${path}`;
+  const waveformPath = `${path
+    .replace(`.mp3`, "")
+    .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
 
   try {
+    // ? Adjust the track gain
     execSync(
       `ffmpeg \
-      -i "${audioPath}" \
+      -i "${trackPath}" \
       -af "volume=${decibels}dB" \
-      "${audioPath}"`
+      "${trackPath}"`
     );
+
+    // ? Regenerate the waveform
+    execSync(
+      `ffmpeg \
+      -y -i "${trackPath}" \
+      -filter_complex showwavespic \
+      -frames:v 1 "${waveformPath}"`
+    );
+
+    // ? Save adjusted track to DB
     return DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
       trackId,
       decibels,
