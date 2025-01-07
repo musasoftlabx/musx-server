@@ -1,5 +1,5 @@
-import { execSync } from "child_process";
 import { DB } from "..";
+import { execSync } from "child_process";
 import dayjs from "dayjs";
 
 export type TrackGain = {
@@ -18,13 +18,15 @@ export default function updateTrackGain(params: TrackGain) {
     .replace(`.mp3`, "")
     .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
 
+  const tp2 = "Uganda/Various Artists (Uganda)/Tattoo2.mp3";
+
   try {
     // ? Adjust the track gain
     execSync(
       `ffmpeg \
       -i "${trackPath}" \
       -af "volume=${decibels}dB" \
-      "${trackPath}"`
+      "${tp2}"`
     );
 
     // ? Regenerate the waveform
