@@ -15,9 +15,8 @@ export default async function transcode(params: Transcode) {
 
   const transcodeDir = "Transcodes";
   const mp3Path = `Music/${path}`;
-  const transcodeHeaderFile = `${transcodeDir}/${path
-    .split("/")
-    .slice(-1)}`.replace(".mp3", ".m3u8");
+  const transcodeHeader = `${transcodeDir}/${path.split("/").slice(-1)}`;
+  const transcodeHeaderFile = transcodeHeader.replace(".mp3", ".m3u8");
   const conversion =
     bitrate === "Max" ? "-codec: copy" : `-b:a ${Number(bitrate)}k`;
 
@@ -25,7 +24,12 @@ export default async function transcode(params: Transcode) {
   !existsSync(transcodeDir) && mkdirSync(transcodeDir, { recursive: true });
 
   // ? Empty the directory
-  emptyDirSync(`${transcodeDir}`);
+  //emptyDirSync(`${transcodeDir}`);
+
+  // ? Remove previous transcodes
+  execSync(
+    `find "${transcodeDir}" -type f -print0 | xargs --null grep -Z -L "${transcodeHeader}" | xargs --null rm`
+  );
 
   try {
     // ? Convert into HLS chunks
@@ -34,9 +38,7 @@ export default async function transcode(params: Transcode) {
               ${conversion} \
               -hls_time 1 \
               -hls_flags independent_segments \
-              -hls_segment_filename ${transcodeDir}/${path
-      .split("/")
-      .slice(-1)}%03d.ts \
+              -hls_segment_filename ${transcodeHeader}%03d.ts \
               -hls_list_size ${duration} \
               -f hls \
               "${transcodeHeaderFile}"
