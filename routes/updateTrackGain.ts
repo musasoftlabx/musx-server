@@ -18,21 +18,25 @@ export default function updateTrackGain(params: TrackGain) {
     .replace(`.mp3`, "")
     .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
 
-  const tp2 = "./Music/Uganda/Various Artists (Uganda)/Tattoo3.mp3";
-
   try {
     // ? Adjust the track gain
     execSync(
       `ffmpeg \
+      -y \
       -i "${trackPath}" \
       -af "volume=${decibels}dB" \
-      "${tp2}"`
+      -b:a 320k \
+      -id3v2_version 3 \
+      -map 0:0 \
+      -map 0:1 \
+      "${trackPath}"`
     );
 
     // ? Regenerate the waveform
     execSync(
       `ffmpeg \
-      -y -i "${trackPath}" \
+      -y \
+      -i "${trackPath}" \
       -filter_complex showwavespic \
       -frames:v 1 "${waveformPath}"`
     );
