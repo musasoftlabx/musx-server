@@ -4,6 +4,7 @@ import { exec, execSync } from "child_process";
 import { existsSync } from "fs";
 import { Stream } from "@elysiajs/stream";
 import rgbHex from "rgb-hex";
+import { unlink } from "fs/promises";
 const ColorThief = require("colorthief");
 
 const colorsFromImage = async (path: string) => {
@@ -108,7 +109,7 @@ export default async function scan() {
     stream.close();
 
     const paths: any = DB.query(
-      `SELECT id, path, artwork, waveform FROM tracks`
+      `SELECT id, path, artwork, waveform, title, artists FROM tracks`
     ).all();
 
     for await (const { id, path, artwork } of paths) {
@@ -150,6 +151,23 @@ export default async function scan() {
             `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
           ).run([path, "WAVEFORM_EXTRACTION", null] as any);
         }
+    }
+
+    // ? Delete from DB if file not found
+    for await (const { id, path, artwork, waveform, title, artists } of paths) {
+      const trackPath = `./Music/${path
+        .replaceAll("$", "\\$")
+        .replaceAll("`", "\\`")}`;
+
+      if (!existsSync(trackPath)) {
+        DB.exec(`DELETE FROM tracks WHERE id = ${id}`);
+        DB.exec(
+          `INSERT INTO deletedTracks VALUES (NULL, ?, ?, ?, DateTime('now'))`,
+          [path, title, artists]
+        );
+        await unlink(`./Artwork/${artwork}`);
+        await unlink(`./Waveform/${waveform}`);
+      }
     }
   });
 }
