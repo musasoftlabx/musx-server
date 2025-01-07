@@ -14,11 +14,12 @@ export default function updateTrackGain(params: TrackGain) {
   } = params;
 
   const trackPath = `./Music/${path}`;
-  const waveformPath = `${path
+  const waveformPath = `./Waveform/${path
     .replace(`.mp3`, "")
     .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
 
   const tp2 = "Uganda/Various Artists (Uganda)/Tattoo2.mp3";
+  console.log(waveformPath);
 
   try {
     // ? Adjust the track gain
@@ -38,11 +39,11 @@ export default function updateTrackGain(params: TrackGain) {
     );
 
     // ? Save adjusted track to DB
-    return DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
-      trackId,
-      decibels,
-      dayjs().format("YYYY-MM-DD HH:mm:ss"),
-    ]);
+    // return DB.exec(`INSERT INTO trackGains VALUES (NULL, ?, ?, NULL, ?)`, [
+    //   trackId,
+    //   decibels,
+    //   dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    // ]);
   } catch (err: any) {
     return error(404, err.message);
   }
