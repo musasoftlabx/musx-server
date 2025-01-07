@@ -4,13 +4,13 @@ import { emptyDirSync } from "fs-extra";
 
 export type Transcode = {
   error: any;
-  query: { path: string; duration: number; bitrate: string };
+  query: { trackId: number; path: string; duration: number; bitrate: string };
 };
 
 export default async function transcode(params: Transcode) {
   const {
     error,
-    query: { path, duration, bitrate },
+    query: { trackId, path, duration, bitrate },
   } = params;
 
   const transcodeDir = "Transcodes";
@@ -34,7 +34,7 @@ export default async function transcode(params: Transcode) {
               ${conversion} \
               -hls_time 1 \
               -hls_flags independent_segments \
-              -hls_segment_filename ${transcodeDir}/chunk%03d.ts \
+              -hls_segment_filename ${transcodeDir}/${trackId}%03d.ts \
               -hls_list_size ${duration} \
               -f hls \
               "${transcodeHeaderFile}"
