@@ -33,19 +33,18 @@ export default async function transcode(params: Transcode) {
 
   try {
     // ? Convert into HLS chunks
-    execSync(`ffmpeg -i "${mp3Path}" \
-              -map 0:a \
-              ${conversion} \
-              -hls_time 1 \
-              -hls_flags independent_segments \
-              -hls_segment_filename "${transcodeHeader.replace(
-                ".mp3",
-                " - "
-              )}%03d.ts" \
-              -hls_list_size ${duration} \
-              -f hls \
-              "${transcodeHeaderFile}"
-            `);
+    execSync(
+      `ffmpeg \
+      -i "${mp3Path}" \
+      -map 0:a \
+      ${conversion} \
+      -hls_time 1 \
+      -hls_flags independent_segments \
+      -hls_segment_filename "${transcodeHeader.replace(".mp3", " - ")}%03d.ts" \
+      -hls_list_size ${duration} \
+      -f hls \
+      "${transcodeHeaderFile}"`
+    );
     // ? Show file contents to client
     return Bun.file(transcodeHeaderFile);
   } catch (err: any) {
