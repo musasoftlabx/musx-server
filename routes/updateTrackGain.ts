@@ -18,7 +18,7 @@ export default function updateTrackGain(params: TrackGain) {
     .replace(`.mp3`, "")
     .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
 
-  const tp2 = "Uganda/Various Artists (Uganda)/Tattoo2.mp3";
+  const tp2 = "./Music/Uganda/Various Artists (Uganda)/Tattoo2.mp3";
   console.log(waveformPath);
 
   try {
