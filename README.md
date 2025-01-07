@@ -28,6 +28,7 @@ https://ffmpeg.org/releases/?C=M;O=D
 > ./configure --disable-x86asm
 > make
 > make install
+> ./configure --enable-libmp3lame --disable-x86asm
 
 Also check https://ultahost.com/knowledge-base/install-ffmpeg-on-ubuntu/ incase installation fails
 
