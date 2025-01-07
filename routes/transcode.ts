@@ -27,9 +27,9 @@ export default async function transcode(params: Transcode) {
   //emptyDirSync(`${transcodeDir}`);
 
   // ? Remove previous transcodes
-  execSync(
-    `find "${transcodeDir}" -type f -print0 | xargs --null grep -Z -L "${transcodeHeader}" | xargs --null rm`
-  );
+  // execSync(
+  //   `find "${transcodeDir}" -type f -print0 | xargs --null grep -Z -L "${transcodeHeader}" | xargs --null rm`
+  // );
 
   try {
     // ? Convert into HLS chunks
