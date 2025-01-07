@@ -4,13 +4,13 @@ import { emptyDirSync } from "fs-extra";
 
 export type Transcode = {
   error: any;
-  query: { trackId: number; path: string; duration: number; bitrate: string };
+  query: { path: string; duration: number; bitrate: string };
 };
 
 export default async function transcode(params: Transcode) {
   const {
     error,
-    query: { trackId, path, duration, bitrate },
+    query: { path, duration, bitrate },
   } = params;
 
   const transcodeDir = "Transcodes";
