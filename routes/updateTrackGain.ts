@@ -19,7 +19,6 @@ export default function updateTrackGain(params: TrackGain) {
     execSync(
       `ffmpeg \
       -i "${audioPath}" \
-      -codec: mp3 \
       -af "volume=${decibels}dB" \
       "${audioPath}"`
     );
