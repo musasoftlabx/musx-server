@@ -155,11 +155,7 @@ export default async function scan() {
 
     // ? Delete from DB if file not found
     for await (const { id, path, artwork, waveform, title, artists } of paths) {
-      const trackPath = `./Music/${path
-        .replaceAll("$", "\\$")
-        .replaceAll("`", "\\`")}`;
-
-      if (!existsSync(trackPath)) {
+      if (!existsSync(`./Music/${path}`)) {
         DB.exec(`DELETE FROM tracks WHERE id = ${id}`);
         DB.exec(
           `INSERT INTO deletedTracks VALUES (NULL, ?, ?, ?, DateTime('now'))`,
