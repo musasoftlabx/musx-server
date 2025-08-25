@@ -20,7 +20,8 @@ export default async function artist(params: TParams) {
         ('${WAVEFORM_URL}' || waveform) AS waveform,
         palette
       FROM tracks
-      WHERE albumArtist = ? AND album = ?`
+      WHERE albumArtist = ? AND album = ?
+      ORDER BY track`
     ).all([decodeURIComponent(artist), decodeURIComponent(album)] as any);
   } catch (err: any) {
     return error(500, {
