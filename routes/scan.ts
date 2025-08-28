@@ -1,10 +1,11 @@
-import { DB } from "..";
+import { dateTime, DB } from "..";
 import { Glob } from "bun";
 import { exec, execSync } from "child_process";
 import { existsSync } from "fs";
 import { Stream } from "@elysiajs/stream";
 import rgbHex from "rgb-hex";
 import { unlink } from "fs/promises";
+import dayjs from "dayjs";
 const ColorThief = require("colorthief");
 
 const colorsFromImage = async (path: string) => {
@@ -157,10 +158,12 @@ export default async function scan() {
     for await (const { id, path, artwork, waveform, title, artists } of paths) {
       if (!existsSync(`./Music/${path}`)) {
         DB.exec(`DELETE FROM tracks WHERE id = ${id}`);
-        DB.exec(
-          `INSERT INTO deletedTracks VALUES (NULL, ?, ?, ?, DateTime('now'))`,
-          [path, title, artists]
-        );
+        DB.exec(`INSERT INTO deletedTracks VALUES (NULL, ?, ?, ?, ?)`, [
+          path,
+          title,
+          artists,
+          dateTime,
+        ]);
         await unlink(`./Artwork/${artwork}`);
         await unlink(`./Waveform/${waveform}`);
       }

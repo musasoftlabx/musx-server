@@ -43,6 +43,7 @@ import deletePlaylistTrack, {
 import transcode, { Transcode } from "./routes/transcode";
 import lastPlaylist from "./routes/lastPlaylist";
 import updateTrackGain, { TrackGain } from "./routes/updateTrackGain";
+import dayjs from "dayjs";
 
 init();
 
@@ -53,6 +54,7 @@ export const ARTWORK_URL = `${URL}/Artwork/`;
 export const WAVEFORM_URL = `${URL}/Waveform/`;
 export const tracksTableColumns = `path, syncDate, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder, artwork, waveform, palette`;
 export const playlistTableColumns = `${tracksTableColumns}, startsAt, endsAt, addedOn`;
+export const dateTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
 
 //DB.exec("PRAGMA journal_mode = WAL;");
 

@@ -33,7 +33,7 @@ export default function dashboard() {
     `SELECT
      DISTINCT trackId id,
      ('${AUDIO_URL}' || path) url,
-     path, title, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
+     path, title, album, albumArtist, artists, genre, year, track, rating, plays, bitrate, size, duration, format, channels, channelLayout, sampleRate, encoder,
      ('${ARTWORK_URL}' || artwork) artwork,
      ('${WAVEFORM_URL}' || waveform) waveform,
      palette
