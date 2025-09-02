@@ -1,6 +1,6 @@
-import { DB } from "..";
+import byteSize from "byte-size";
 
-import { AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
+import { DB, AUDIO_URL, ARTWORK_URL, WAVEFORM_URL } from "..";
 
 export default async function list({ params }: { params: { "*": string } }) {
   const decoded = decodeURI(params["*"]);
@@ -25,6 +25,13 @@ export default async function list({ params }: { params: { "*": string } }) {
       folders.push({
         name: path,
         path: `${entry.split("/").slice(0, -1).join("/")}/`,
+        size: DB.query(
+          `SELECT SUM(size) AS size FROM tracks WHERE path = "${entry}${path}"`
+        ).get(),
+        // albums.map((album: any) => ({
+        //   ...album,
+        //   size: `${byteSize(album.size)}`,
+        // })),
       });
     else
       files.push(
