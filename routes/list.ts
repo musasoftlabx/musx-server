@@ -21,10 +21,6 @@ export default async function list({ params }: { params: { "*": string } }) {
   const files = [];
 
   for await (const path of paths) {
-    // const count = DB.query(
-    //   `SELECT SUM(size) AS size FROM tracks WHERE path LIKE "%${entry}${path}%"`
-    // ).values()[0][0] as number;
-
     const details = DB.query(
       `SELECT COUNT(id) as totalFiles, SUM(size) AS totalSize FROM tracks WHERE path LIKE "%${entry}${path}%"`
     ).get() as { totalFiles: number; totalSize: number };
