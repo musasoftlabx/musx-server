@@ -26,8 +26,8 @@ export default async function list({ params }: { params: { "*": string } }) {
         name: path,
         path: `${entry.split("/").slice(0, -1).join("/")}/`,
         size: DB.query(
-          `SELECT SUM(size) AS size FROM tracks WHERE path LIKE "%${entry}${path}"`
-        ).get(),
+          `SELECT SUM(size) AS size FROM tracks WHERE path LIKE "%${entry}${path}%"`
+        ).values()[0],
         // albums.map((album: any) => ({
         //   ...album,
         //   size: `${byteSize(album.size)}`,
