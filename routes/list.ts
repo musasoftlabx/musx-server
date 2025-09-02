@@ -21,17 +21,15 @@ export default async function list({ params }: { params: { "*": string } }) {
   const files = [];
 
   for await (const path of paths) {
+    const size = DB.query(
+      `SELECT SUM(size) AS size FROM tracks WHERE path LIKE "%${entry}${path}%"`
+    ).values()[0][0] as number;
+
     if (!path.includes(".mp3"))
       folders.push({
         name: path,
         path: `${entry.split("/").slice(0, -1).join("/")}/`,
-        size: DB.query(
-          `SELECT SUM(size) AS size FROM tracks WHERE path LIKE "%${entry}${path}%"`
-        ).values()[0],
-        // albums.map((album: any) => ({
-        //   ...album,
-        //   size: `${byteSize(album.size)}`,
-        // })),
+        size: `${byteSize(size)}`,
       });
     else
       files.push(
