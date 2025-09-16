@@ -55,6 +55,7 @@ export default async function refreshMetadata(params: TParams) {
 
           // ? Destructure
           const {
+            tags,
             bit_rate: bitrate,
             size,
             duration,
@@ -66,6 +67,13 @@ export default async function refreshMetadata(params: TParams) {
             DB.query(
               `UPDATE tracks SET
                 syncDate = DateTime('now'),
+                title = ?,
+                album = ?,
+                albumArtist = ?,
+                artists = ?,
+                genre = ?,
+                year = ?,
+                track = ?,
                 bitrate = ?,
                 size = ?,
                 duration = ?,
@@ -77,6 +85,13 @@ export default async function refreshMetadata(params: TParams) {
               WHERE path = ?
               `
             ).run([
+              tags?.title,
+              tags?.album,
+              tags?.album_artist,
+              tags?.artist,
+              tags?.genre,
+              tags?.date,
+              tags?.track,
               bitrate,
               size,
               duration,
