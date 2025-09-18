@@ -43,6 +43,7 @@ import deletePlaylistTrack, {
 import transcode, { Transcode } from "./routes/transcode";
 import lastPlaylist from "./routes/lastPlaylist";
 import updateTrackGain, { TrackGain } from "./routes/updateTrackGain";
+import generateImageAI, { Prompt } from "./routes/generateImageAI";
 import dayjs from "dayjs";
 
 init();
@@ -101,6 +102,7 @@ const app = new Elysia()
   .get("/plays", (params) => plays(params))
   .get("/libraryCount", libraryCount)
   .post("/refreshMetadata", (params) => refreshMetadata(params))
+  .post("/generateImageAI", (params: Prompt) => generateImageAI(params))
   .post("/createPlaylist", (params) => createPlaylist(params))
   .post("/addPlaylistTrack", (params) => addPlaylistTrack(params))
   .patch("/rateTrack", (params: RateTrack) => rateTrack(params))
