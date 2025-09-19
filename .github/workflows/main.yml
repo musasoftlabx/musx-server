@@ -12,8 +12,8 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
-          script:
-            - cd /media
-            - git pull
-            - bun i
-            - pm2 restart index
+          script: |
+            cd /media
+            git pull
+            bun i
+            pm2 restart index
