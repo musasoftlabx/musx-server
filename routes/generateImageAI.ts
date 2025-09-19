@@ -26,7 +26,7 @@ export default async function generateImageAI(params: Prompt) {
     await writeFile("output.png", imageBuffer);
   } catch (err: any) {
     return error(500, {
-      subject: "Image Generation Error",
+      subject: "Image Generation Error ",
       body: err.message,
     });
   }
