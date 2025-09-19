@@ -13,7 +13,10 @@ export default async function generateImageAI(params: Prompt) {
   } = params;
 
   try {
-    const client = new OpenAI();
+    const client = new OpenAI({
+      apiKey:
+        "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",
+    });
 
     const response = await client.responses.create({
       model: "gpt-4.1",
