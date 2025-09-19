@@ -17,3 +17,6 @@ jobs:
             git pull
             bun i
             pm2 restart index
+
+# Fix Issue regarding deploying due to bun command
+# https://github.com/appleboy/ssh-action/issues/31#issuecomment-1006565847 (Comment out [ -z "$PS1" ] && return` in /etc/bash.bashrc)
