@@ -45,6 +45,7 @@ import lastPlaylist from "./routes/lastPlaylist";
 import updateTrackGain, { TrackGain } from "./routes/updateTrackGain";
 import generateImageAI, { Prompt } from "./routes/generateImageAI";
 import dayjs from "dayjs";
+import editPlaylist, { PlaylistProps } from "./routes/editPlaylist";
 
 init();
 
@@ -115,6 +116,7 @@ const app = new Elysia()
   .patch("/updatePalette", (params: Palette) => updatePalette(params))
   .put("/updateLyrics", (params: Lyrics) => updateLyrics(params))
   .put("/updateTrackGain", (params: TrackGain) => updateTrackGain(params))
+  .put("/editPlaylist", (params: PlaylistProps) => editPlaylist(params))
   .get("/searchHistory", searchHistory)
   .get("/search*", (params: Search) => search(params))
   .get("/recentlyAdded*", (params: RecentlyAdded) => recentlyAdded(params))
