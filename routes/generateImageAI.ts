@@ -15,7 +15,7 @@ export default async function generateImageAI(params: Prompt) {
   try {
     const client = new OpenAI({
       apiKey:
-        "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",
+        "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",
     });
 
     return await client.responses.create({
