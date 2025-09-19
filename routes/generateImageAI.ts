@@ -8,7 +8,7 @@ export type Prompt = {
 
 export default async function generateImageAI(params: Prompt) {
   const {
-    error,
+    //error,
     query: { prompt },
   } = params;
 
@@ -32,9 +32,13 @@ export default async function generateImageAI(params: Prompt) {
     // const imageBuffer = Buffer.from(img.data[0].b64_json, "base64");
     // await writeFile("output.png", imageBuffer);
   } catch (err: any) {
-    return error(500, {
+    return {
       subject: "Image Generation Error ",
       body: err.message,
-    });
+    };
+    // return error(500, {
+    //   subject: "Image Generation Error ",
+    //   body: err.message,
+    // });
   }
 }
