@@ -10,9 +10,7 @@ export default function deletePlaylistTrack(params: DeletePlaylistTrack) {
     query: { playlistId, position },
   } = params;
 
-  console.log(playlistId, position);
-
-  return DB.query(
+  return DB.exec(
     `DELETE FROM playlistTracks WHERE position = ${position} AND playlistId = ${playlistId}`
   );
 }
