@@ -47,6 +47,7 @@ import updateTrackGain, { TrackGain } from "./routes/updateTrackGain";
 import generateImageAI, { Prompt } from "./routes/generateImageAI";
 import dayjs from "dayjs";
 import editPlaylist, { PlaylistProps } from "./routes/editPlaylist";
+import deletePlaylist, { DeletePlaylist } from "./routes/deletePlaylist";
 
 init();
 
@@ -123,6 +124,7 @@ const app = new Elysia()
   .get("/search*", (params: Search) => search(params))
   .get("/recentlyAdded*", (params: RecentlyAdded) => recentlyAdded(params))
   .get("/recentlyPlayed*", (params: RecentlyPlayed) => recentlyPlayed(params))
+  .delete("/deletePlaylist", (params: DeletePlaylist) => deletePlaylist(params))
   .delete("/deletePlaylistTrack*", (params: DeletePlaylistTrack) =>
     deletePlaylistTrack(params)
   )
