@@ -124,7 +124,9 @@ const app = new Elysia()
   .get("/search*", (params: Search) => search(params))
   .get("/recentlyAdded*", (params: RecentlyAdded) => recentlyAdded(params))
   .get("/recentlyPlayed*", (params: RecentlyPlayed) => recentlyPlayed(params))
-  .delete("/deletePlaylist", (params: DeletePlaylist) => deletePlaylist(params))
+  .delete("/deletePlaylist*", (params: DeletePlaylist) =>
+    deletePlaylist(params)
+  )
   .delete("/deletePlaylistTrack*", (params: DeletePlaylistTrack) =>
     deletePlaylistTrack(params)
   )
