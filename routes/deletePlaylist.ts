@@ -10,7 +10,7 @@ export default function deletePlaylist(params: DeletePlaylist) {
     query: { playlistId },
   } = params;
 
-  console.log(playlistId);
+  console.log(typeof playlistId);
 
   return DB.exec(`DELETE FROM playlists WHERE id = ${playlistId}`);
 }
