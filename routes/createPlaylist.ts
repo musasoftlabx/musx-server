@@ -7,7 +7,7 @@ export default async function createPlaylist(params: TParams) {
 
   try {
     const { lastInsertRowid } = DB.run(
-      `INSERT INTO playlists VALUES (NULL, "${body.name}", "${body?.description}", DateTime('now'), DateTime('now'))`
+      `INSERT INTO playlists VALUES (NULL, "${body.name}", "${body?.description}", NULL, DateTime('now'), DateTime('now'))`
     );
 
     return lastInsertRowid;
