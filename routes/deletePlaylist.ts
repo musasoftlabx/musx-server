@@ -10,5 +10,5 @@ export default function deletePlaylist(params: DeletePlaylist) {
     query: { playlistId },
   } = params;
 
-  return DB.exec(`DELETE FROM playlists WHERE id = ${Number(playlistId)}`);
+  return DB.query(`DELETE FROM playlists WHERE id = ${Number(playlistId)}`);
 }
