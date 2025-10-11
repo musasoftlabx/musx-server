@@ -133,6 +133,9 @@ const app = new Elysia()
   .get("/mostPlayed*", (params: MostPlayed) => mostPlayed(params))
   .get("/transcode*", (params: Transcode) => transcode(params))
   .get("/*", (params) => list(params))
+  // .onError(({ code, error, path }) => {
+  //   return `${path} ${error} ${code}`;
+  // })
   .listen(3030);
 
 console.log(

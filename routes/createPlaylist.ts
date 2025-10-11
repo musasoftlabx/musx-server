@@ -1,13 +1,11 @@
+import { error } from "elysia";
 import { DB } from "..";
 
-type TParams = { body: any; set: any; error: any };
+type TParams = { body: any; set: any };
 
 export default async function createPlaylist(params: TParams) {
-  console.log(params);
   const {
     body: { name, description },
-    set,
-    error,
   } = params;
 
   try {
@@ -23,7 +21,7 @@ export default async function createPlaylist(params: TParams) {
       return lastInsertRowid;
     } else {
       return error(403, {
-        subject: "Playlist Creation Error",
+        subject: "Similar playlist exists",
         body: "A playlist with a similar name already exists",
       });
     }
