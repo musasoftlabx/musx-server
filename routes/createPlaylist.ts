@@ -10,11 +10,24 @@ export default async function createPlaylist(params: TParams) {
   } = params;
 
   try {
-    const { lastInsertRowid } = DB.run(
-      `INSERT INTO playlists VALUES (NULL, "${name}", "${description}", NULL, DateTime('now'), DateTime('now'))`
-    );
+    const exists = DB.query(
+      `SELECT COUNT(id) FROM playlists WHERE name = "${name}"`
+    ).values()[0][0];
 
-    return lastInsertRowid;
+    console.log("exists", exists);
+
+    if (exists)
+      return error(403, {
+        subject: "Playlist Creation Error",
+        body: "A playlist with a similar name already exists",
+      });
+    else {
+      const { lastInsertRowid } = DB.run(
+        `INSERT INTO playlists VALUES (NULL, "${name}", "${description}", NULL, DateTime('now'), DateTime('now'))`
+      );
+
+      return lastInsertRowid;
+    }
   } catch (err: any) {
     return error(500, {
       subject: "Playlist Creation Error",
