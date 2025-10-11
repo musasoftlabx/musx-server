@@ -1,4 +1,3 @@
-import { error } from "elysia";
 import { DB } from "..";
 
 type TParams = { body: any; set: any };
@@ -20,15 +19,15 @@ export default async function createPlaylist(params: TParams) {
 
       return lastInsertRowid;
     } else {
-      return error(403, {
+      return {
         subject: "Similar playlist exists",
         body: "A playlist with a similar name already exists",
-      });
+      };
     }
   } catch (err: any) {
-    return error(500, {
+    return {
       subject: "Playlist Creation Error",
       body: err.message,
-    });
+    };
   }
 }
