@@ -5,6 +5,7 @@ type TParams = { body: any; set: any };
 export default async function createPlaylist(params: TParams) {
   const {
     body: { name, description },
+    set,
   } = params;
 
   try {
@@ -19,12 +20,14 @@ export default async function createPlaylist(params: TParams) {
 
       return lastInsertRowid;
     } else {
+      set.status = 403;
       return {
         subject: "Similar playlist exists",
-        body: "A playlist with a similar name already exists",
+        body: "A playlist with a similar name already exists.",
       };
     }
   } catch (err: any) {
+    set.status = 502;
     return {
       subject: "Playlist Creation Error",
       body: err.message,
