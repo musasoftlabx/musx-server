@@ -3,11 +3,15 @@ import { DB } from "..";
 type TParams = { body: any; set: any; error: any };
 
 export default async function createPlaylist(params: TParams) {
-  const { body, set, error } = params;
+  const {
+    body: { name, description },
+    set,
+    error,
+  } = params;
 
   try {
     const { lastInsertRowid } = DB.run(
-      `INSERT INTO playlists VALUES (NULL, "${body.name}", "${body?.description}", NULL, DateTime('now'), DateTime('now'))`
+      `INSERT INTO playlists VALUES (NULL, "${name}", "${description}", NULL, DateTime('now'), DateTime('now'))`
     );
 
     return lastInsertRowid;
