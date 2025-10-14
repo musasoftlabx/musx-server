@@ -14,7 +14,7 @@ import deleteTrack from "./routes/deleteTrack";
 import addPlaylistTrack from "./routes/addPlaylistTrack";
 import playlists from "./routes/playlists";
 import createPlaylistWithTrack from "./routes/createPlaylistWithTrack";
-import createPlaylist from "./routes/createPlaylist";
+import createPlaylist, { CreatePlaylist } from "./routes/createPlaylist";
 import scan from "./routes/scan";
 import rescan from "./routes/rescan";
 import reset from "./routes/reset";
@@ -107,7 +107,7 @@ const app = new Elysia()
   .post("/refreshMetadata", (params) => refreshMetadata(params))
   .post("/generateImageAI", (params: Prompt) => generateImageAI(params))
   .post("/createPlaylistWithTrack", (params) => createPlaylistWithTrack(params))
-  .post("/createPlaylist", (params) => createPlaylist(params))
+  .post("/createPlaylist", (params: CreatePlaylist) => createPlaylist(params))
   .post("/addPlaylistTrack", (params) => addPlaylistTrack(params))
   .patch("/rateTrack", (params: RateTrack) => rateTrack(params))
   .patch("/updatePlayCount", (params: PlayCount) => updatePlayCount(params))

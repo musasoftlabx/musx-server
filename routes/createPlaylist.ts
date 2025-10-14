@@ -1,11 +1,13 @@
 import { DB } from "..";
+import { Context } from "elysia";
+import { CreatePlaylistBodyProps } from "../types";
 
-type TParams = { body: any; set: any };
+export type CreatePlaylist = Pick<Context, "set"> & CreatePlaylistBodyProps;
 
-export default async function createPlaylist(params: TParams) {
+export default async function createPlaylist(params: CreatePlaylist) {
   const {
-    body: { name, description },
     set,
+    body: { name, description },
   } = params;
 
   try {
@@ -20,17 +22,18 @@ export default async function createPlaylist(params: TParams) {
 
       return lastInsertRowid;
     } else {
-      set.status = 403;
+      set.status = "Forbidden";
       return {
         subject: "Similar playlist exists",
         body: "A playlist with a similar name already exists.",
       };
     }
-  } catch (err: any) {
+  } catch (err) {
     set.status = 502;
-    return {
-      subject: "Playlist Creation Error",
-      body: err.message,
-    };
+    if (err instanceof Error)
+      return {
+        subject: "Playlist creation error",
+        body: err.message,
+      };
   }
 }
