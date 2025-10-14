@@ -8,7 +8,7 @@ import dashboard from "./routes/dashboard";
 import album from "./routes/album";
 import artist from "./routes/artist";
 import artists from "./routes/artists";
-import rateTrack from "./routes/rateTrack";
+import rateTrack, { RateTrack } from "./routes/rateTrack";
 import updatePlayCount from "./routes/updatePlayCount";
 import deleteTrack from "./routes/deleteTrack";
 import addPlaylistTrack from "./routes/addPlaylistTrack";
@@ -37,7 +37,7 @@ import recentlyAdded, { RecentlyAdded } from "./routes/recentlyAdded";
 import recentlyPlayed, { RecentlyPlayed } from "./routes/recentlyPlayed";
 import mostPlayed, { MostPlayed } from "./routes/mostPlayed";
 
-import { Lyrics, Palette, PlayCount, RateTrack } from "./types";
+import { Lyrics, Palette, PlayCount } from "./types";
 import deletePlaylistTrack, {
   DeletePlaylistTrack,
 } from "./routes/deletePlaylistTrack";
