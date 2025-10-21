@@ -19,7 +19,9 @@ export default async function addPlaylistTrack(params: AddPlaylistTrack) {
   try {
     return DB.run(
       `INSERT INTO playlistTracks
-       VALUES (NULL, ${playlistId}, ${trackId}, ${position}, ${startsAt}, ${endsAt}, DateTime('now'))`
+       VALUES (NULL, ${playlistId}, ${trackId}, ${position}, ${
+        startsAt ?? null
+      }, ${endsAt ?? null}, DateTime('now'))`
     );
   } catch (err) {
     set.status = 502;
