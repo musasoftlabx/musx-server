@@ -11,7 +11,7 @@ import artists from "./routes/artists";
 import rateTrack, { RateTrack } from "./routes/rateTrack";
 import updatePlayCount from "./routes/updatePlayCount";
 import deleteTrack from "./routes/deleteTrack";
-import addPlaylistTrack from "./routes/addPlaylistTrack";
+import addPlaylistTrack, { AddPlaylistTrack } from "./routes/addPlaylistTrack";
 import playlists from "./routes/playlists";
 import createPlaylistWithTrack from "./routes/createPlaylistWithTrack";
 import createPlaylist, { CreatePlaylist } from "./routes/createPlaylist";
@@ -42,7 +42,7 @@ import deletePlaylistTrack, {
   DeletePlaylistTrack,
 } from "./routes/deletePlaylistTrack";
 import transcode, { Transcode } from "./routes/transcode";
-import lastPlaylist from "./routes/lastPlaylist";
+import lastModifiedPlaylist from "./routes/lastModifiedPlaylist";
 import updateTrackGain, { TrackGain } from "./routes/updateTrackGain";
 import generateImageAI, { Prompt } from "./routes/generateImageAI";
 import dayjs from "dayjs";
@@ -99,7 +99,7 @@ const app = new Elysia()
   .get("/artist/:artist", (params) => artist(params))
   .get("/artist/:artist/album/:album", (params) => album(params))
   .get("/playlists", () => playlists)
-  .get("/lastPlaylist", () => lastPlaylist)
+  .get("/lastModifiedPlaylist", () => lastModifiedPlaylist)
   .get("/trackMetadata/:id", (params) => trackMetadata(params))
   .get("/playlist/:id", (params) => playlist(params))
   .get("/plays", (params) => plays(params))
@@ -108,7 +108,9 @@ const app = new Elysia()
   .post("/generateImageAI", (params: Prompt) => generateImageAI(params))
   .post("/createPlaylistWithTrack", (params) => createPlaylistWithTrack(params))
   .post("/createPlaylist", (params: CreatePlaylist) => createPlaylist(params))
-  .post("/addPlaylistTrack", (params) => addPlaylistTrack(params))
+  .post("/addPlaylistTrack", (params: AddPlaylistTrack) =>
+    addPlaylistTrack(params)
+  )
   .patch("/rateTrack", (params: RateTrack) => rateTrack(params))
   .patch("/updatePlayCount", (params: PlayCount) => updatePlayCount(params))
   .delete("/deleteTrack/:id", (params) => deleteTrack(params))

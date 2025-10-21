@@ -1,8 +1,8 @@
 import { DB } from "..";
 import { Context } from "elysia";
-import { AddPlaylistTrackProps } from "../types";
+import { AddPlaylistTrackBodyProps } from "../types";
 
-export type AddPlaylistTrack = Pick<Context, "set"> & AddPlaylistTrackProps;
+export type AddPlaylistTrack = Pick<Context, "set"> & AddPlaylistTrackBodyProps;
 
 export default async function addPlaylistTrack(params: AddPlaylistTrack) {
   const {
