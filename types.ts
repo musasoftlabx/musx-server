@@ -6,3 +6,11 @@ export type CreatePlaylistBodyProps = {
 };
 export type DeletePlaylistBodyProps = { query: { playlistId: number } };
 export type RateTrackBodyProps = { body: { id: number; rating: number } };
+export type AddPlaylistTrackProps = {
+  body: {
+    playlistId: number;
+    trackId: number;
+    startsAt?: string;
+    endsAt?: string;
+  };
+};
