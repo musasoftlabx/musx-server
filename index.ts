@@ -91,7 +91,9 @@ const app = new Elysia()
   .use(html({ contentType: "text/html" }))
   .get("/html", () => scanner())
   .get("/scanner", () => Bun.file("scanner.tsx"))
-  .get("/scan", () => scan())
+  .get("/scan", function* () {
+    return scan();
+  })
   .get("/rescan", () => rescan())
   .get("/reset", () => reset())
   .get("/dashboard", () => dashboard())
@@ -109,13 +111,13 @@ const app = new Elysia()
   .post("/createPlaylistWithTrack", (params) => createPlaylistWithTrack(params))
   .post("/createPlaylist", (params: CreatePlaylist) => createPlaylist(params))
   .post("/addPlaylistTrack", (params: AddPlaylistTrack) =>
-    addPlaylistTrack(params)
+    addPlaylistTrack(params),
   )
   .patch("/rateTrack", (params: RateTrack) => rateTrack(params))
   .patch("/updatePlayCount", (params: PlayCount) => updatePlayCount(params))
   .delete("/deleteTrack/:id", (params) => deleteTrack(params))
   .put("/rearrangePlaylist", (params: RearrangePlaylist) =>
-    rearrangePlaylist(params)
+    rearrangePlaylist(params),
   )
   .patch("/extract", (params) => frameExtraction())
   .patch("/updatePalette", (params: Palette) => updatePalette(params))
@@ -127,10 +129,10 @@ const app = new Elysia()
   .get("/recentlyAdded*", (params: RecentlyAdded) => recentlyAdded(params))
   .get("/recentlyPlayed*", (params: RecentlyPlayed) => recentlyPlayed(params))
   .delete("/deletePlaylist*", (params: DeletePlaylist) =>
-    deletePlaylist(params)
+    deletePlaylist(params),
   )
   .delete("/deletePlaylistTrack*", (params: DeletePlaylistTrack) =>
-    deletePlaylistTrack(params)
+    deletePlaylistTrack(params),
   )
   .get("/mostPlayed*", (params: MostPlayed) => mostPlayed(params))
   .get("/transcode*", (params: Transcode) => transcode(params))
@@ -141,5 +143,5 @@ const app = new Elysia()
   .listen(3030);
 
 console.log(
-  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
+  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`,
 );
