@@ -15,8 +15,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            export PATH=$PATH:/home/musa/bun/bin
-            echo "@machmende1994." | sudo -S su -
+            echo ${{ secrets.VPS_PASSWORD }} | sudo -S su -
             cd /media
             git pull
             bun i
