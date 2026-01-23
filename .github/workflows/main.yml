@@ -11,10 +11,11 @@ jobs:
         env:
           env_var: ${{ vars.OPENAPI_KEY }}
         with:
-          host: "197.248.212.233"
-          username: "musa"
-          password: "@machmende1994."
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
           script: |
+            export PATH=$PATH:/home/musa/bun/bin
             cd /media
             git pull
             bun i
