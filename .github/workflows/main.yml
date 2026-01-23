@@ -17,6 +17,7 @@ jobs:
           script: |
             echo ${{ secrets.VPS_PASSWORD }} | sudo -S su -
             cd /media
+            ls
             git pull
             bun i
             pm2 restart index
