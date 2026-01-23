@@ -1,11 +1,11 @@
 import { dateTime, DB } from "..";
+import { Context } from "elysia";
 import { Glob } from "bun";
-import { exec, execSync } from "child_process";
+import { SQLQueryBindings } from "bun:sqlite";
+import { execSync } from "child_process";
 import { existsSync } from "fs";
-import { Stream } from "@elysiajs/stream";
 import rgbHex from "rgb-hex";
 import { unlink } from "fs/promises";
-import dayjs from "dayjs";
 const ColorThief = require("colorthief");
 
 const colorsFromImage = async (path: string) => {
@@ -17,26 +17,33 @@ const colorsFromImage = async (path: string) => {
   ]);
 };
 
-export default async function* () {
+export default async function* (params: Pick<Context, "set">) {
+  const { set } = params;
+
   let count = 0;
-  const glob = new Glob("**/*.{mp3}");
   const musicDirectory = "./Music";
 
-  for await (const entry of glob.scan({ cwd: musicDirectory })) {
-    const file = entry.replaceAll("$", "\\$").replaceAll("`", "\\`");
+  const glob = new Glob("**/*.{mp3}");
 
-    // ? Remove root directory from entry
-    const path = file.replaceAll("\\$", "$").replaceAll("\\`", "`");
+  // ? Scan files from glob output
+  for await (const path of glob.scan({ cwd: musicDirectory })) {
+    // ? Remove special characters from filename
+    const file = path.replaceAll("$", "\\$").replaceAll("`", "\\`");
 
-    const pathExists: any = DB.query(
+    // ? Add special characters from filename
+    //const path = file.replaceAll("\\$", "$").replaceAll("\\`", "`");
+
+    // ? Check if file has already been scanned before
+    const pathExists = DB.query(
       `SELECT COUNT(path) FROM tracks WHERE path = "${path}"`,
     ).values();
 
+    // ? If file has been scanned previously, ignore. Else, probe it
     if (!Boolean(pathExists[0][0])) {
-      yield `${count}. ${path}`;
-
       try {
         count++;
+
+        yield `${count}. ${path}`; // ? Send an output to client to show file being probed.
 
         const stdout: any = execSync(
           `ffprobe -v error -hide_banner -show_format -show_streams -output_format json "${musicDirectory}/${file}"`,
@@ -47,7 +54,7 @@ export default async function* () {
         const jsonString = atob(base64Data);
         const metadata = JSON.parse(jsonString);
 
-        // ? Destructure
+        // ? Destructure format from metadata
         const {
           tags,
           bit_rate: bitrate,
@@ -56,12 +63,12 @@ export default async function* () {
           format_name,
         } = metadata.format;
 
-        // ? Get the path and rename it to make artwork
+        // ? Create artwork filename from path
         const artwork = `${path
           .replace(`.${format_name}`, "")
           .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`; //\W+
 
-        // ? Generate waveform
+        // ? Create waveform filename from path
         const waveform = `${path
           .replace(`.${format_name}`, "")
           .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
@@ -89,25 +96,39 @@ export default async function* () {
             metadata?.streams[0]?.tags?.encoder ?? null,
             artwork,
             waveform,
-            null, //(await colorsFromImage(artworkPath)) ?? null,
+            null,
           ] as any);
-        } catch (err: any) {
-          console.log("DB:", err.message);
+        } catch (err) {
+          if (err instanceof Error)
+            DB.query(
+              `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
+            ).run([file, "DB_INSERTION", null] as any);
         }
-      } catch (err: any) {
-        yield `Error. ${entry}: ${err.message}`;
+      } catch (err) {
+        if (err instanceof Error) {
+          yield `Error. ${path}: ${err.message}`;
 
-        DB.query(
-          `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
-        ).run([file, "METADATA_EXTRACTION", null] as any);
+          DB.query(
+            `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
+          ).run([file, "METADATA_EXTRACTION", null] as any);
+        }
       }
     }
   }
 
-  const paths: any = DB.query(
-    `SELECT id, path, artwork, waveform, title, artists FROM tracks`,
-  ).all();
+  const paths = DB.query<
+    {
+      id: number;
+      path: string;
+      artwork: string;
+      waveform: string;
+      title: string;
+      artists: string;
+    },
+    SQLQueryBindings[]
+  >(`SELECT id, path, artwork, waveform, title, artists FROM tracks`).all();
 
+  // ? Loop through library to extract or update artworks
   for await (const { id, path, artwork } of paths) {
     const trackPath = `${musicDirectory}/${path
       .replaceAll("$", "\\$")
@@ -120,16 +141,20 @@ export default async function* () {
         execSync(
           `ffmpeg -v error -hide_banner -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`,
         );
-        DB.query(`UPDATE tracks SET palette = ? WHERE id = ${id}`).run([
-          await colorsFromImage(artworkPath),
-        ] as any);
-      } catch (err: any) {
-        DB.query(
-          `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
-        ).run([path, "IMAGE_EXTRACTION", null] as any);
+
+        DB.query<SQLQueryBindings, {}>(
+          `UPDATE tracks SET palette = ? WHERE id = ${id}`,
+        ).run([await colorsFromImage(artworkPath)]);
+      } catch (err) {
+        if (err instanceof Error) {
+          DB.query<SQLQueryBindings, {}>(
+            `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
+          ).run([path, "IMAGE_EXTRACTION", null]);
+        }
       }
   }
 
+  // ? Loop through library to extract or update waveforms
   for await (const { path, waveform } of paths) {
     const trackPath = `${musicDirectory}/${path
       .replaceAll("$", "\\$")
@@ -143,9 +168,11 @@ export default async function* () {
           `ffmpeg -v error -hide_banner -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`,
         );
       } catch (err) {
-        DB.query(
-          `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
-        ).run([path, "WAVEFORM_EXTRACTION", null] as any);
+        if (err instanceof Error) {
+          DB.query<SQLQueryBindings, {}>(
+            `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
+          ).run([path, "WAVEFORM_EXTRACTION", null]);
+        }
       }
   }
 
