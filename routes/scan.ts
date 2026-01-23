@@ -4,8 +4,8 @@ import { Glob } from "bun";
 import { SQLQueryBindings } from "bun:sqlite";
 import { execSync } from "child_process";
 import { existsSync } from "fs";
-import rgbHex from "rgb-hex";
 import { unlink } from "fs/promises";
+import rgbHex from "rgb-hex";
 const ColorThief = require("colorthief");
 
 const colorsFromImage = async (path: string) => {
@@ -75,7 +75,7 @@ export default async function* (params: Pick<Context, "set">) {
 
         // ? Insert record to DB
         try {
-          DB.query(
+          DB.query<SQLQueryBindings, {}>(
             `INSERT INTO tracks VALUES (NULL,?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,?,?,NULL)`,
           ).run([
             path,
@@ -97,20 +97,21 @@ export default async function* (params: Pick<Context, "set">) {
             artwork,
             waveform,
             null,
-          ] as any);
+          ]);
         } catch (err) {
           if (err instanceof Error)
-            DB.query(
+            DB.query<SQLQueryBindings, {}>(
               `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
-            ).run([file, "DB_INSERTION", null] as any);
+            ).run([file, "DB_INSERTION", null]);
         }
       } catch (err) {
         if (err instanceof Error) {
           yield `Error. ${path}: ${err.message}`;
 
-          DB.query(
+          DB.exec(
             `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
-          ).run([file, "METADATA_EXTRACTION", null] as any);
+            [file, "METADATA_EXTRACTION", null],
+          );
         }
       }
     }
@@ -146,11 +147,11 @@ export default async function* (params: Pick<Context, "set">) {
           `UPDATE tracks SET palette = ? WHERE id = ${id}`,
         ).run([await colorsFromImage(artworkPath)]);
       } catch (err) {
-        if (err instanceof Error) {
-          DB.query<SQLQueryBindings, {}>(
+        if (err instanceof Error)
+          DB.exec(
             `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
-          ).run([path, "IMAGE_EXTRACTION", null]);
-        }
+            [path, "IMAGE_EXTRACTION", null],
+          );
       }
   }
 
@@ -169,9 +170,10 @@ export default async function* (params: Pick<Context, "set">) {
         );
       } catch (err) {
         if (err instanceof Error) {
-          DB.query<SQLQueryBindings, {}>(
+          DB.exec(
             `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
-          ).run([path, "WAVEFORM_EXTRACTION", null]);
+            [path, "WAVEFORM_EXTRACTION", null],
+          );
         }
       }
   }
