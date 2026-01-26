@@ -149,10 +149,11 @@ export default async function* (params: Pick<Context, "set">) {
         ).run([await colorsFromImage(artworkPath)]);
       } catch (err) {
         if (err instanceof Error)
-          DB.exec(
-            `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
-            [path, "IMAGE_EXTRACTION", null],
-          );
+          DB.run(`INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`, [
+            path,
+            "IMAGE_EXTRACTION",
+            null,
+          ]);
       }
   }
 
