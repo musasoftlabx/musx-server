@@ -108,10 +108,11 @@ export default async function* (params: Pick<Context, "set">) {
         if (err instanceof Error) {
           yield `Error. ${path}: ${err.message}`;
 
-          DB.exec(
-            `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
-            [file, "METADATA_EXTRACTION", null],
-          );
+          DB.run(`INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`, [
+            file,
+            "METADATA_EXTRACTION",
+            null,
+          ]);
         }
       }
     }
@@ -170,10 +171,11 @@ export default async function* (params: Pick<Context, "set">) {
         );
       } catch (err) {
         if (err instanceof Error) {
-          DB.exec(
-            `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`,
-            [path, "WAVEFORM_EXTRACTION", null],
-          );
+          DB.run(`INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`, [
+            path,
+            "WAVEFORM_EXTRACTION",
+            null,
+          ]);
         }
       }
   }
@@ -181,8 +183,8 @@ export default async function* (params: Pick<Context, "set">) {
   // ? Delete from DB if file not found
   for await (const { id, path, artwork, waveform, title, artists } of paths) {
     if (!existsSync(`${musicDirectory}/${path}`)) {
-      DB.exec(`DELETE FROM tracks WHERE id = ${id}`);
-      DB.exec(`INSERT INTO deletedTracks VALUES (NULL, ?, ?, ?, ?)`, [
+      DB.run(`DELETE FROM tracks WHERE id = ${id}`);
+      DB.run(`INSERT INTO deletedTracks VALUES (NULL, ?, ?, ?, ?)`, [
         path,
         title,
         artists,
