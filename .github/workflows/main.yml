@@ -15,7 +15,10 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
+            echo ${{ secrets.VPS_PASSWORD }} | sudo -S su -
             cd /media
+            git config --global --add safe.directory /media
+            ls
             git pull
             bun i
             pm2 restart index

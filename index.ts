@@ -51,8 +51,8 @@ import deletePlaylist, { DeletePlaylist } from "./routes/deletePlaylist";
 
 init();
 
-export const IP = ip.address();
-export const URL = `http://${ip.address()}`;
+export const IP = "197.248.212.233"; //ip.address();
+export const URL = `http://${IP}`;
 export const AUDIO_URL = `${URL}/Music/`;
 export const ARTWORK_URL = `${URL}/Artwork/`;
 export const WAVEFORM_URL = `${URL}/Waveform/`;
@@ -91,7 +91,9 @@ const app = new Elysia()
   .use(html({ contentType: "text/html" }))
   .get("/html", () => scanner())
   .get("/scanner", () => Bun.file("scanner.tsx"))
-  .get("/scan", () => scan())
+  .get("/scan", function* (params) {
+    return scan(params);
+  })
   .get("/rescan", () => rescan())
   .get("/reset", () => reset())
   .get("/dashboard", () => dashboard())

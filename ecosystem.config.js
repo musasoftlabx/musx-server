@@ -3,13 +3,13 @@ module.exports = {
     {
       name: "Music Server",
       exec_mode: "cluster",
-      instances: 6,
-      script: "ts-node-esm index.ts",
+      instances: "max",
+      script: "ts-node index.ts",
       args: "start",
-      node_args: ["--max_old_space_size=4096 --time"],
+      node_args: ["--max_old_space_size=2048 --time"],
       watch: false,
       max_memory_restart: "4G",
-      env: { PORT: 3000 },
+      //env: { PORT: 3000 },
     },
   ],
 };
