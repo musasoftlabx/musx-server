@@ -1,5 +1,6 @@
 import { DB } from "..";
 import { existsSync, mkdirSync } from "fs";
+import subProcess from "child_process";
 
 export default async function init() {
   DB.exec("PRAGMA timezone = 'Africa/Nairobi';");
@@ -110,8 +111,32 @@ export default async function init() {
   //DB.exec(`ALTER TABLE playlistTracks DROP COLUMN priority`);
 
   // ? Create artwork & waveform directories if it doesn't exist
-  !existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
-  !existsSync("./Waveform") && mkdirSync("./Waveform", { recursive: true });
+  //!existsSync("./Artwork") && mkdirSync("./Artwork", { recursive: true });
+  //!existsSync("./Waveform") && mkdirSync("./Waveform", { recursive: true });
+
+  !existsSync("./Artwork") &&
+    subProcess.exec(
+      `ln -s /mnt/d/musx/Artwork /media/Artwork`,
+      (err, stdout, stderr) => {
+        if (err) console.error(err);
+        else {
+          console.log(`stdout: ${stdout.toString()}`);
+          console.log(`stderr: ${stderr.toString() || "No err"}`);
+        }
+      }
+    );
+
+  !existsSync("./Waveform") &&
+    subProcess.exec(
+      `ln -s /mnt/d/musx/Waveform /media/Waveform`,
+      (err, stdout, stderr) => {
+        if (err) console.error(err);
+        else {
+          console.log(`stdout: ${stdout.toString()}`);
+          console.log(`stderr: ${stderr.toString() || "No err"}`);
+        }
+      }
+    );
 
   //DB.query(`DROP TABLE IF EXISTS searchHistory`).run();
 }
