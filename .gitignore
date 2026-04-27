@@ -48,5 +48,20 @@ Artwork/
 Waveform/
 Transcodes/
 
+/Music/
+/Artwork/
+/Waveform/
+/Transcodes/
+
+Music
+Artwork
+Waveform
+Transcodes
+
+*.sqlite*
+*musx*
+
+/.pm2
+
 *.sqlite*
 *musx*
