@@ -15,13 +15,12 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            echo ${{ secrets.VPS_PASSWORD }} | sudo -S su -
             cd /media
             git config --global --add safe.directory /media
             ls
             git pull
-            sudo -E -S bun i
-            sudo -E -S pm2 restart index
+            bun i
+            pm2 restart index
 
 # Fix Issue regarding deploying due to bun command
 # https://github.com/appleboy/ssh-action/issues/31#issuecomment-1006565847 (Comment out [ -z "$PS1" ] && return` in /etc/bash.bashrc)
