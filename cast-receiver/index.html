@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Premium Audio Receiver</title>
+
+    <script src="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <main class="screen">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-mark">
+	          <img id="logo" src="logo.png" alt="Album artwork" class="logo" />
+	        </span>
+          <span>Musix</span>
+        </div>
+
+        <div class="live-status">
+          <span class="pulse"></span>
+          CHROMECAST AUDIO
+        </div>
+      </header>
+
+      <section class="player">
+        <div class="artwork-container">
+          <img id="artwork" src="artwork.png" alt="Album artwork" />
+        </div>
+
+        <div class="track-info">
+          <div class="eyebrow">NOW PLAYING</div>
+
+          <h1 id="title">Welcome</h1>
+
+          <h2 id="artist">Your music experience starts here</h2>
+
+          <p id="album"></p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="progress-section">
+          <span id="elapsed">00:00</span>
+
+          <div class="progress-track">
+            <div id="progress"></div>
+          </div>
+
+          <span id="total">00:00</span>
+        </div>
+
+        <div class="playback-status">
+          <span id="playbackState">READY TO PLAY</span>
+        </div>
+
+        <div class="footer-brand">AN EXCEPTIONAL LISTENING EXPERIENCE</div>
+      </footer>
+    </main>
+
+    <script src="receiver.js"></script>
+  </body>
+</html>
