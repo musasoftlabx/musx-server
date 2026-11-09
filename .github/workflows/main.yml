@@ -20,8 +20,8 @@ jobs:
             git config --global --add safe.directory /media
             ls
             git pull
-            echo ${{ secrets.VPS_PASSWORD }} | sudo /root/.bun/bin/bun i
-            echo ${{ secrets.VPS_PASSWORD }} | sudo /root/.bun/bin/pm2 restart index
+            sudo -S /root/.bun/bin/bun i
+            sudo -S /root/.bun/bin/pm2 restart index
 
 # Fix Issue regarding deploying due to bun command
 # https://github.com/appleboy/ssh-action/issues/31#issuecomment-1006565847 (Comment out [ -z "$PS1" ] && return` in /etc/bash.bashrc)
