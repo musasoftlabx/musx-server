@@ -51,8 +51,8 @@ import deletePlaylist, { DeletePlaylist } from "./routes/deletePlaylist";
 
 init();
 
-export const IP = "197.248.212.233"; //ip.address();
-export const URL = `http://${IP}`;
+export const IP = "musasoftlabs.com"; //ip.address();
+export const URL = `https://${IP}`;
 export const AUDIO_URL = `${URL}/Music/`;
 export const ARTWORK_URL = `${URL}/Artwork/`;
 export const WAVEFORM_URL = `${URL}/Waveform/`;
