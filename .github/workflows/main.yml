@@ -15,6 +15,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
+            echo ${{ secrets.VPS_PASSWORD }} | sudo -S su musa
             cd /media
             git config --global --add safe.directory /media
             ls
