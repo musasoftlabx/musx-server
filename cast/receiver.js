@@ -125,7 +125,7 @@ playerManager.addEventListener(
 playerManager.addEventListener(
   cast.framework.events.EventType.ERROR,
   (event) => {
-    playbackState.textContent = "PLAYBACK ERROR";
+    playbackState.textContent = "PLAYBACK ERRORSSSS";
 
     // 1. Create a new XMLHttpRequest object
     const xhr = new XMLHttpRequest();
