@@ -5,6 +5,12 @@ const playerManager = context.getPlayerManager();
 castDebugLogger.setEnabled(true);
 castDebugLogger.showDebugLogs(true);
 
+castDebugLogger.debug(
+  "Musix logger",
+  "Playable URL:",
+  playerManager.getMediaInformation()?.title
+);
+
 const artwork = document.getElementById("artwork");
 const title = document.getElementById("title");
 const artist = document.getElementById("artist");
