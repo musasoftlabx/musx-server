@@ -19,7 +19,7 @@ jobs:
             cd /media
             git config --global --add safe.directory /media
             ls
-            git fetch && git reset --hard @{u}
+            echo ${{ secrets.VPS_PASSWORD }} | sudo -S git fetch && git reset --hard @{u}
             echo ${{ secrets.VPS_PASSWORD }} | sudo -S /root/.bun/bin/bun i
             echo ${{ secrets.VPS_PASSWORD }} | sudo -S /root/.bun/bin/pm2 restart index.ts
 
