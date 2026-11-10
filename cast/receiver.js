@@ -109,26 +109,26 @@ playerManager.addEventListener(
   updateMetadata
 );
 
-// Playback updates
-playerManager.addEventListener(
-  cast.framework.events.EventType.PLAYER_STATE_CHANGED,
-  updatePlaybackState
-);
+// // Playback updates
+// playerManager.addEventListener(
+//   cast.framework.events.EventType.PLAYER_STATE_CHANGED,
+//   updatePlaybackState
+// );
 
-// Progress updates
-playerManager.addEventListener(
-  cast.framework.events.EventType.TIME_UPDATE,
-  updateProgress
-);
+// // Progress updates
+// playerManager.addEventListener(
+//   cast.framework.events.EventType.TIME_UPDATE,
+//   updateProgress
+// );
 
-// Handle receiver errors
-playerManager.addEventListener(
-  cast.framework.events.EventType.ERROR,
-  (event) => {
-    console.error("Cast playback error:", event);
-    playbackState.textContent = "PLAYBACK ERROR";
-  }
-);
+// // Handle receiver errors
+// playerManager.addEventListener(
+//   cast.framework.events.EventType.ERROR,
+//   (event) => {
+//     console.error("Cast playback error:", event);
+//     playbackState.textContent = "PLAYBACK ERROR";
+//   }
+// );
 
 // Configure supported controls
 playerManager.setSupportedMediaCommands(
