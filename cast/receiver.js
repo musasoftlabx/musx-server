@@ -103,24 +103,6 @@ function updatePlaybackState(event) {
   }
 }
 
-function downloadFile(filename, textContent) {
-  // 1. Create a Blob containing the text data
-  const blob = new Blob([textContent], { type: "text/plain" });
-
-  // 2. Create a temporary hidden anchor element
-  const element = document.createElement("a");
-  element.href = URL.createObjectURL(blob); // Create an ObjectURL pointing to the blob
-  element.download = filename; // Set the default filename
-
-  // 3. Trigger the click event to initiate download
-  document.body.appendChild(element);
-  element.click();
-
-  // 4. Clean up the DOM and memory
-  document.body.removeChild(element);
-  URL.revokeObjectURL(element.href);
-}
-
 // Metadata updates
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
@@ -143,8 +125,20 @@ playerManager.addEventListener(
 playerManager.addEventListener(
   cast.framework.events.EventType.ERROR,
   (event) => {
-    downloadFile("error.txt", JSON.stringify(event, null, 2));
-    console.error("Cast playback error:", event);
+    fetch("https://musasoftlabs.com:3000/cast-error", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        error: event.error,
+        mediaInformation: playerManager.getMediaInformation(),
+        currentTimeSec: playerManager.getCurrentTimeSec(),
+        durationSec: playerManager.getDurationSec(),
+      }),
+    }).catch((err) => {
+      console.error("Failed to report cast error:", err);
+    });
     playbackState.textContent = "PLAYBACK ERROR";
   }
 );

@@ -27,6 +27,7 @@ import plays from "./routes/plays";
 import libraryCount from "./routes/libraryCount";
 import list from "./routes/list";
 import refreshMetadata from "./routes/refreshMetadata";
+import castError from "./routes/castError";
 import rearrangePlaylist, {
   RearrangePlaylist,
 } from "./routes/rearrangePlaylist";
@@ -106,6 +107,7 @@ const app = new Elysia()
   .get("/playlist/:id", (params) => playlist(params))
   .get("/plays", (params) => plays(params))
   .get("/libraryCount", libraryCount)
+  .post("/castError", (params) => castError(params))
   .post("/refreshMetadata", (params) => refreshMetadata(params))
   .post("/generateImageAI", (params: Prompt) => generateImageAI(params))
   .post("/createPlaylistWithTrack", (params) => createPlaylistWithTrack(params))
