@@ -18,6 +18,7 @@ jobs:
             cd /media
             git config --global --add safe.directory /media
             ls
+            echo ${{ secrets.VPS_PASSWORD }} | sudo -S git stash
             echo ${{ secrets.VPS_PASSWORD }} | sudo -S git pull
             echo ${{ secrets.VPS_PASSWORD }} | sudo -S /root/.bun/bin/bun i
             echo ${{ secrets.VPS_PASSWORD }} | sudo -S /root/.bun/bin/pm2 restart index.ts
