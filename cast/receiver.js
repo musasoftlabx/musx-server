@@ -5,7 +5,7 @@ const playerManager = context.getPlayerManager();
 castDebugLogger.setEnabled(true);
 castDebugLogger.showDebugLogs(true);
 
-castDebugLogger.debug(
+castDebugLogger.warn(
   "Musix logger",
   "Playable URL:",
   playerManager.getMediaInformation()?.title
@@ -115,11 +115,11 @@ playerManager.addEventListener(
 //   updatePlaybackState
 // );
 
-// // Progress updates
-// playerManager.addEventListener(
-//   cast.framework.events.EventType.TIME_UPDATE,
-//   updateProgress
-// );
+// Progress updates
+playerManager.addEventListener(
+  cast.framework.events.EventType.TIME_UPDATE,
+  updateProgress
+);
 
 // // Handle receiver errors
 // playerManager.addEventListener(
