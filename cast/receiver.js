@@ -1,6 +1,9 @@
 const context = cast.framework.CastReceiverContext.getInstance();
-
+const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
 const playerManager = context.getPlayerManager();
+
+castDebugLogger.setEnabled(true);
+castDebugLogger.showDebugLogs(true);
 
 const artwork = document.getElementById("artwork");
 const title = document.getElementById("title");
