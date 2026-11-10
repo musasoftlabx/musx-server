@@ -125,22 +125,59 @@ playerManager.addEventListener(
 playerManager.addEventListener(
   cast.framework.events.EventType.ERROR,
   (event) => {
-    fetch("https://musasoftlabs.com:3000/castError", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        error: event.error,
-        mediaInformation: playerManager.getMediaInformation(),
-        currentTimeSec: playerManager.getCurrentTimeSec(),
-        durationSec: playerManager.getDurationSec(),
-      }),
-    }).catch((err) => {
-      console.error("Failed to report cast error:", err);
-    });
     playbackState.textContent = "PLAYBACK ERROR";
+
+    // 1. Create a new XMLHttpRequest object
+    const xhr = new XMLHttpRequest();
+    const url = "https://musasoftlabs.com:3000/castError";
+
+    // 2. Initialize the request as a POST and make it asynchronous
+    xhr.open("POST", url, true);
+
+    // 3. Set the Content-Type header to tell the server to expect JSON
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    // 4. Configure how to handle the server's response
+    xhr.onload = function () {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        // Parse and log the JSON response from the server
+        const responseData = JSON.parse(xhr.responseText);
+        console.log("Success:", responseData);
+      } else {
+        console.error("HTTP Error:", xhr.status, xhr.statusText);
+      }
+    };
+
+    // 5. Handle potential network-level errors
+    xhr.onerror = function () {
+      console.error("Network Error occurred.");
+    };
+
+    // 6. Prepare your JavaScript object
+    const payload = {
+      name: "Alex",
+      role: "Developer",
+      active: true,
+    };
+
+    // 7. Stringify the object and send the request
+    xhr.send(JSON.stringify(payload));
+
+    // fetch("https://musasoftlabs.com:3000/castError", {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     error: event.error,
+    //     mediaInformation: playerManager.getMediaInformation(),
+    //     currentTimeSec: playerManager.getCurrentTimeSec(),
+    //     durationSec: playerManager.getDurationSec(),
+    //   }),
+    // }).catch((err) => {
+    //   console.error("Failed to report cast error:", err);
+    // });
   }
 );
 
