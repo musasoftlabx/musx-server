@@ -125,7 +125,7 @@ playerManager.addEventListener(
 playerManager.addEventListener(
   cast.framework.events.EventType.ERROR,
   (event) => {
-    fetch("https://musasoftlabs.com:3000/cast-error", {
+    fetch("https://musasoftlabs.com:3000/castError", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
