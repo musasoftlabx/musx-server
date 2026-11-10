@@ -103,6 +103,24 @@ function updatePlaybackState(event) {
   }
 }
 
+function downloadFile(filename, textContent) {
+  // 1. Create a Blob containing the text data
+  const blob = new Blob([textContent], { type: "text/plain" });
+
+  // 2. Create a temporary hidden anchor element
+  const element = document.createElement("a");
+  element.href = URL.createObjectURL(blob); // Create an ObjectURL pointing to the blob
+  element.download = filename; // Set the default filename
+
+  // 3. Trigger the click event to initiate download
+  document.body.appendChild(element);
+  element.click();
+
+  // 4. Clean up the DOM and memory
+  document.body.removeChild(element);
+  URL.revokeObjectURL(element.href);
+}
+
 // Metadata updates
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
@@ -116,15 +134,16 @@ playerManager.addEventListener(
 // );
 
 // Progress updates
-playerManager.addEventListener(
-  cast.framework.events.EventType.TIME_UPDATE,
-  updateProgress
-);
+// playerManager.addEventListener(
+//   cast.framework.events.EventType.TIME_UPDATE,
+//   updateProgress
+// );
 
 // // Handle receiver errors
 playerManager.addEventListener(
   cast.framework.events.EventType.ERROR,
   (event) => {
+    downloadFile("error.txt", JSON.stringify(event, null, 2));
     console.error("Cast playback error:", event);
     playbackState.textContent = "PLAYBACK ERROR";
   }
