@@ -147,9 +147,10 @@ playerManager.addEventListener(
         currentTimeSec: playerManager.getCurrentTimeSec(),
         durationSec: playerManager.getDurationSec(),
       }),
-    }).catch((err) => {
-      console.error("Failed to report cast error:", err);
-    });
+    })
+      .then((response) => response.json())
+      .then((data) => console.log("Success:", data))
+      .catch((error) => console.error("Error:", error));
   }
 );
 
