@@ -142,11 +142,14 @@ playerManager.addEventListener(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        error: event.error,
-        mediaInformation: playerManager.getMediaInformation(),
-        currentTimeSec: playerManager.getCurrentTimeSec(),
-        durationSec: playerManager.getDurationSec(),
+        name: "Cast Receiver Error",
       }),
+      // body: JSON.stringify({
+      //   error: event.error,
+      //   mediaInformation: playerManager.getMediaInformation(),
+      //   currentTimeSec: playerManager.getCurrentTimeSec(),
+      //   durationSec: playerManager.getDurationSec(),
+      // }),
     })
       .then((response) => response.json())
       .then((data) => console.log("Success:", data))
