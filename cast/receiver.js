@@ -90,25 +90,14 @@ function updateProgress() {
   total.textContent = formatTime(duration);
 }
 
-function updatePlaybackState(event) {
-  const state = event.playerState;
-
-  switch (state) {
-    case cast.framework.messages.PlayerState.PLAYING:
-      playbackState.textContent = "NOW PLAYING";
-      break;
-
-    case cast.framework.messages.PlayerState.PAUSED:
-      playbackState.textContent = "PAUSED";
-      break;
-
-    case cast.framework.messages.PlayerState.BUFFERING:
-      playbackState.textContent = "BUFFERING";
-      break;
-
-    default:
-      playbackState.textContent = "READY TO PLAY";
-  }
+function updatePlaybackState() {
+  if (cast.framework.messages.PlayerState.PLAYING)
+    playbackState.textContent = "NOW PLAYING";
+  else if (cast.framework.messages.PlayerState.PAUSED)
+    playbackState.textContent = "PAUSED";
+  else if (cast.framework.messages.PlayerState.BUFFERING)
+    playbackState.textContent = "BUFFERING";
+  else playbackState.textContent = "READY TO PLAY";
 }
 
 // Metadata updates
@@ -117,11 +106,11 @@ playerManager.addEventListener(
   updateMetadata
 );
 
-// // Playback updates
-// playerManager.addEventListener(
-//   cast.framework.events.EventType.PLAYER_STATE_CHANGED,
-//   updatePlaybackState
-// );
+// Playback updates
+playerManager.addEventListener(
+  cast.framework.events.EventType.PLAYER_STATE_CHANGED,
+  updatePlaybackState
+);
 
 // Progress updates
 playerManager.addEventListener(
