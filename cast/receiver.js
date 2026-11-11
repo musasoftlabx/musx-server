@@ -117,17 +117,17 @@ playerManager.addEventListener(
   updateMetadata
 );
 
-// // Playback updates
-// playerManager.addEventListener(
-//   cast.framework.events.EventType.PLAYER_STATE_CHANGED,
-//   updatePlaybackState
-// );
+// Playback updates
+playerManager.addEventListener(
+  cast.framework.events.EventType.PLAYER_STATE_CHANGED,
+  updatePlaybackState
+);
 
 // Progress updates
-// playerManager.addEventListener(
-//   cast.framework.events.EventType.TIME_UPDATE,
-//   updateProgress
-// );
+playerManager.addEventListener(
+  cast.framework.events.EventType.TIME_UPDATE,
+  updateProgress
+);
 
 // // Handle receiver errors
 playerManager.addEventListener(
