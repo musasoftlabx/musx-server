@@ -242,21 +242,22 @@ function updateMetadata() {
       document
         .getElementById("audio")
         .addEventListener("timeupdate", function () {
-          //Unhighlight all the lyrics
-          var lyric_selected = lyrics_container.querySelectorAll("p[selected]");
-          for (var i = 0; i < lyric_selected.length; i++) {
-            lyric_selected[i].removeAttribute("selected");
-          }
+          lyrics.textContent = this.currentTime;
+          // //Unhighlight all the lyrics
+          // var lyric_selected = lyrics_container.querySelectorAll("p[selected]");
+          // for (var i = 0; i < lyric_selected.length; i++) {
+          //   lyric_selected[i].removeAttribute("selected");
+          // }
 
-          //Get the lyric to highlight
-          var lyric_selected = lrc.select(this.currentTime);
+          // //Get the lyric to highlight
+          // var lyric_selected = lrc.select(this.currentTime);
 
-          //Highlight the lyric
-          if (lyric_selected != undefined && lyric_selected >= 0) {
-            lyrics_container
-              .querySelectorAll("p")
-              [lyric_selected].setAttribute("selected", "selected");
-          }
+          // //Highlight the lyric
+          // if (lyric_selected != undefined && lyric_selected >= 0) {
+          //   lyrics_container
+          //     .querySelectorAll("p")
+          //     [lyric_selected].setAttribute("selected", "selected");
+          // }
         });
     })
     .catch((error) => console.error("Error:", error));
