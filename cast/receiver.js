@@ -71,7 +71,7 @@ function updateMetadata() {
       const lyrics = document.getElementById("lyrics");
       lyrics.textContent = data;
 
-      var Lyrics = function (text_lrc) {
+      var Lyrics = function (text_lrc = data) {
         /* Private */
         this.timestamp_offset = 0;
         this.lyrics_all = undefined;
@@ -222,7 +222,7 @@ function updateMetadata() {
         },
       };
 
-      var lrc = new Lyrics(data);
+      //var lrc = new Lyrics(data);
       document
         .getElementById("audio")
         .addEventListener("timeupdate", function () {
@@ -234,7 +234,7 @@ function updateMetadata() {
           }
 
           //Get the lyric to highlight
-          var lyric_selected = lrc.select(this.currentTime);
+          var lyric_selected = Lyrics.select(this.currentTime);
 
           //Highlight the lyric
           if (lyric_selected != undefined && lyric_selected >= 0) {
