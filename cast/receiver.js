@@ -65,13 +65,13 @@ function updateMetadata() {
   artwork.src = imageUrl || DEFAULT_ARTWORK;
 
   // ? Lyrics integration
-  // fetch("https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc")
-  //   .then((response) => response.text())
-  //   .then((data) => {
-  //     const lyrics = document.getElementById("lyrics");
-  //     lyrics.textContent = data;
-  //   })
-  //   .catch((error) => console.error("Error:", error));
+  fetch("https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc")
+    .then((response) => response.text())
+    .then((data) => {
+      const lyrics = document.getElementById("lyrics");
+      lyrics.textContent = data;
+    })
+    .catch((error) => console.error("Error:", error));
 }
 
 artwork.addEventListener("error", () => {
