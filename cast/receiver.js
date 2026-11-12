@@ -16,7 +16,7 @@ castDebugLogger.showDebugLogs(true);
 castDebugLogger.warn(
   "Musix logger",
   "Playable URL:",
-  playerManager.getMediaInformation()?.title
+  playerManager.getMediaInformation()?.title,
 );
 
 const artwork = document.getElementById("artwork");
@@ -41,7 +41,7 @@ function formatTime(seconds) {
 
   return `${String(minutes).padStart(2, "0")}:${String(remaining).padStart(
     2,
-    "0"
+    "0",
   )}`;
 }
 
@@ -63,6 +63,15 @@ function updateMetadata() {
   const imageUrl = metadata.images?.[0]?.url;
 
   artwork.src = imageUrl || DEFAULT_ARTWORK;
+
+  // ? Lyrics integration
+  fetch("https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc")
+    .then((response) => response.text())
+    .then((data) => {
+      const lyrics = document.getElementById("lyrics");
+      lyrics.textContent = data;
+    })
+    .catch((error) => console.error("Error:", error));
 }
 
 artwork.addEventListener("error", () => {
@@ -103,19 +112,19 @@ function updatePlaybackState() {
 // Metadata updates
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
-  updateMetadata
+  updateMetadata,
 );
 
 // Playback updates
 playerManager.addEventListener(
   cast.framework.events.EventType.PLAYER_STATE_CHANGED,
-  updatePlaybackState
+  updatePlaybackState,
 );
 
 // Progress updates
 playerManager.addEventListener(
   cast.framework.events.EventType.TIME_UPDATE,
-  updateProgress
+  updateProgress,
 );
 
 // // Handle receiver errors
@@ -143,7 +152,7 @@ playerManager.addEventListener(
       .then((response) => response.json())
       .then((data) => console.log("Success:", data))
       .catch((error) => console.error("Error:", error));
-  }
+  },
 );
 
 // Configure supported controls
@@ -151,7 +160,7 @@ playerManager.setSupportedMediaCommands(
   cast.framework.messages.Command.PLAY |
     cast.framework.messages.Command.PAUSE |
     cast.framework.messages.Command.SEEK |
-    cast.framework.messages.Command.STREAM_TRANSFER
+    cast.framework.messages.Command.STREAM_TRANSFER,
 );
 
 // Start receiver
