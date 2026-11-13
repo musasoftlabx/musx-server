@@ -184,7 +184,14 @@ function updateMetadata() {
     renderLyrics(null);
     fetch(media?.contentUrl.replace(".mp3", ".lrc"))
       .then((res) => res.text())
-      .then((text) => key === currentMediaKey && renderLyrics(text))
+      .then((text) => {
+        if (text.includes("404") || text.includes("Not Found")) {
+          logs.textContent = "No lyrics found";
+          if (key === currentMediaKey) renderLyrics(null);
+          return;
+        }
+        key === currentMediaKey && renderLyrics(text);
+      })
       .catch(() => {
         logs.textContent = "Error fetching lyrics";
         if (key === currentMediaKey) renderLyrics(null);
