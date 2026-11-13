@@ -103,6 +103,8 @@ function renderLyrics(raw) {
   lyricsOffset = parsed.offset;
   activeLyricIndex = -1;
 
+  logs.textContent = `${lyricLines.length}: ${lyricsSynced}`;
+
   lyricsEl.replaceChildren();
   lyricsEl.style.transform = "translateY(0)";
 
@@ -192,12 +194,8 @@ function updateMetadata() {
 
     fetch(`https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`)
       .then((res) => res.text())
-      .then((text) => {
-        logs.textContent = `${key}: ${currentMediaKey}`;
-        raw = text || null;
-        //if (key === currentMediaKey) renderLyrics(raw);
-      })
-      .catch((error) => {
+      .then((text) => key === currentMediaKey && renderLyrics(text))
+      .catch(() => {
         logs.textContent = "Error fetching lyrics";
       });
   }
