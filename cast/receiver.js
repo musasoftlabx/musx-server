@@ -43,6 +43,7 @@ function setText(element, value, fallback) {
 const ambientArt = document.getElementById("ambientArt");
 const lyricsEl = document.getElementById("lyrics");
 const lyricsMode = document.getElementById("lyricsMode");
+const logs = document.getElementById("logs");
 
 const API_BASE = "https://musasoftlabs.com";
 
@@ -180,6 +181,8 @@ async function loadLyrics(media) {
       );
       if (response.ok) raw = (await response.text()) || null;
     }
+
+    logs.textContent(raw);
 
     // Ignore results for a track that is no longer playing
     if (key === currentMediaKey) renderLyrics(raw);
