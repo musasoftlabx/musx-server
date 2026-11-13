@@ -178,7 +178,8 @@ async function loadLyrics(media) {
         `https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`,
       );
       if (response.ok) {
-        logs.textContent = await response.text();
+        logs.textContent =
+          (await response.text()) || "No lyrics found for this track";
         raw = (await response.text()) || null;
       }
     }
