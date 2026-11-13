@@ -162,7 +162,7 @@ function syncLyrics(currentTime) {
 function updateMetadata() {
   const media = playerManager.getMediaInformation();
 
-  logs.textContent = `${media?.contentUrl}: ${""}`;
+  //logs.textContent = `${media?.contentUrl}: ${""}`;
 
   if (!media) return;
 
@@ -182,9 +182,7 @@ function updateMetadata() {
   if (key !== currentMediaKey) {
     currentMediaKey = key;
     renderLyrics(null);
-
-    fetch(`https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`)
-      //fetch(`https://musasoftlabs.com/Music/${track?.path.replace(".mp3", ".lrc")}`,)
+    fetch(media?.contentUrl.replace(".mp3", ".lrc"))
       .then((res) => res.text())
       .then((text) => key === currentMediaKey && renderLyrics(text))
       .catch(() => {
