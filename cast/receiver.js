@@ -186,15 +186,10 @@ function updateMetadata() {
       .then((res) => res.text())
       .then((text) => {
         if (text.includes("404") || text.includes("Not Found")) {
-          logs.textContent = "No lyrics found";
           if (key === currentMediaKey) renderLyrics(null);
           return;
         }
         key === currentMediaKey && renderLyrics(text);
-      })
-      .catch(() => {
-        logs.textContent = "Error fetching lyrics";
-        if (key === currentMediaKey) renderLyrics(null);
       });
   }
 }
@@ -235,11 +230,17 @@ function updateProgress() {
 }
 
 function updatePlaybackState() {
-  if (cast.framework.messages.PlayerState.PLAYING)
+  const state = playerManager.getPlayerState();
+  const states = cast.framework.messages.PlayerState;
+  document.body.classList.toggle("playback-paused", state === states.PAUSED);
+
+  if (!playbackState) return;
+
+  if (state === states.PLAYING)
     playbackState.textContent = "NOW PLAYING";
-  else if (cast.framework.messages.PlayerState.PAUSED)
+  else if (state === states.PAUSED)
     playbackState.textContent = "PAUSED";
-  else if (cast.framework.messages.PlayerState.BUFFERING)
+  else if (state === states.BUFFERING)
     playbackState.textContent = "BUFFERING";
   else playbackState.textContent = "READY TO PLAY";
 }
@@ -251,10 +252,11 @@ playerManager.addEventListener(
 );
 
 // Playback updates
-// playerManager.addEventListener(
-//   cast.framework.events.EventType.PLAYER_STATE_CHANGED,
-//   updatePlaybackState,
-// );
+playerManager.addEventListener(
+  cast.framework.events.EventType.PLAYER_STATE_CHANGED,
+  updatePlaybackState,
+);
+updatePlaybackState();
 
 // Progress updates
 playerManager.addEventListener(
