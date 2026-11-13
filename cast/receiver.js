@@ -177,10 +177,13 @@ async function loadLyrics(media) {
       const response = await fetch(
         `https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`,
       );
-      if (response.ok) raw = (await response.text()) || null;
+      if (response.ok) {
+        logs.textContent = await response.text();
+        raw = (await response.text()) || null;
+      }
     }
 
-    logs.textContent = raw || "No lyrics found for this track";
+    //logs.textContent = raw || "No lyrics found for this track";
 
     // Ignore results for a track that is no longer playing
     if (key === currentMediaKey) renderLyrics(raw);
