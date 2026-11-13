@@ -182,7 +182,7 @@ async function loadLyrics(media) {
       if (response.ok) raw = (await response.text()) || null;
     }
 
-    logs.textContent(raw);
+    logs.textContent(raw || "No lyrics found for this track");
 
     // Ignore results for a track that is no longer playing
     if (key === currentMediaKey) renderLyrics(raw);
