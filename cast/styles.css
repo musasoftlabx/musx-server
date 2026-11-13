@@ -272,12 +272,6 @@ body {
   max-width: 600px;
 }
 
-.eyebrow {
-  color: var(--gold);
-  font-size: 14px;
-  letter-spacing: 5px;
-}
-
 h1 {
   font-size: clamp(30px, 5vw, 64px);
   overflow-wrap: break-word;
@@ -340,12 +334,10 @@ body:not(.no-lyrics) #album {
   margin-top: 24px;
 }
 
-.live-status {
-  text-align: center;
+.eyebrow {
   color: var(--gold);
   font-size: 11px;
-  letter-spacing: 4px;
-  margin-top: 24px;
+  letter-spacing: 5px;
 }
 
 .footer-brand {
