@@ -234,15 +234,17 @@ function updatePlaybackState() {
   const states = cast.framework.messages.PlayerState;
   document.body.classList.toggle("playback-paused", state === states.PAUSED);
 
-  if (!playbackState) return;
+  logs.textContent = `${state}: ${states[state]}`;
 
-  if (state === states.PLAYING)
-    playbackState.textContent = "NOW PLAYING";
-  else if (state === states.PAUSED)
-    playbackState.textContent = "PAUSED";
-  else if (state === states.BUFFERING)
-    playbackState.textContent = "BUFFERING";
-  else playbackState.textContent = "READY TO PLAY";
+  // if (!playbackState) return;
+
+  // if (state === states.PLAYING)
+  //   playbackState.textContent = "NOW PLAYING";
+  // else if (state === states.PAUSED)
+  //   playbackState.textContent = "PAUSED";
+  // else if (state === states.BUFFERING)
+  //   playbackState.textContent = "BUFFERING";
+  // else playbackState.textContent = "READY TO PLAY";
 }
 
 // Metadata updates
