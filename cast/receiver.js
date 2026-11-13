@@ -183,10 +183,8 @@ function updateMetadata() {
     currentMediaKey = key;
     renderLyrics(null);
 
-    //fetch(`https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`)
-    fetch(
-      `https://musasoftlabs.com/Music/${track?.path.replace(".mp3", ".lrc")}`,
-    )
+    fetch(`https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`)
+      //fetch(`https://musasoftlabs.com/Music/${track?.path.replace(".mp3", ".lrc")}`,)
       .then((res) => res.text())
       .then((text) => key === currentMediaKey && renderLyrics(text))
       .catch(() => {
