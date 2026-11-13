@@ -1,13 +1,8 @@
 const context = cast.framework.CastReceiverContext.getInstance();
+const queueBase = cast.framework.QueueBase.nextItems();
 const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
 const playerManager = context.getPlayerManager();
 const playbackConfig = new cast.framework.PlaybackConfig();
-
-playbackConfig.licenseRequestHandler = (requestInfo) => {
-  requestInfo.withCredentials = true;
-  requestInfo.headers = requestInfo.headers || {};
-  requestInfo.headers["Content-Type"] = "application/json";
-};
 playerManager.setPlaybackConfig(playbackConfig);
 
 const artwork = document.getElementById("artwork");
@@ -44,7 +39,7 @@ const ambientArt = document.getElementById("ambientArt");
 const lyricsEl = document.getElementById("lyrics");
 const lyricsMode = document.getElementById("lyricsMode");
 
-const API_BASE = "https://musasoftlabs.com:3000";
+const API_BASE = "https://musasoftlabs.com";
 
 let currentMediaKey = null;
 let lyricLines = [];
@@ -95,7 +90,9 @@ function parseLyrics(raw) {
 }
 
 function renderLyrics(raw) {
-  const parsed = raw ? parseLyrics(raw) : { lines: [], synced: false, offset: 0 };
+  const parsed = raw
+    ? parseLyrics(raw)
+    : { lines: [], synced: false, offset: 0 };
 
   lyricLines = parsed.lines;
   lyricsSynced = parsed.synced;
@@ -173,8 +170,10 @@ async function loadLyrics(media) {
 
     const trackId = custom.trackId ?? custom.id;
     if (!raw && trackId != null) {
-      const response = await fetch(`${API_BASE}/trackMetadata/${trackId}`);
-      if (response.ok) raw = (await response.json())?.lyrics || null;
+      const response = await fetch(
+        `https://musasoftlabs.com/Music/Tanzania/Zuchu/Zawadi.lrc`,
+      );
+      if (response.ok) raw = (await response.text()) || null;
     }
 
     // Ignore results for a track that is no longer playing
@@ -216,9 +215,13 @@ artwork.addEventListener("error", () => {
   }
 });
 
-ambientArt.addEventListener("error", () => {
-  ambientArt.src = DEFAULT_ARTWORK;
-}, { once: true });
+ambientArt.addEventListener(
+  "error",
+  () => {
+    ambientArt.src = DEFAULT_ARTWORK;
+  },
+  { once: true },
+);
 
 function updateProgress() {
   const current = playerManager.getCurrentTimeSec();

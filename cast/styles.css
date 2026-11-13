@@ -1,3 +1,10 @@
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./JetBrainsMono-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+}
+
 :root {
   --gold: #d4af37;
   --background: #090909;
@@ -14,7 +21,7 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--white);
-  font-family: Arial, sans-serif;
+  font-family: "JetBrains Mono", monospace;
   overflow: hidden;
 }
 
@@ -62,7 +69,7 @@ body {
 
 .logo {
   height: 50px;
-  width: 50px
+  width: 50px;
 }
 
 .brand {
@@ -77,12 +84,6 @@ body {
 .brand-mark {
   color: var(--gold);
   font-size: 32px;
-}
-
-.live-status {
-  color: var(--gold);
-  font-size: 12px;
-  letter-spacing: 3px;
 }
 
 .pulse {
@@ -332,6 +333,14 @@ body:not(.no-lyrics) #album {
 }
 
 .playback-status {
+  text-align: center;
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 4px;
+  margin-top: 24px;
+}
+
+.live-status {
   text-align: center;
   color: var(--gold);
   font-size: 11px;
