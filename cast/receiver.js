@@ -40,10 +40,153 @@ function setText(element, value, fallback) {
   element.textContent = value || fallback;
 }
 
+const ambientArt = document.getElementById("ambientArt");
+const lyricsEl = document.getElementById("lyrics");
+const lyricsMode = document.getElementById("lyricsMode");
+
+const API_BASE = "https://musasoftlabs.com:3000";
+
+let currentMediaKey = null;
+let lyricLines = [];
+let lyricsSynced = false;
+let lyricsOffset = 0;
+let activeLyricIndex = -1;
+
+function parseLyrics(raw) {
+  const lines = [];
+  let offset = 0;
+  const timeTag = /\[(\d{1,3}):(\d{1,2})(?:[.:](\d{1,3}))?\]/g;
+
+  String(raw)
+    .replace(/\r/g, "")
+    .split("\n")
+    .forEach((rawLine) => {
+      const line = rawLine.trim();
+      if (!line) return;
+
+      const offsetMatch = /^\[offset:\s*([+-]?\d+)\s*\]$/i.exec(line);
+      if (offsetMatch) {
+        offset = Number(offsetMatch[1]) / 1000;
+        return;
+      }
+
+      // Skip ID tags such as [ar:], [ti:], [al:], [by:]
+      if (/^\[[a-z]+:.*\]$/i.test(line)) return;
+
+      const stamps = [...line.matchAll(timeTag)];
+      const text = line.replace(timeTag, "").trim();
+
+      stamps.forEach((m) => {
+        const fraction = m[3] ? Number(`0.${m[3]}`) : 0;
+        lines.push({ time: Number(m[1]) * 60 + Number(m[2]) + fraction, text });
+      });
+
+      if (!stamps.length) lines.push({ time: null, text: line });
+    });
+
+  const synced = lines.filter((l) => l.time !== null);
+
+  if (synced.length) {
+    synced.sort((a, b) => a.time - b.time);
+    return { lines: synced, synced: true, offset };
+  }
+
+  return { lines, synced: false, offset: 0 };
+}
+
+function renderLyrics(raw) {
+  const parsed = raw ? parseLyrics(raw) : { lines: [], synced: false, offset: 0 };
+
+  lyricLines = parsed.lines;
+  lyricsSynced = parsed.synced;
+  lyricsOffset = parsed.offset;
+  activeLyricIndex = -1;
+
+  lyricsEl.replaceChildren();
+  lyricsEl.style.transform = "translateY(0)";
+
+  if (!lyricLines.length) {
+    document.body.classList.add("no-lyrics");
+    lyricsMode.textContent = "";
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  lyricLines.forEach((line) => {
+    const p = document.createElement("p");
+    p.className = "lyric-line";
+    if (!line.text) p.classList.add("lyric-gap");
+    p.textContent = line.text || "\u266A";
+    fragment.appendChild(p);
+  });
+  lyricsEl.appendChild(fragment);
+
+  lyricsMode.textContent = lyricsSynced ? "SYNCED" : "";
+  document.body.classList.toggle("lyrics-static", !lyricsSynced);
+  document.body.classList.remove("no-lyrics");
+
+  if (lyricsSynced) syncLyrics(playerManager.getCurrentTimeSec());
+}
+
+function syncLyrics(currentTime) {
+  if (!lyricsSynced || !lyricLines.length) return;
+
+  const time = currentTime + lyricsOffset;
+  let index = -1;
+  for (let i = 0; i < lyricLines.length; i++) {
+    if (lyricLines[i].time <= time) index = i;
+    else break;
+  }
+
+  if (index === activeLyricIndex) return;
+
+  const nodes = lyricsEl.children;
+  nodes[activeLyricIndex]?.classList.remove("active");
+  activeLyricIndex = index;
+
+  for (let i = 0; i < nodes.length; i++) {
+    nodes[i].classList.toggle("past", i < index);
+  }
+
+  const target = nodes[Math.max(index, 0)];
+  if (index >= 0) target.classList.add("active");
+
+  // Keep the active line vertically centred in the viewport
+  const viewport = lyricsEl.parentElement;
+  const offsetY =
+    target.offsetTop - viewport.clientHeight / 2 + target.offsetHeight / 2;
+  lyricsEl.style.transform = `translateY(${-Math.max(0, offsetY)}px)`;
+}
+
+async function loadLyrics(media) {
+  const custom = media.customData || {};
+  const metadata = media.metadata || {};
+  const key = media.contentId || media.contentUrl || metadata.title;
+
+  try {
+    let raw = custom.lyrics || metadata.lyrics || null;
+
+    if (!raw && custom.lyricsUrl) {
+      const response = await fetch(custom.lyricsUrl);
+      if (response.ok) raw = await response.text();
+    }
+
+    const trackId = custom.trackId ?? custom.id;
+    if (!raw && trackId != null) {
+      const response = await fetch(`${API_BASE}/trackMetadata/${trackId}`);
+      if (response.ok) raw = (await response.json())?.lyrics || null;
+    }
+
+    // Ignore results for a track that is no longer playing
+    if (key === currentMediaKey) renderLyrics(raw);
+  } catch (error) {
+    console.error("Lyrics error:", error);
+    if (key === currentMediaKey) renderLyrics(null);
+  }
+}
+
 function updateMetadata() {
   const media = playerManager.getMediaInformation();
-
-  lyrics.textContent = JSON.stringify(media);
 
   if (!media) return;
 
@@ -56,149 +199,15 @@ function updateMetadata() {
   const imageUrl = metadata.images?.[0]?.url;
 
   artwork.src = imageUrl || DEFAULT_ARTWORK;
+  ambientArt.src = artwork.src;
 
-  // ? Lyrics integration
-  // fetch(`https://musasoftlabs.com/Music/Tanzania/Zuchu/${metadata.title}.lrc`)
-  //   .then((response) => response.text())
-  //   .then((data) => {
-  //     let lyrics = document.getElementById("lyrics");
-  //     lyrics.textContent = data;
-
-  //     const select = (ts) => {
-  //       if (isNaN(ts)) {
-  //         return -1;
-  //       }
-  //       var timestamp = Number(ts) + this.timestamp_offset;
-  //       var i = 0;
-  //       if (timestamp < this.lyrics_all[0].timestamp) {
-  //         return -1;
-  //       }
-  //       for (i = 0; i < this.lyrics_all.length - 1; i++) {
-  //         if (
-  //           this.lyrics_all[i].timestamp <= timestamp &&
-  //           this.lyrics_all[i + 1].timestamp > timestamp
-  //         ) {
-  //           break;
-  //         }
-  //       }
-  //       return i;
-  //     };
-
-  //     let timestamp_offset = 0;
-  //     let lyrics_all = undefined;
-  //     let meta_info = undefined;
-  //     let ID_TAGS = [
-  //       { name: "artist", id: "ar" },
-  //       { name: "album", id: "al" },
-  //       { name: "title", id: "ti" },
-  //       { name: "author", id: "au" },
-  //       { name: "length", id: "length" },
-  //       { name: "by", id: "by" },
-  //       { name: "offset", id: "offset" },
-  //       { name: "createdBy", id: "re" },
-  //       { name: "createdByVersion", id: "ve" },
-  //     ];
-
-  //     /* Initialization */
-  //     for (var i = 0; i < ID_TAGS.length; i++) {
-  //       ID_TAGS[i].re = new RegExp("\\[" + ID_TAGS[i].id + ":(.*)\\]$", "g");
-  //     }
-
-  //     lyrics_all = new Array();
-  //     meta_info = new Object();
-  //     timestamp_offset = 0;
-
-  //     var lines_all = String(data).split("\n");
-  //     for (var i = 0; i < lines_all.length; i++) {
-  //       var line = lines_all[i].replace(/(^\s*)|(\s*$)/g, "");
-  //       if (!line) {
-  //         continue;
-  //       }
-
-  //       //Parse ID Tags
-  //       var is_id_tag = false;
-  //       for (var j = 0; j < ID_TAGS.length; j++) {
-  //         var match = ID_TAGS[j].re.exec(line);
-  //         if (!match || match.length < 2) {
-  //           continue;
-  //         }
-
-  //         is_id_tag = true;
-  //         var value = match[1].replace(/(^\s*)|(\s*$)/g, "");
-  //         if (typeof ID_TAGS[j].handler == "function") {
-  //           meta_info[String(ID_TAGS[j].name)] = ID_TAGS[j].handler.call(
-  //             this,
-  //             value,
-  //           );
-  //         } else {
-  //           meta_info[String(ID_TAGS[j].name)] = String(value);
-  //         }
-  //       }
-  //       if (is_id_tag) {
-  //         continue;
-  //       }
-
-  //       //Parse lyric
-  //       var timestamp_all = Array();
-  //       while (true) {
-  //         var match = /^(\[\d+:\d+(.\d+)?\])(.*)/g.exec(line);
-  //         if (match) {
-  //           timestamp_all.push(match[1]);
-  //           line = match[match.length - 1].replace(/(^\s*)|(\s*$)/g, "");
-  //         } else {
-  //           break;
-  //         }
-  //       }
-  //       for (var j = 0; j < timestamp_all.length; j++) {
-  //         var ts_match = /^\[(\d{1,2}):(\d|[0-5]\d)(\.(\d+))?\]$/g.exec(
-  //           timestamp_all[j],
-  //         );
-  //         if (ts_match) {
-  //           lyrics_all.push({
-  //             timestamp:
-  //               Number(ts_match[1]) * 60 +
-  //               Number(ts_match[2]) +
-  //               (ts_match[4] ? Number("0." + ts_match[4]) : 0),
-  //             text: line,
-  //           });
-  //         }
-  //       }
-  //     }
-
-  //     // lyrics_all.sort(function (a, b) {
-  //     //   return a.timestamp > b.timestamp ? 1 : -1;
-  //     // });
-  //     // if (!lyrics_all.length) {
-  //     //   lyrics_all = undefined;
-  //     // }
-  //     // if (this.isEmpty(meta_info)) {
-  //     //   meta_info = undefined;
-  //     // }
-  //     // return lyrics_all !== undefined || meta_info !== undefined ? true : false;
-
-  //     //var lrc = new Lyrics(data);
-  //     document
-  //       .getElementById("audio")
-  //       .addEventListener("timeupdate", function () {
-  //         //lyrics.textContent = this.currentTime;
-  //         //Unhighlight all the lyrics
-  //         var lyric_selected = lyrics_container.querySelectorAll("p[selected]");
-  //         for (var i = 0; i < lyric_selected.length; i++) {
-  //           lyric_selected[i].removeAttribute("selected");
-  //         }
-
-  //         //Get the lyric to highlight
-  //         var lyric_selected = select(this.currentTime);
-
-  //         //Highlight the lyric
-  //         if (lyric_selected != undefined && lyric_selected >= 0) {
-  //           lyrics_container
-  //             .querySelectorAll("p")
-  //             [lyric_selected].setAttribute("selected", "selected");
-  //         }
-  //       });
-  //   })
-  //   .catch((error) => console.error("Error:", error));
+  // MEDIA_STATUS fires often; only reload lyrics when the track changes
+  const key = media.contentId || media.contentUrl || metadata.title;
+  if (key !== currentMediaKey) {
+    currentMediaKey = key;
+    renderLyrics(null);
+    loadLyrics(media);
+  }
 }
 
 artwork.addEventListener("error", () => {
@@ -206,6 +215,10 @@ artwork.addEventListener("error", () => {
     artwork.src = DEFAULT_ARTWORK;
   }
 });
+
+ambientArt.addEventListener("error", () => {
+  ambientArt.src = DEFAULT_ARTWORK;
+}, { once: true });
 
 function updateProgress() {
   const current = playerManager.getCurrentTimeSec();
@@ -221,6 +234,8 @@ function updateProgress() {
   const percentage = Math.min(100, Math.max(0, (current / duration) * 100));
 
   progress.style.width = `${percentage}%`;
+
+  syncLyrics(current);
 
   elapsed.textContent = formatTime(current);
   total.textContent = formatTime(duration);

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Premium Audio Receiver</title>
+    <title>Muzix Audio Receiver</title>
 
     <script src="//www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
     <script src="//www.gstatic.com/cast/sdk/libs/devtools/debug_layer/caf_receiver_logger.js"></script>
@@ -12,13 +12,16 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
 
-  <body>
+  <body class="no-lyrics">
     <audio id="audio" autoplay></audio>
+    <div class="ambient" aria-hidden="true">
+      <img id="ambientArt" src="artwork.png" alt="" />
+    </div>
     <main class="screen">
       <header class="header">
         <div class="brand">
           <span class="brand-mark">
-            <img id="logo" src="logo.png" alt="Album artwork" class="logo" />
+            <img id="logo" src="logo.png" alt="App logo" class="logo" />
           </span>
           <span>Musix</span>
         </div>
@@ -30,29 +33,32 @@
       </header>
 
       <section class="player">
-        <div class="artwork-container">
-          <img id="artwork" src="artwork.png" alt="Album artwork" />
+        <div class="now-playing">
+          <div class="artwork-container">
+            <img id="artwork" src="artwork.png" alt="Album artwork" />
+          </div>
+
+          <div class="track-info">
+            <div class="eyebrow">NOW PLAYING</div>
+
+            <h1 id="title">title</h1>
+
+            <h2 id="artist">artist</h2>
+
+            <p id="album">album</p>
+          </div>
         </div>
 
-        <div
-          id="lyrics"
-          style="
-            height: 300px;
-            width: 300px;
-            overflow-y: scroll;
-            overflow-wrap: break-word;
-          "
-        ></div>
+        <aside class="lyrics-panel" aria-label="Lyrics">
+          <div class="lyrics-header">
+            <span class="lyrics-label">LYRICS</span>
+            <span id="lyricsMode" class="lyrics-mode"></span>
+          </div>
 
-        <div class="track-info">
-          <div class="eyebrow">NOW PLAYING</div>
-
-          <h1 id="title">title</h1>
-
-          <h2 id="artist">artist</h2>
-
-          <p id="album">album</p>
-        </div>
+          <div class="lyrics-viewport">
+            <div id="lyrics" class="lyrics-scroller"></div>
+          </div>
+        </aside>
       </section>
 
       <footer class="footer">
@@ -74,7 +80,6 @@
       </footer>
     </main>
 
-    <!-- <script src="lyrics.min.js"></script> -->
     <script src="receiver.js"></script>
   </body>
 </html>
