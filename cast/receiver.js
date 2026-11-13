@@ -186,7 +186,7 @@ function updateMetadata() {
       .then((res) => res.text())
       .then((text) => key === currentMediaKey && renderLyrics(text))
       .catch(() => {
-        //logs.textContent = "Error fetching lyrics";
+        logs.textContent = "Error fetching lyrics";
         if (key === currentMediaKey) renderLyrics(null);
       });
   }
