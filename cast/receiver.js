@@ -163,7 +163,7 @@ function loadLyrics() {
   fetch(`https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`)
     .then((res) => res.text())
     .then((text) => {
-      logs.textContent = text || "No lyrics found for this track";
+      logs.textContent = `${key}: ${currentMediaKey}`;
       raw = text || null;
       //if (key === currentMediaKey) renderLyrics(raw);
     })
