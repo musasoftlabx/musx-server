@@ -159,40 +159,28 @@ function syncLyrics(currentTime) {
   lyricsEl.style.transform = `translateY(${-Math.max(0, offsetY)}px)`;
 }
 
-async function loadLyrics(media) {
-  const custom = media.customData || {};
-  const metadata = media.metadata || {};
-  const key = media.contentId || media.contentUrl || metadata.title;
-
-  try {
-    let raw = custom.lyrics || metadata.lyrics || null;
-
-    if (!raw && custom.lyricsUrl) {
-      const response = await fetch(custom.lyricsUrl);
-      if (response.ok) raw = await response.text();
-    }
-
-    const trackId = custom.trackId ?? custom.id;
-    if (!raw && trackId != null) {
-      const response = await fetch(
-        `https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`,
-      );
-      if (response.ok) {
-        logs.textContent =
-          (await response.text()) || "No lyrics found for this track";
-        raw = (await response.text()) || null;
-      }
-    }
-
-    //logs.textContent = raw || "No lyrics found for this track";
-
-    // Ignore results for a track that is no longer playing
-    if (key === currentMediaKey) renderLyrics(raw);
-  } catch (error) {
-    console.error("Lyrics error:", error);
-    if (key === currentMediaKey) renderLyrics(null);
-  }
+function loadLyrics() {
+  fetch(`https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`)
+    .then((res) => res.text())
+    .then((text) => {
+      logs.textContent = text || "No lyrics found for this track";
+      raw = text || null;
+      if (key === currentMediaKey) renderLyrics(raw);
+    })
+    .catch((error) => {
+      console.error("Lyrics fetch error:", error);
+      logs.textContent = "Error fetching lyrics";
+    });
 }
+
+//logs.textContent = raw || "No lyrics found for this track";
+
+// Ignore results for a track that is no longer playing
+
+// } catch (error) {
+//   console.error("Lyrics error:", error);
+//   if (key === currentMediaKey) renderLyrics(null);
+// }
 
 function updateMetadata() {
   const media = playerManager.getMediaInformation();
