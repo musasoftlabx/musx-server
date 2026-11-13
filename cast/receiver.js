@@ -165,10 +165,9 @@ function loadLyrics() {
     .then((text) => {
       logs.textContent = text || "No lyrics found for this track";
       raw = text || null;
-      if (key === currentMediaKey) renderLyrics(raw);
+      //if (key === currentMediaKey) renderLyrics(raw);
     })
     .catch((error) => {
-      console.error("Lyrics fetch error:", error);
       logs.textContent = "Error fetching lyrics";
     });
 }
