@@ -4,14 +4,14 @@ const playerManager = context.getPlayerManager();
 const playbackConfig = new cast.framework.PlaybackConfig();
 playerManager.setPlaybackConfig(playbackConfig);
 
-context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
-const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
-context.addEventListener(cast.framework.system.EventType.READY, () => {
-  if (!castDebugLogger.debugOverlayElement_) {
-    castDebugLogger.setEnabled(true);
-    castDebugLogger.showDebugLogs(true);
-  }
-});
+// context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
+// const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
+// context.addEventListener(cast.framework.system.EventType.READY, () => {
+//   if (!castDebugLogger.debugOverlayElement_) {
+//     castDebugLogger.setEnabled(true);
+//     castDebugLogger.showDebugLogs(true);
+//   }
+// });
 
 const artwork = document.getElementById("artwork");
 const title = document.getElementById("title");
@@ -179,7 +179,7 @@ async function loadLyrics(media) {
     const trackId = custom.trackId ?? custom.id;
     if (!raw && trackId != null) {
       const response = await fetch(
-        `https://musasoftlabs.com/Music/Tanzania/Zuchu/Zawadi.lrc`,
+        `https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`,
       );
       if (response.ok) raw = (await response.text()) || null;
     }
