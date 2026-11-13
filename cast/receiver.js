@@ -14,11 +14,14 @@ const artwork = document.getElementById("artwork");
 const title = document.getElementById("title");
 const artist = document.getElementById("artist");
 const album = document.getElementById("album");
-
 const progress = document.getElementById("progress");
 const elapsed = document.getElementById("elapsed");
 const total = document.getElementById("total");
 const playbackState = document.getElementById("playbackState");
+const ambientArt = document.getElementById("ambientArt");
+const lyricsEl = document.getElementById("lyrics");
+const lyricsMode = document.getElementById("lyricsMode");
+const logs = document.getElementById("logs");
 
 const DEFAULT_ARTWORK = "artwork.png";
 
@@ -39,11 +42,6 @@ function formatTime(seconds) {
 function setText(element, value, fallback) {
   element.textContent = value || fallback;
 }
-
-const ambientArt = document.getElementById("ambientArt");
-const lyricsEl = document.getElementById("lyrics");
-const lyricsMode = document.getElementById("lyricsMode");
-const logs = document.getElementById("logs");
 
 const API_BASE = "https://musasoftlabs.com";
 
@@ -182,7 +180,7 @@ async function loadLyrics(media) {
       if (response.ok) raw = (await response.text()) || null;
     }
 
-    logs.textContent(raw || "No lyrics found for this track");
+    logs.textContent = raw || "No lyrics found for this track";
 
     // Ignore results for a track that is no longer playing
     if (key === currentMediaKey) renderLyrics(raw);
