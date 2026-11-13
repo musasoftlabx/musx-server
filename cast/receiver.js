@@ -159,19 +159,6 @@ function syncLyrics(currentTime) {
   lyricsEl.style.transform = `translateY(${-Math.max(0, offsetY)}px)`;
 }
 
-function loadLyrics() {
-  fetch(`https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`)
-    .then((res) => res.text())
-    .then((text) => {
-      logs.textContent = `${key}: ${currentMediaKey}`;
-      raw = text || null;
-      //if (key === currentMediaKey) renderLyrics(raw);
-    })
-    .catch((error) => {
-      logs.textContent = "Error fetching lyrics";
-    });
-}
-
 //logs.textContent = raw || "No lyrics found for this track";
 
 // Ignore results for a track that is no longer playing
@@ -202,7 +189,17 @@ function updateMetadata() {
   if (key !== currentMediaKey) {
     currentMediaKey = key;
     renderLyrics(null);
-    loadLyrics(media);
+
+    fetch(`https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`)
+      .then((res) => res.text())
+      .then((text) => {
+        logs.textContent = `${key}: ${currentMediaKey}`;
+        raw = text || null;
+        //if (key === currentMediaKey) renderLyrics(raw);
+      })
+      .catch((error) => {
+        logs.textContent = "Error fetching lyrics";
+      });
   }
 }
 
