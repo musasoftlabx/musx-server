@@ -1,17 +1,14 @@
 const context = cast.framework.CastReceiverContext.getInstance();
-const queueBase = cast.framework.QueueBase.nextItems();
+const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
 const playerManager = context.getPlayerManager();
 const playbackConfig = new cast.framework.PlaybackConfig();
-playerManager.setPlaybackConfig(playbackConfig);
 
-// context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
-// const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
-// context.addEventListener(cast.framework.system.EventType.READY, () => {
-//   if (!castDebugLogger.debugOverlayElement_) {
-//     castDebugLogger.setEnabled(true);
-//     castDebugLogger.showDebugLogs(true);
-//   }
-// });
+playbackConfig.licenseRequestHandler = (requestInfo) => {
+  requestInfo.withCredentials = true;
+  requestInfo.headers = requestInfo.headers || {};
+  requestInfo.headers["Content-Type"] = "application/json";
+};
+playerManager.setPlaybackConfig(playbackConfig);
 
 const artwork = document.getElementById("artwork");
 const title = document.getElementById("title");
@@ -47,7 +44,7 @@ const ambientArt = document.getElementById("ambientArt");
 const lyricsEl = document.getElementById("lyrics");
 const lyricsMode = document.getElementById("lyricsMode");
 
-const API_BASE = "https://musasoftlabs.com";
+const API_BASE = "https://musasoftlabs.com:3000";
 
 let currentMediaKey = null;
 let lyricLines = [];
@@ -178,10 +175,8 @@ async function loadLyrics(media) {
 
     const trackId = custom.trackId ?? custom.id;
     if (!raw && trackId != null) {
-      const response = await fetch(
-        `https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`,
-      );
-      if (response.ok) raw = (await response.text()) || null;
+      const response = await fetch(`${API_BASE}/trackMetadata/${trackId}`);
+      if (response.ok) raw = (await response.json())?.lyrics || null;
     }
 
     // Ignore results for a track that is no longer playing
@@ -213,7 +208,7 @@ function updateMetadata() {
   if (key !== currentMediaKey) {
     currentMediaKey = key;
     renderLyrics(null);
-    //loadLyrics(media);
+    loadLyrics(media);
   }
 }
 
