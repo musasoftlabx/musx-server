@@ -1,9 +1,17 @@
 const context = cast.framework.CastReceiverContext.getInstance();
 const queueBase = cast.framework.QueueBase.nextItems();
-const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
 const playerManager = context.getPlayerManager();
 const playbackConfig = new cast.framework.PlaybackConfig();
 playerManager.setPlaybackConfig(playbackConfig);
+
+context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
+const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
+context.addEventListener(cast.framework.system.EventType.READY, () => {
+  if (!castDebugLogger.debugOverlayElement_) {
+    castDebugLogger.setEnabled(true);
+    castDebugLogger.showDebugLogs(true);
+  }
+});
 
 const artwork = document.getElementById("artwork");
 const title = document.getElementById("title");
