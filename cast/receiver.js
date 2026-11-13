@@ -213,7 +213,7 @@ function updateMetadata() {
   if (key !== currentMediaKey) {
     currentMediaKey = key;
     renderLyrics(null);
-    loadLyrics(media);
+    //loadLyrics(media);
   }
 }
 
