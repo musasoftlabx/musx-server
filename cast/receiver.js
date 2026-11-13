@@ -44,7 +44,7 @@ const ambientArt = document.getElementById("ambientArt");
 const lyricsEl = document.getElementById("lyrics");
 const lyricsMode = document.getElementById("lyricsMode");
 
-const API_BASE = "https://musasoftlabs.com:3000";
+const API_BASE = "https://musasoftlabs.com";
 
 let currentMediaKey = null;
 let lyricLines = [];
@@ -175,8 +175,10 @@ async function loadLyrics(media) {
 
     const trackId = custom.trackId ?? custom.id;
     if (!raw && trackId != null) {
-      const response = await fetch(`${API_BASE}/trackMetadata/${trackId}`);
-      if (response.ok) raw = (await response.json())?.lyrics || null;
+      const response = await fetch(
+        `https://musasoftlabs.com/Music/Tanzania/Zuchu/Chapati.lrc`,
+      );
+      if (response.ok) raw = (await response.text()) || null;
     }
 
     // Ignore results for a track that is no longer playing
