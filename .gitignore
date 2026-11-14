@@ -63,5 +63,6 @@ Transcodes
 
 *.sqlite*
 *muzix*
+*musx*
 
 /.pm2
