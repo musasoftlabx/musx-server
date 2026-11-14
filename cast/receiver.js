@@ -23,6 +23,7 @@ const ambientArt = document.getElementById("ambientArt");
 const lyricsEl = document.getElementById("lyrics");
 const lyricsMode = document.getElementById("lyricsMode");
 const logs = document.getElementById("logs");
+const nextTrack = document.getElementById("nextTrack");
 const nextArtwork = document.getElementById("nextArtwork");
 const nextTitle = document.getElementById("nextTitle");
 const nextArtist = document.getElementById("nextArtist");
@@ -53,14 +54,12 @@ function updateNextTrack() {
   const queue = playerManager.getQueueManager();
   const index = queue?.getCurrentItemIndex() ?? -1;
   const next = index >= 0 ? queue.getItems()[index + 1] : null;
+  nextTrack.hidden = !next;
+  if (!next) return;
   const metadata = next?.media?.metadata;
 
-  setText(
-    nextTitle,
-    metadata?.title,
-    next ? "Unknown Track" : "No upcoming track",
-  );
-  setText(nextArtist, metadata?.artist, next ? "Unknown Artist" : "");
+  setText(nextTitle, metadata?.title, "Unknown Track");
+  setText(nextArtist, metadata?.artist, "Unknown Artist");
   setText(nextAlbum, metadata?.albumName, "");
   const imageUrl = metadata?.images?.[0]?.url || DEFAULT_ARTWORK;
   if (nextArtworkUrl !== imageUrl) {

@@ -66,6 +66,7 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
+  margin-right: -2vw;
 }
 
 .next-track {
@@ -74,11 +75,14 @@ body {
   gap: 12px;
   min-width: 0;
   max-width: min(36vw, 440px);
-  margin-left: auto;
   padding: 8px 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.06);
+}
+
+.next-track[hidden] {
+  display: none;
 }
 
 .next-track-artwork {
@@ -173,8 +177,9 @@ body {
 .album-disc {
   position: absolute;
   right: 0;
-  width: 66.6667%;
-  height: 100%;
+  top: 2.5%;
+  width: 63.3333%;
+  height: 95%;
   border-radius: 50%;
   overflow: hidden;
   -webkit-mask-image: radial-gradient(circle, transparent 6%, #000 6.5%);
@@ -361,6 +366,7 @@ body {
 
 .track-info {
   max-width: 600px;
+  transform: translateX(-4vw);
 }
 
 h1 {
