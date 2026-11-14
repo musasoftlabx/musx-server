@@ -134,7 +134,7 @@ body {
 .next-track-title,
 .next-track-detail {
   font-family: "Rubik", sans-serif;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.25em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
