@@ -26,6 +26,15 @@
           <span>Musix</span>
         </div>
 
+        <aside class="next-track" aria-label="Next track">
+          <img id="nextArtwork" class="next-track-artwork" src="artwork.png" alt="" />
+          <div class="next-track-info">
+            <div class="next-track-label">UP NEXT</div>
+            <div id="nextTitle" class="next-track-title">No upcoming track</div>
+            <div id="nextArtist" class="next-track-detail"></div>
+            <div id="nextAlbum" class="next-track-detail"></div>
+          </div>
+        </aside>
         <div id="logs"></div>
       </header>
 
@@ -35,6 +44,7 @@
             <div class="album-disc">
               <img id="artwork" src="artwork.png" alt="Album artwork" />
             </div>
+            <img id="albumCover" class="album-cover" src="artwork.png" alt="" aria-hidden="true" />
           </div>
 
           <div class="track-info">

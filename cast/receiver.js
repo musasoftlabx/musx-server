@@ -11,6 +11,7 @@ playbackConfig.licenseRequestHandler = (requestInfo) => {
 playerManager.setPlaybackConfig(playbackConfig);
 
 const artwork = document.getElementById("artwork");
+const albumCover = document.getElementById("albumCover");
 const title = document.getElementById("title");
 const artist = document.getElementById("artist");
 const album = document.getElementById("album");
@@ -22,8 +23,13 @@ const ambientArt = document.getElementById("ambientArt");
 const lyricsEl = document.getElementById("lyrics");
 const lyricsMode = document.getElementById("lyricsMode");
 const logs = document.getElementById("logs");
+const nextArtwork = document.getElementById("nextArtwork");
+const nextTitle = document.getElementById("nextTitle");
+const nextArtist = document.getElementById("nextArtist");
+const nextAlbum = document.getElementById("nextAlbum");
 
 const DEFAULT_ARTWORK = "artwork.png";
+let nextArtworkUrl = DEFAULT_ARTWORK;
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) {
@@ -41,6 +47,26 @@ function formatTime(seconds) {
 
 function setText(element, value, fallback) {
   element.textContent = value || fallback;
+}
+
+function updateNextTrack() {
+  const queue = playerManager.getQueueManager();
+  const index = queue?.getCurrentItemIndex() ?? -1;
+  const next = index >= 0 ? queue.getItems()[index + 1] : null;
+  const metadata = next?.media?.metadata;
+
+  setText(
+    nextTitle,
+    metadata?.title,
+    next ? "Unknown Track" : "No upcoming track",
+  );
+  setText(nextArtist, metadata?.artist, next ? "Unknown Artist" : "");
+  setText(nextAlbum, metadata?.albumName, "");
+  const imageUrl = metadata?.images?.[0]?.url || DEFAULT_ARTWORK;
+  if (nextArtworkUrl !== imageUrl) {
+    nextArtworkUrl = imageUrl;
+    nextArtwork.src = imageUrl;
+  }
 }
 
 const API_BASE = "https://musasoftlabs.com";
@@ -175,6 +201,7 @@ function updateMetadata() {
   const imageUrl = metadata.images?.[0]?.url;
 
   artwork.src = imageUrl || DEFAULT_ARTWORK;
+  albumCover.src = artwork.src;
   ambientArt.src = artwork.src;
 
   // MEDIA_STATUS fires often; only reload lyrics when the track changes
@@ -197,6 +224,18 @@ function updateMetadata() {
 artwork.addEventListener("error", () => {
   if (artwork.src !== location.origin + DEFAULT_ARTWORK) {
     artwork.src = DEFAULT_ARTWORK;
+  }
+});
+
+albumCover.addEventListener("error", () => {
+  if (albumCover.src !== new URL(DEFAULT_ARTWORK, document.baseURI).href) {
+    albumCover.src = DEFAULT_ARTWORK;
+  }
+});
+
+nextArtwork.addEventListener("error", () => {
+  if (nextArtwork.src !== new URL(DEFAULT_ARTWORK, document.baseURI).href) {
+    nextArtwork.src = DEFAULT_ARTWORK;
   }
 });
 
@@ -251,6 +290,10 @@ function updatePlaybackState() {
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
   updateMetadata,
+);
+playerManager.addEventListener(
+  cast.framework.events.EventType.MEDIA_STATUS,
+  updateNextTrack,
 );
 
 // Playback updates

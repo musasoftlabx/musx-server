@@ -65,6 +65,56 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
+}
+
+.next-track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  max-width: min(36vw, 440px);
+  margin-left: auto;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.next-track-artwork {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.next-track-info {
+  min-width: 0;
+}
+
+.next-track-label {
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.next-track-title,
+.next-track-detail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.next-track-title {
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.next-track-detail {
+  color: var(--muted);
+  font-size: 11px;
 }
 
 .logo {
@@ -113,15 +163,17 @@ body {
 }
 
 .artwork-container {
-  width: min(26vw, 36vh);
-  aspect-ratio: 1;
+  position: relative;
+  width: min(39vw, 54vh, 100%);
+  aspect-ratio: 3 / 2;
   flex-shrink: 0;
   filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.7));
 }
 
 .album-disc {
-  position: relative;
-  width: 100%;
+  position: absolute;
+  right: 0;
+  width: 66.6667%;
   height: 100%;
   border-radius: 50%;
   overflow: hidden;
@@ -148,11 +200,22 @@ body {
   animation-play-state: paused;
 }
 
-.artwork-container img {
+.album-disc img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+}
+
+.album-cover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 66.6667%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 8px 0 20px rgba(0, 0, 0, 0.4);
 }
 
 /* Without lyrics, fall back to the wide artwork + info layout */
@@ -167,7 +230,7 @@ body {
 }
 
 .no-lyrics .artwork-container {
-  width: min(38vw, 48vh);
+  width: min(57vw, 72vh, 60%);
 }
 
 .no-lyrics .lyrics-panel {
@@ -175,7 +238,7 @@ body {
 }
 
 .lyrics-panel {
-  margin-left: -4vw;
+  margin-left: -6vw;
   height: 100%;
   max-height: 62vh;
   display: flex;
@@ -382,7 +445,7 @@ body:not(.no-lyrics) #album {
   }
 
   .no-lyrics .artwork-container {
-    width: 35vw;
+    width: min(52.5vw, 60%);
   }
 }
 
