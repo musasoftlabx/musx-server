@@ -228,7 +228,7 @@ body {
   width: 63.3333%;
   filter: hue-rotate(30deg) grayscale(0.7);
   height: 95%;
-  border: 3px double rgba(255, 255, 255, 0.5);
+  border: 3px double rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   overflow: hidden;
   -webkit-mask-image: radial-gradient(circle, transparent 6%, #000 6.5%);
