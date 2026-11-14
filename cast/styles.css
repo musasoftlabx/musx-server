@@ -145,9 +145,10 @@ body {
 .artist-detail,
 .album-detail {
   display: flex;
+  align-items: center;
   gap: 5px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 16px;
 }
 
 .artist-icon,
@@ -162,9 +163,15 @@ body {
   stroke-width: 1.7;
 }
 
+#album {
+  color: var(--muted);
+  margin: 0;
+  margin-left: 2px;
+}
+
+#album,
 .album-icon {
-  margin-top: 4px;
-  margin-left: 3px;
+  font-size: 15px;
 }
 
 .logo {
@@ -436,7 +443,8 @@ h2 {
 }
 
 h2,
-.artist-icon {
+.artist-icon,
+.album-icon {
   font-size: clamp(18px, 2.5vw, 30px);
 }
 
@@ -445,18 +453,8 @@ body:not(.no-lyrics) h1 {
   margin-top: 12px;
 }
 
-body:not(.no-lyrics) #album {
-  margin: 10px 0 0;
-}
-
-#album {
-  color: var(--muted);
-  margin-top: 20px;
-}
-
-#album,
-.album-icon {
-  font-size: 18px;
+body:not(.no-lyrics) .album-detail {
+  margin-top: 10px;
 }
 
 .footer {
