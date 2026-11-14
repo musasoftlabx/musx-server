@@ -92,9 +92,7 @@ const app = new Elysia()
   .use(html({ contentType: "text/html" }))
   .get("/html", () => scanner())
   .get("/scanner", () => Bun.file("scanner.tsx"))
-  .get("/scan", function* (params) {
-    return scan(params);
-  })
+  .get("/scan", scan)
   .get("/rescan", () => rescan())
   .get("/reset", () => reset())
   .get("/dashboard", () => dashboard())

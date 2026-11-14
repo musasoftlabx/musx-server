@@ -1,198 +1,249 @@
-import { dateTime, DB } from "..";
-import { Context } from "elysia";
+import { DB } from "..";
+import type { Context } from "elysia";
 import { Glob } from "bun";
-import { SQLQueryBindings } from "bun:sqlite";
-import { execSync } from "child_process";
-import { existsSync } from "fs";
-import { unlink } from "fs/promises";
-import rgbHex from "rgb-hex";
-const ColorThief = require("colorthief");
+import type { SQLQueryBindings } from "bun:sqlite";
+import { execFile } from "node:child_process";
+import { constants } from "node:fs";
+import { access, mkdir, rmdir, stat, unlink } from "node:fs/promises";
+import { resolve } from "node:path";
+import { promisify } from "node:util";
 
-const colorsFromImage = async (path: string) => {
-  const rgbArray = await ColorThief.getColor(path);
-  const rgbPalette = await ColorThief.getPalette(path);
-  return JSON.stringify([
-    `#${rgbHex(rgbArray.join())}`,
-    ...rgbPalette.map((rgbArray: []) => `#${rgbHex(rgbArray.join())}`),
-  ]);
-};
+const probeFile = promisify(execFile);
+const CONCURRENCY = 4;
+const PROBE_TIMEOUT_MS = 30_000;
 
-export default async function* (params: Pick<Context, "set">) {
-  const { set } = params;
+interface ProbeMetadata {
+  format?: {
+    tags?: Record<string, string | undefined>;
+    bit_rate?: string;
+    size?: string;
+    duration?: string;
+    format_name?: string;
+  };
+  streams?: {
+    codec_type?: string;
+    channels?: number;
+    channel_layout?: string;
+    sample_rate?: string;
+    tags?: { encoder?: string };
+  }[];
+}
 
-  let count = 0;
-  const musicDirectory = "./Music";
+interface Track {
+  id: number;
+  path: string;
+  artwork: string | null;
+  waveform: string | null;
+  title: string | null;
+  artists: string | null;
+}
 
-  const glob = new Glob("**/*.{mp3}");
+type ProbeResult =
+  | { path: string; bindings: SQLQueryBindings[] }
+  | { path: string; error: unknown };
 
-  // ? Scan files from glob output
-  for await (const path of glob.scan({ cwd: musicDirectory })) {
-    // ? Remove special characters from filename
-    const file = path.replaceAll("$", "\\$").replaceAll("`", "\\`");
+function hasCode(error: unknown, code: string) {
+  return error instanceof Error && "code" in error && error.code === code;
+}
 
-    // ? Add special characters from filename
-    //const path = file.replaceAll("\\$", "$").replaceAll("\\`", "`");
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
 
-    // ? Check if file has already been scanned before
-    const pathExists = DB.query(
-      `SELECT COUNT(path) FROM tracks WHERE path = "${path}"`
-    ).values();
-
-    // ? If file has been scanned previously, ignore. Else, probe it
-    if (!Boolean(pathExists[0][0])) {
-      try {
-        count++;
-
-        yield `${count}. ${path}`; // ? Send an output to client to show file being probed.
-
-        const stdout: any = execSync(
-          `ffprobe -v error -hide_banner -show_format -show_streams -output_format json "${musicDirectory}/${file}"`
-        );
-
-        const buffer: Buffer = Buffer.from(stdout);
-        const base64Data = buffer.toString("base64");
-        const jsonString = atob(base64Data);
-        const metadata = JSON.parse(jsonString);
-
-        // ? Destructure format from metadata
-        const {
-          tags,
-          bit_rate: bitrate,
-          size,
-          duration,
-          format_name,
-        } = metadata.format;
-
-        // ? Create artwork filename from path
-        const artwork = `${path
-          .replace(`.${format_name}`, "")
-          .replace(/[^a-zA-Z0-9]/g, "_")}.jpg`; //\W+
-
-        // ? Create waveform filename from path
-        const waveform = `${path
-          .replace(`.${format_name}`, "")
-          .replace(/[^a-zA-Z0-9]/g, "_")}.png`;
-
-        // ? Insert record to DB
-        try {
-          DB.query<SQLQueryBindings, {}>(
-            `INSERT INTO tracks VALUES (NULL,?,DateTime('now'),?,?,?,?,?,?,?,0,0,?,?,?,?,?,?,?,?,?,?,?,NULL)`
-          ).run([
-            path,
-            tags?.title,
-            tags?.album,
-            tags?.album_artist,
-            tags?.artist,
-            tags?.genre,
-            tags?.date,
-            tags?.track,
-            bitrate,
-            size,
-            duration,
-            format_name,
-            metadata?.streams[0].channels ?? null,
-            metadata?.streams[0].channel_layout ?? null,
-            metadata?.streams[0].sample_rate ?? null,
-            metadata?.streams[0]?.tags?.encoder ?? null,
-            artwork,
-            waveform,
-            null,
-          ]);
-        } catch (err) {
-          if (err instanceof Error)
-            DB.query<SQLQueryBindings, {}>(
-              `INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`
-            ).run([file, "DB_INSERTION", null]);
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          yield `Error. ${path}: ${err.message}`;
-
-          DB.run(`INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`, [
-            file,
-            "METADATA_EXTRACTION",
-            null,
-          ]);
-        }
-      }
+async function probe(path: string, musicDirectory: string): Promise<ProbeResult> {
+  try {
+    const { stdout } = await probeFile(
+      "ffprobe",
+      [
+        "-v", "error", "-hide_banner",
+        "-select_streams", "a:0",
+        "-show_format", "-show_streams", "-output_format", "json",
+        resolve(musicDirectory, path),
+      ],
+      { encoding: "utf8", timeout: PROBE_TIMEOUT_MS, killSignal: "SIGKILL" }
+    );
+    const metadata: ProbeMetadata = JSON.parse(stdout);
+    const stream = metadata.streams?.find((item) => item.codec_type === "audio");
+    if (!metadata.format || !stream) {
+      throw new Error("ffprobe returned no audio stream or format metadata");
     }
+
+    const { tags, bit_rate, size, duration, format_name } = metadata.format;
+    // Preserve MP3 asset names; retain other extensions to avoid format collisions.
+    const assetName = path.replace(/\.mp3$/, "").replace(/[^a-zA-Z0-9]/g, "_");
+    return {
+      path,
+      bindings: [
+        path,
+        tags?.title ?? null,
+        tags?.album ?? null,
+        tags?.album_artist ?? null,
+        tags?.artist ?? null,
+        tags?.genre ?? null,
+        tags?.date ?? null,
+        tags?.track ?? null,
+        bit_rate ?? null,
+        size ?? null,
+        duration ?? null,
+        format_name ?? null,
+        stream.channels ?? null,
+        stream.channel_layout ?? null,
+        stream.sample_rate ?? null,
+        stream.tags?.encoder ?? null,
+        `${assetName}.jpg`,
+        `${assetName}.png`,
+        null,
+      ],
+    };
+  } catch (error) {
+    return { path, error };
+  }
+}
+
+export default async function* ({ set }: Pick<Context, "set">) {
+  const musicDirectory = resolve("./Music");
+  const lockDirectory = resolve("./.music-scan.lock");
+
+  try {
+    await mkdir(lockDirectory);
+  } catch (error) {
+    if (!hasCode(error, "EEXIST")) throw error;
+    set.status = 409;
+    yield "A scan is already running. If a previous process crashed, remove .music-scan.lock only after confirming no scan is active.";
+    return;
   }
 
-  const paths = DB.query<
-    {
-      id: number;
-      path: string;
-      artwork: string;
-      waveform: string;
-      title: string;
-      artists: string;
-    },
-    SQLQueryBindings[]
-  >(`SELECT id, path, artwork, waveform, title, artists FROM tracks`).all();
+  try {
+    const scanError = DB.query<unknown, SQLQueryBindings[]>(
+      `INSERT INTO scanErrors (track, operation, error, scannedOn)
+       VALUES (?, ?, ?, DateTime('now'))`
+    );
+    const reportError = (path: string, operation: string, error: unknown) => {
+      const message = errorMessage(error);
+      scanError.run(path, operation, message);
+      return `Error. ${path}: ${message}`;
+    };
 
-  // ? Loop through library to extract or update artworks
-  // for await (const { id, path, artwork } of paths) {
-  //   const trackPath = `${musicDirectory}/${path
-  //     .replaceAll("$", "\\$")
-  //     .replaceAll("`", "\\`")}`;
-  //   const artworkPath = `./Artwork/${artwork}`;
+    try {
+      const directory = await stat(musicDirectory);
+      const checkDirectory = async () => {
+        const current = await stat(musicDirectory);
+        if (
+          !current.isDirectory() ||
+          current.dev !== directory.dev ||
+          current.ino !== directory.ino
+        ) {
+          throw new Error("Music directory changed during scanning; cleanup aborted");
+        }
+        await access(musicDirectory, constants.R_OK | constants.X_OK);
+      };
+      await checkDirectory();
 
-  //   // ? Execute ffmpeg to extract artwork
-  //   if (!existsSync(artworkPath))
-  //     try {
-  //       execSync(
-  //         `ffmpeg -v error -hide_banner -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`
-  //       );
+      const tracks = DB.query<Track, []>(
+        `SELECT id, path, artwork, waveform, title, artists FROM tracks`
+      ).all();
+      const existingPaths = new Set(tracks.map((track) => track.path));
+      const insertTrack = DB.query<unknown, SQLQueryBindings[]>(
+        `INSERT INTO tracks (
+          path, syncDate, title, album, albumArtist, artists, genre, year, track,
+          rating, plays, bitrate, size, duration, format, channels, channelLayout,
+          sampleRate, encoder, artwork, waveform, palette, lyrics
+        ) VALUES (?, DateTime('now'), ?, ?, ?, ?, ?, ?, ?, 0, 0,
+                  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`
+      );
+      const saveBatch = DB.transaction((results: ProbeResult[]) => {
+        const errors: string[] = [];
+        for (const result of results) {
+          if ("error" in result) {
+            errors.push(reportError(result.path, "METADATA_EXTRACTION", result.error));
+          } else {
+            try {
+              insertTrack.run(...result.bindings);
+            } catch (error) {
+              errors.push(reportError(result.path, "DB_INSERTION", error));
+            }
+          }
+        }
+        return errors;
+      });
 
-  //       DB.query<SQLQueryBindings, {}>(
-  //         `UPDATE tracks SET palette = ? WHERE id = ${id}`
-  //       ).run([await colorsFromImage(artworkPath)]);
-  //     } catch (err) {
-  //       if (err instanceof Error)
-  //         DB.run(`INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`, [
-  //           path,
-  //           "IMAGE_EXTRACTION",
-  //           null,
-  //         ]);
-  //     }
-  // }
+      let count = 0;
+      const scanBatch = async function* (paths: string[]) {
+        for (const path of paths) yield `${++count}. ${path}`;
+        const results = await Promise.all(paths.map((path) => probe(path, musicDirectory)));
+        // Keep disk/process work outside the short SQLite write transaction.
+        yield* saveBatch(results);
+      };
 
-  // // ? Loop through library to extract or update waveforms
-  // for await (const { path, waveform } of paths) {
-  //   const trackPath = `${musicDirectory}/${path
-  //     .replaceAll("$", "\\$")
-  //     .replaceAll("`", "\\`")}`;
-  //   const waveformPath = `./Waveform/${waveform}`;
+      let pending: string[] = [];
+      for await (const path of new Glob("**/*.{mp3,flac,aac,m4a}").scan({ cwd: musicDirectory })) {
+        if (existingPaths.has(path)) continue;
+        pending.push(path);
+        if (pending.length === CONCURRENCY) {
+          yield* scanBatch(pending);
+          pending = [];
+        }
+      }
+      if (pending.length) yield* scanBatch(pending);
 
-  //   // ? Execute ffmpeg to construct waveform
-  //   if (!existsSync(waveformPath))
-  //     try {
-  //       execSync(
-  //         `ffmpeg -v error -hide_banner -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`
-  //       );
-  //     } catch (err) {
-  //       if (err instanceof Error) {
-  //         DB.run(`INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`, [
-  //           path,
-  //           "WAVEFORM_EXTRACTION",
-  //           null,
-  //         ]);
-  //       }
-  //     }
-  // }
+      const deleteTrack = DB.query<unknown, [number]>(
+        "DELETE FROM tracks WHERE id = ?"
+      );
+      const recordDeletion = DB.query<unknown, SQLQueryBindings[]>(
+        `INSERT INTO deletedTracks (path, title, artists, deletedOn)
+         VALUES (?, ?, ?, DateTime('now'))`
+      );
+      const deleteBatch = DB.transaction((missing: Track[]) => {
+        for (const track of missing) {
+          deleteTrack.run(track.id);
+          recordDeletion.run(track.path, track.title, track.artists);
+        }
+      });
 
-  // ? Delete from DB if file not found
-  for await (const { id, path, artwork, waveform, title, artists } of paths) {
-    if (!existsSync(`${musicDirectory}/${path}`)) {
-      DB.run(`DELETE FROM tracks WHERE id = ${id}`);
-      DB.run(`INSERT INTO deletedTracks VALUES (NULL, ?, ?, ?, ?)`, [
-        path,
-        title,
-        artists,
-        dateTime,
-      ]);
-      await unlink(`./Artwork/${artwork}`);
-      await unlink(`./Waveform/${waveform}`);
+      for (let i = 0; i < tracks.length; i += CONCURRENCY) {
+        const checks = await Promise.all(
+          tracks.slice(i, i + CONCURRENCY).map(async (track) => {
+            try {
+              await stat(resolve(musicDirectory, track.path));
+              return { track, missing: false };
+            } catch (error) {
+              if (hasCode(error, "ENOENT")) return { track, missing: true };
+              return { track, missing: false, error };
+            }
+          })
+        );
+        const missing: Track[] = [];
+        for (const check of checks) {
+          if ("error" in check) {
+            yield reportError(check.track.path, "FILE_ACCESS", check.error);
+          } else if (check.missing) {
+            missing.push(check.track);
+          }
+        }
+        if (!missing.length) continue;
+
+        await checkDirectory();
+        deleteBatch(missing);
+        for (const track of missing) {
+          for (const asset of [
+            track.artwork && resolve("./Artwork", track.artwork),
+            track.waveform && resolve("./Waveform", track.waveform),
+          ]) {
+            if (!asset) continue;
+            try {
+              await unlink(asset);
+            } catch (error) {
+              if (!hasCode(error, "ENOENT")) {
+                yield reportError(asset, "ASSET_DELETION", error);
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      yield reportError(musicDirectory, "SCAN", error);
     }
+  } finally {
+    await rmdir(lockDirectory);
   }
 }
