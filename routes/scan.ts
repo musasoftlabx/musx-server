@@ -17,9 +17,8 @@ const colorsFromImage = async (path: string) => {
   ]);
 };
 
-export default async function* (params: Pick<Context, "set">) {
-  const { set } = params;
-
+//export default async function* (params: Pick<Context, "set">) {
+export default async function* ({ set }: Pick<Context, "set">) {
   let count = 0;
   const musicDirectory = "./Music";
 
