@@ -31,6 +31,8 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+.db
+
 # vercel
 .vercel
 .vscode
@@ -60,9 +62,6 @@ Waveform
 Transcodes
 
 *.sqlite*
-*musx*
+*muzix*
 
 /.pm2
-
-*.sqlite*
-*musx*
