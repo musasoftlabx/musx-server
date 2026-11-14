@@ -224,6 +224,7 @@ body {
   align-items: center;
   font-family: "Science Gothic Bold", sans-serif;
   gap: 15px;
+  margin-left: -0.5em;
   font-size: 35px;
   letter-spacing: 5px;
   background: linear-gradient(to right, #a855f7, #dd95b9);
@@ -492,9 +493,23 @@ h2,
   font-size: clamp(18px, 2.5vw, 30px);
 }
 
-body:not(.no-lyrics) h1 {
-  font-size: clamp(24px, 3.4vw, 48px);
+body:not(.no-lyrics) #title {
+  font-size: 20px;
   margin-top: 12px;
+}
+
+body:not(.no-lyrics) .track-info {
+  margin-top: 15px;
+}
+
+body:not(.no-lyrics) #artist,
+body:not(.no-lyrics) .artist-icon {
+  font-size: 16px;
+}
+
+body:not(.no-lyrics) #album,
+body:not(.no-lyrics) .album-icon {
+  font-size: 13px;
 }
 
 .footer {
