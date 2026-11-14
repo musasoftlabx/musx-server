@@ -181,17 +181,17 @@ export default async function* ({ set }: Pick<Context, "set">) {
   }
 
   // ? Delete from DB if file not found
-  for await (const { id, path, artwork, waveform, title, artists } of paths) {
-    if (!existsSync(`${musicDirectory}/${path}`)) {
-      DB.run(`DELETE FROM tracks WHERE id = ${id}`);
-      DB.run(`INSERT INTO deletedTracks VALUES (NULL, ?, ?, ?, ?)`, [
-        path,
-        title,
-        artists,
-        dateTime,
-      ]);
-      await unlink(`./Artwork/${artwork}`);
-      await unlink(`./Waveform/${waveform}`);
-    }
-  }
+  // for await (const { id, path, artwork, waveform, title, artists } of paths) {
+  //   if (!existsSync(`${musicDirectory}/${path}`)) {
+  //     DB.run(`DELETE FROM tracks WHERE id = ${id}`);
+  //     DB.run(`INSERT INTO deletedTracks VALUES (NULL, ?, ?, ?, ?)`, [
+  //       path,
+  //       title,
+  //       artists,
+  //       dateTime,
+  //     ]);
+  //     await unlink(`./Artwork/${artwork}`);
+  //     await unlink(`./Waveform/${waveform}`);
+  //   }
+  // }
 }
