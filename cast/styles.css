@@ -118,8 +118,28 @@ body {
 }
 
 .next-track-detail {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   color: var(--muted);
   font-size: 11px;
+}
+
+.next-track-icon {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.next-track-detail span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .logo {
@@ -372,6 +392,10 @@ body {
 .track-info {
   max-width: 600px;
   transform: translateX(-4vw);
+}
+
+body:not(.no-lyrics) .track-info {
+  transform: translateX(1vw);
 }
 
 h1 {

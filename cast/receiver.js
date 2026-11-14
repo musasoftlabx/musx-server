@@ -30,7 +30,7 @@ const nextArtist = document.getElementById("nextArtist");
 const nextAlbum = document.getElementById("nextAlbum");
 
 const DEFAULT_ARTWORK = "artwork.png";
-let nextArtworkUrl = DEFAULT_ARTWORK;
+let nextArtworkUrl = null;
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) {
@@ -52,16 +52,27 @@ function setText(element, value, fallback) {
 
 function updateNextTrack() {
   const queue = playerManager.getQueueManager();
-  const index = queue?.getCurrentItemIndex() ?? -1;
-  const next = index >= 0 ? queue.getItems()[index + 1] : null;
+  const items = queue?.getItems() ?? [];
+  const currentItem = queue?.getCurrentItem();
+  const currentIndex =
+    currentItem?.itemId != null
+      ? items.findIndex((item) => item.itemId === currentItem.itemId)
+      : (queue?.getCurrentItemIndex() ?? -1);
+  const next = currentIndex >= 0 ? items[currentIndex + 1] : null;
   nextTrack.hidden = !next;
   if (!next) return;
-  const metadata = next?.media?.metadata;
+  const media = next.media || {};
+  const metadata = media.metadata || {};
 
   setText(nextTitle, metadata?.title, "Unknown Track");
   setText(nextArtist, metadata?.artist, "Unknown Artist");
   setText(nextAlbum, metadata?.albumName, "");
-  const imageUrl = metadata?.images?.[0]?.url || DEFAULT_ARTWORK;
+  const imageUrl =
+    metadata.images?.find((image) => image?.url)?.url ||
+    metadata.posterUrl ||
+    media.customData?.artwork ||
+    media.customData?.image ||
+    DEFAULT_ARTWORK;
   if (nextArtworkUrl !== imageUrl) {
     nextArtworkUrl = imageUrl;
     nextArtwork.src = imageUrl;
@@ -234,6 +245,7 @@ albumCover.addEventListener("error", () => {
 
 nextArtwork.addEventListener("error", () => {
   if (nextArtwork.src !== new URL(DEFAULT_ARTWORK, document.baseURI).href) {
+    nextArtworkUrl = null;
     nextArtwork.src = DEFAULT_ARTWORK;
   }
 });
