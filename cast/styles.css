@@ -142,6 +142,31 @@ body {
   white-space: nowrap;
 }
 
+.artist-detail,
+.album-detail {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.artist-icon,
+.album-icon {
+  width: 1em;
+  height: 1em;
+  flex: 0 0 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.album-icon {
+  margin-top: 4px;
+}
+
 .logo {
   height: 50px;
   width: 50px;
@@ -200,7 +225,6 @@ body {
   right: 2%;
   top: 2.5%;
   width: 63.3333%;
-  _filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.7));
   filter: hue-rotate(30deg) grayscale(0.7);
   height: 95%;
   border: 3px double rgba(255, 255, 255, 0.8);
@@ -215,7 +239,7 @@ body {
   position: absolute;
   inset: 38%;
   border-radius: 50%;
-  border: 3px double rgba(255, 255, 255, 0.65);
+  border: 2px double rgba(255, 255, 255, 0.65);
   background: conic-gradient(
     rgba(255, 255, 255, 0.75),
     rgba(160, 170, 185, 0.35),
@@ -407,9 +431,13 @@ h1 {
 
 h2 {
   color: #cccccc;
-  font-size: clamp(18px, 2.5vw, 30px);
   font-weight: 400;
   margin: 0;
+}
+
+h2,
+.artist-icon {
+  font-size: clamp(18px, 2.5vw, 30px);
 }
 
 body:not(.no-lyrics) h1 {
@@ -423,8 +451,12 @@ body:not(.no-lyrics) #album {
 
 #album {
   color: var(--muted);
-  font-size: 18px;
   margin-top: 20px;
+}
+
+#album,
+.album-icon {
+  font-size: 18px;
 }
 
 .footer {
