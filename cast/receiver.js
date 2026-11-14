@@ -66,7 +66,7 @@ function updateNextTrack() {
 
   setText(nextTitle, metadata?.title, "Unknown Track");
   setText(nextArtist, metadata?.artist, "Unknown Artist");
-  setText(nextAlbum, metadata?.albumName, "");
+  if (nextAlbum) setText(nextAlbum, metadata?.albumName, "");
   const imageUrl =
     metadata.images?.find((image) => image?.url)?.url ||
     metadata.posterUrl ||
