@@ -234,7 +234,7 @@ body {
   gap: 15px;
   font-size: 35px;
   letter-spacing: 5px;
-  background: linear-gradient(to right, #a855f7, #dd95b9);
+  background: linear-gradient(to right, #a855f7, var(--gold));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -247,6 +247,7 @@ body {
   margin-top: -10px;
   margin-left: 0.2em;
   color: var(--muted);
+  transform: scaleY(0.7);
 }
 
 .pulse {
