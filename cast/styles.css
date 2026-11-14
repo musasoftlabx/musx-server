@@ -180,6 +180,8 @@ body {
   right: 2%;
   top: 2.5%;
   width: 63.3333%;
+  _filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.7));
+  filter: hue-rotate(30deg) grayscale(0.7);
   height: 95%;
   border: 3px double rgba(255, 255, 255, 0.8);
   border-radius: 50%;
