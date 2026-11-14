@@ -1,8 +1,36 @@
 @font-face {
   font-family: "JetBrains Mono";
-  src: url("./JetBrainsMono-Regular.ttf") format("truetype");
+  src: url("./fonts/JetBrainsMono-Regular.ttf") format("truetype");
   font-style: normal;
   font-weight: 400;
+}
+
+@font-face {
+  font-family: "JetBrains Mono Bold";
+  src: url("./fonts/JetBrainsMono-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Rubik";
+  src: url("./fonts/Rubik.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Rubik Bold";
+  src: url("./fonts/Rubik-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Science Gothic Bold";
+  src: url("./fonts/ScienceGothic-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
 }
 
 :root {
@@ -106,6 +134,8 @@ body {
 
 .next-track-title,
 .next-track-detail {
+  font-family: "Rubik", sans-serif;
+  letter-spacing: 0.15em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -147,6 +177,7 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
+  margin-top: 12px;
   color: var(--muted);
   font-size: 16px;
 }
@@ -161,6 +192,16 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.7;
+}
+
+#artist {
+  margin: 0;
+}
+
+#title {
+  font-family: "JetBrains Mono Bold";
+  font-weight: 700;
+  font-size: 35px;
 }
 
 #album {
@@ -275,7 +316,7 @@ body {
   height: 100%;
   object-fit: cover;
   border: 3px outset rgba(255, 255, 255, 0.3);
-  border-left: 20px groove rgba(255, 255, 255, 0.7);
+  border-left: 15px groove rgba(255, 255, 255, 0.7);
   box-shadow: 8px 0 20px rgba(0, 0, 0, 0.9);
 }
 
@@ -433,7 +474,7 @@ h1 {
   font-size: clamp(30px, 5vw, 64px);
   overflow-wrap: break-word;
   line-height: 1.1;
-  margin: 24px 0 12px;
+  margin: 24px 0 0;
 }
 
 h2 {
@@ -451,10 +492,6 @@ h2,
 body:not(.no-lyrics) h1 {
   font-size: clamp(24px, 3.4vw, 48px);
   margin-top: 12px;
-}
-
-body:not(.no-lyrics) .album-detail {
-  margin-top: 10px;
 }
 
 .footer {
@@ -497,10 +534,11 @@ body:not(.no-lyrics) .album-detail {
 }
 
 .footer-brand {
+  font-family: "Rubik", sans-serif;
+  letter-spacing: 0.5em;
   text-align: center;
   color: #666666;
   font-size: 10px;
-  letter-spacing: 4px;
   margin-top: 25px;
 }
 
