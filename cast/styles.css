@@ -95,6 +95,7 @@ body {
 
 .next-track-info {
   min-width: 0;
+  top: -1%;
 }
 
 .next-track-label {
@@ -180,6 +181,7 @@ body {
   top: 2.5%;
   width: 63.3333%;
   height: 95%;
+  border: 3px double rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   overflow: hidden;
   -webkit-mask-image: radial-gradient(circle, transparent 6%, #000 6.5%);
@@ -219,8 +221,9 @@ body {
   width: 66.6667%;
   height: 100%;
   object-fit: cover;
-  border-radius: 6px;
-  box-shadow: 8px 0 20px rgba(0, 0, 0, 0.4);
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  box-shadow: 8px 0 20px rgba(0, 0, 0, 0.9);
 }
 
 /* Without lyrics, fall back to the wide artwork + info layout */
