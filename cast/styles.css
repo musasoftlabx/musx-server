@@ -13,6 +13,13 @@
 }
 
 @font-face {
+  font-family: "Abel";
+  src: url("./fonts/Abel.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
   font-family: "Rubik";
   src: url("./fonts/Rubik.ttf") format("truetype");
   font-style: normal;
@@ -152,6 +159,7 @@ body {
   gap: 5px;
   color: var(--muted);
   font-size: 11px;
+  margin-top: 3px;
 }
 
 .next-track-icon {
@@ -224,7 +232,6 @@ body {
   align-items: center;
   font-family: "Science Gothic Bold", sans-serif;
   gap: 15px;
-  margin-left: -0.5em;
   font-size: 35px;
   letter-spacing: 5px;
   background: linear-gradient(to right, #a855f7, #dd95b9);
@@ -233,9 +240,13 @@ body {
   color: transparent;
 }
 
-.brand-mark {
-  color: var(--gold);
-  font-size: 32px;
+.brand-caption {
+  font-family: "Abel";
+  font-size: 1em;
+  letter-spacing: 1.2em;
+  margin-top: -10px;
+  margin-left: 0.2em;
+  color: var(--muted);
 }
 
 .pulse {
@@ -496,6 +507,10 @@ h2,
 body:not(.no-lyrics) #title {
   font-size: 20px;
   margin-top: 12px;
+}
+
+body:not(.no-lyrics) .brand-container {
+  margin-left: -0.5em;
 }
 
 body:not(.no-lyrics) .track-info {
