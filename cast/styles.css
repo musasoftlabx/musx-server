@@ -145,7 +145,6 @@ body {
 .artist-detail,
 .album-detail {
   display: flex;
-  align-items: center;
   gap: 5px;
   color: var(--muted);
   font-size: 11px;
