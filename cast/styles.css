@@ -96,7 +96,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
 
-  --s: 26px; /* control the size*/
+  --s: 36px; /* control the size*/
   --c1: #1a130a;
   --c2: #2a1835;
 
