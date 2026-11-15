@@ -34,8 +34,8 @@
 }
 
 @font-face {
-  font-family: "Science Gothic Bold";
-  src: url("./fonts/ScienceGothic-Bold.ttf") format("truetype");
+  font-family: "Pacifico";
+  src: url("./fonts/Pacifico.ttf") format("truetype");
   font-style: normal;
   font-weight: bold;
 }
@@ -261,9 +261,10 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 #title {
-  font-family: "JetBrains Mono Bold";
-  font-weight: 700;
+  font-family: "Pacifico";
+  font-weight: normal;
   font-size: 35px;
+  letter-spacing: 0.15em;
 }
 
 #album {
@@ -527,6 +528,12 @@ body:not(.no-lyrics) .artist-icon {
   mask-composite: exclude;
   pointer-events: none;
 }
+
+/* .lyrics-panel::after {
+  padding: 3px;
+  filter: blur(8px);
+  opacity: 0.65;
+} */
 
 .lyrics-header {
   display: flex;
