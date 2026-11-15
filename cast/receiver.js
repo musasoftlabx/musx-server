@@ -230,7 +230,7 @@ function updateMetadata() {
   artwork.src = imageUrl || DEFAULT_ARTWORK;
   albumCover.src = artwork.src;
   ambientArt.src = artwork.src;
-  //artistImage.src = "https://musasoftlabs.com/Music/Tanzania/Zuchu/artist.jpg";
+  artistImage.src = "https://musasoftlabs.com/Music/Tanzania/Zuchu/artist.jpg";
 
   // MEDIA_STATUS fires often; only reload lyrics when the track changes
   const key = media.contentId || media.contentUrl || metadata.title;
