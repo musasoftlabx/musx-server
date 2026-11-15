@@ -262,8 +262,10 @@ function updateMetadata() {
       });
   }
 
-  //const { metadataType, images, title, artist, albumName, ...rest } = metadata;
-  //logs.textContent = JSON.stringify(rest);
+  const x = metadata;
+
+  const { metadataType, images, title, artist, albumName, ...rest } = x;
+  logs.textContent = JSON.stringify(rest);
 }
 
 artwork.addEventListener("error", () => {
