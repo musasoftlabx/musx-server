@@ -227,14 +227,6 @@ function updateMetadata() {
 
   logs.textContent = JSON.stringify(metadata);
 
-  // {
-  //   metadata.albumName
-  //     ? metadata.albumName === metadata.title
-  //       ? metadata.extraPayload?.albumArtist + " Singles" + extraInfo
-  //       : metadata.albumName + extraInfo
-  //     : "No Album";
-  // }
-
   const imageUrl = metadata.images?.[0]?.url;
 
   artwork.src = imageUrl || DEFAULT_ARTWORK;
