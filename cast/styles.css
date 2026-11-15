@@ -422,11 +422,15 @@ body:not(.no-lyrics) .artist-icon {
   top: 0;
   width: 66.6667%;
   height: 100%;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .album-cover {
   object-fit: cover;
-  border: 10px outset rgba(255, 255, 255, 0.3);
+  border-right: 10px outset rgba(255, 255, 255, 0.3);
+  border-top: 10px outset rgba(255, 255, 255, 0.3);
+  border-bottom: 10px outset rgba(255, 255, 255, 0.3);
   box-shadow: 8px 0 20px rgba(0, 0, 0, 0.9);
 }
 
