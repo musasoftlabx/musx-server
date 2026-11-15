@@ -251,8 +251,8 @@ function updateMetadata() {
       });
   }
 
-  const { metadataType, images, title, artist, albumName, ...rest } = metadata;
-  logs.textContent = JSON.stringify(rest);
+  //const { metadataType, images, title, artist, albumName, ...rest } = metadata;
+  //logs.textContent = JSON.stringify(rest);
 }
 
 artwork.addEventListener("error", () => {

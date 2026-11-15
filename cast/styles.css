@@ -289,8 +289,11 @@ body {
   letter-spacing: 0.8em;
   margin-top: -1.7em;
   margin-left: 3em;
-  color: var(--muted);
   transform: scaleY(0.7);
+  background: linear-gradient(to right, #ffffff, #603b87);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .pulse {
@@ -631,6 +634,7 @@ body:not(.no-lyrics) #title {
 
 body:not(.no-lyrics) .brand-container {
   margin-left: -0.5em;
+  transform: scale(0.7);
 }
 
 body:not(.no-lyrics) .track-info {
