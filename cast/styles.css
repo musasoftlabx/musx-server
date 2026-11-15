@@ -40,6 +40,13 @@
   font-weight: bold;
 }
 
+@font-face {
+  font-family: "RockSalt";
+  src: url("./fonts/RockSalt.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
 :root {
   --gold: #d4af37;
   --background: #090909;
@@ -230,7 +237,7 @@ body {
 .brand {
   display: flex;
   align-items: center;
-  font-family: "Science Gothic Bold", sans-serif;
+  font-family: "RockSalt", sans-serif;
   gap: 15px;
   font-size: 35px;
   letter-spacing: 5px;
@@ -241,11 +248,11 @@ body {
 }
 
 .brand-caption {
-  font-family: "Abel";
+  font-family: "Rubik";
   font-size: 1em;
-  letter-spacing: 1.2em;
-  margin-top: -10px;
-  margin-left: 0.2em;
+  letter-spacing: 0.8em;
+  margin-top: -1.7em;
+  margin-left: 3em;
   color: var(--muted);
   transform: scaleY(0.7);
 }
@@ -332,8 +339,25 @@ body {
   height: 100%;
   object-fit: cover;
   border: 3px outset rgba(255, 255, 255, 0.3);
-  border-left: 15px groove rgba(255, 255, 255, 0.7);
+  _border-left: 15px groove rgba(255, 255, 255, 0.7);
   box-shadow: 8px 0 20px rgba(0, 0, 0, 0.9);
+}
+
+.album-cover-hinge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.4) 0 1px,
+    rgba(0, 0, 0, 0.25) 1px 3px,
+    transparent 3px 5px
+  );
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+  z-index: 2;
 }
 
 /* Without lyrics, fall back to the wide artwork + info layout */
