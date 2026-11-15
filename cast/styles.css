@@ -209,9 +209,12 @@ body {
   align-items: center;
   gap: 5px;
   margin-top: 12px;
-  margin-left: 2px;
   color: var(--muted);
   font-size: 16px;
+}
+
+body:not(.no-lyrics) .artist-icon {
+  margin-left: -0.5vw;
 }
 
 .artist-image,
