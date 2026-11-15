@@ -58,6 +58,27 @@ the stale, empty lock directory with `rmdir .music-scan.lock`.
 
 Run scanner regression tests with `bun test routes/scan.test.ts`.
 
+### Waveform generation
+
+`GET /scan-waveforms` generates missing waveform images with two asynchronous
+FFmpeg workers. It reads the output directory once and streams progress only
+for pending files. Each worker uses one decoder, filter, and encoder thread
+and has a five-minute timeout. The image size is explicitly 600x240, matching
+the previous FFmpeg default; audio is not resampled or downmixed.
+
+Outputs are written to unique temporary files in `./Waveform` and atomically
+renamed after successful generation. Failures are streamed and stored with
+their messages in `scanErrors`. Cancellation stops active workers and removes
+their temporary files before releasing the scan lock.
+
+The `.waveform-scan.lock` directory prevents overlapping waveform scans across
+server workers sharing a working directory; conflicting requests receive HTTP
+409. After a process crash, confirm no waveform scan is active before removing
+the stale empty lock with `rmdir .waveform-scan.lock`. A crash may leave hidden
+`.waveform-*` temporary images; these are not treated as completed outputs.
+
+Run waveform regression tests with `bun test routes/scan-waveforms.test.ts`.
+
 11:33:00 - 1900files
 11:43:00 - 16200files
 11:50:50 - 27113files

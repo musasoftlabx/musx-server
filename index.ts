@@ -49,6 +49,7 @@ import generateImageAI, { Prompt } from "./routes/generateImageAI";
 import dayjs from "dayjs";
 import editPlaylist, { PlaylistProps } from "./routes/editPlaylist";
 import deletePlaylist, { DeletePlaylist } from "./routes/deletePlaylist";
+import scanWaveforms from "./routes/scan-waveforms";
 
 init();
 
@@ -93,6 +94,7 @@ const app = new Elysia()
   .get("/html", () => scanner())
   .get("/scanner", () => Bun.file("scanner.tsx"))
   .get("/scan", scan)
+  .get("/scan-waveforms", scanWaveforms)
   // .get("/scan", function* (params) {
   //   return scan(params);
   // })

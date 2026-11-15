@@ -7,6 +7,7 @@
 
 # testing
 /coverage
+/.waveform-scan.lock/
 /.music-scan.lock/
 
 # next.js
