@@ -130,31 +130,31 @@ export default async function* ({ set }: Pick<Context, "set">) {
   >(`SELECT id, path, artwork, waveform, title, artists FROM tracks`).all();
 
   // ? Loop through library to extract or update artworks
-  for await (const { id, path, artwork } of paths) {
-    const trackPath = `${musicDirectory}/${path
-      .replaceAll("$", "\\$")
-      .replaceAll("`", "\\`")}`;
-    const artworkPath = `./Artwork/${artwork}`;
+  // for await (const { id, path, artwork } of paths) {
+  //   const trackPath = `${musicDirectory}/${path
+  //     .replaceAll("$", "\\$")
+  //     .replaceAll("`", "\\`")}`;
+  //   const artworkPath = `./Artwork/${artwork}`;
 
-    // ? Execute ffmpeg to extract artwork
-    if (!existsSync(artworkPath))
-      try {
-        execSync(
-          `ffmpeg -v error -hide_banner -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`,
-        );
+  //   // ? Execute ffmpeg to extract artwork
+  //   if (!existsSync(artworkPath))
+  //     try {
+  //       execSync(
+  //         `ffmpeg -v error -hide_banner -y -i "${trackPath}" -an -vcodec copy "${artworkPath}"`,
+  //       );
 
-        DB.query<SQLQueryBindings, {}>(
-          `UPDATE tracks SET palette = ? WHERE id = ${id}`,
-        ).run([await colorsFromImage(artworkPath)]);
-      } catch (err) {
-        if (err instanceof Error)
-          DB.run(`INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`, [
-            path,
-            "IMAGE_EXTRACTION",
-            null,
-          ]);
-      }
-  }
+  //       DB.query<SQLQueryBindings, {}>(
+  //         `UPDATE tracks SET palette = ? WHERE id = ${id}`,
+  //       ).run([await colorsFromImage(artworkPath)]);
+  //     } catch (err) {
+  //       if (err instanceof Error)
+  //         DB.run(`INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`, [
+  //           path,
+  //           "IMAGE_EXTRACTION",
+  //           null,
+  //         ]);
+  //     }
+  // }
 
   // ? Loop through library to extract or update waveforms
   for await (const { path, waveform } of paths) {
