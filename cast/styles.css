@@ -234,6 +234,7 @@ body:not(.no-lyrics) .artist-icon {
   width: 1.7em;
   height: 1.7em;
   flex-basis: 1.5em;
+  margin-top: -2px;
 }
 
 .artist-image {
@@ -503,7 +504,7 @@ body:not(.no-lyrics) .artist-icon {
   background: linear-gradient(
     160deg,
     rgba(69, 2, 96, 0.295),
-    rgba(255, 255, 255, 0.015)
+    rgba(212, 162, 0, 0.015)
   );
   border: 1px solid transparent;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
