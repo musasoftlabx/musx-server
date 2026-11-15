@@ -225,6 +225,16 @@ function updateMetadata() {
   setText(artist, metadata.artist, "Unknown Artist");
   setText(album, metadata.albumName, "");
 
+  logs.textContent = JSON.stringify(metadata.extraPayload);
+
+  // {
+  //   metadata.albumName
+  //     ? metadata.albumName === metadata.title
+  //       ? metadata.extraPayload?.albumArtist + " Singles" + extraInfo
+  //       : metadata.albumName + extraInfo
+  //     : "No Album";
+  // }
+
   const imageUrl = metadata.images?.[0]?.url;
 
   artwork.src = imageUrl || DEFAULT_ARTWORK;
