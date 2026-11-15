@@ -34,8 +34,8 @@
 }
 
 @font-face {
-  font-family: "Pacifico";
-  src: url("./fonts/Pacifico.ttf") format("truetype");
+  font-family: "LilyScriptOne";
+  src: url("./fonts/LilyScriptOne.ttf") format("truetype");
   font-style: normal;
   font-weight: bold;
 }
@@ -261,7 +261,7 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 #title {
-  font-family: "Pacifico";
+  font-family: "LilyScriptOne";
   font-weight: normal;
   font-size: 35px;
   letter-spacing: 0.15em;
@@ -297,7 +297,7 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 .brand-caption {
-  font-family: "Rubik", sans-serif;
+  font-family: "Rubik Bold", sans-serif;
   opacity: 0.5;
   font-size: 1em;
   letter-spacing: 0.8em;
