@@ -49,6 +49,7 @@
 
 :root {
   --gold: #d4af37;
+  --purple: #a855f7;
   --background: #090909;
   --muted: #999999;
   --white: #ffffff;
@@ -95,12 +96,24 @@ body {
   flex-direction: column;
   justify-content: space-between;
 
-  background: radial-gradient(
+  --s: 100px; /* control the size*/
+  --c1: #13011a;
+  --c2: #1a0f02;
+  --_g: var(--c1) 17.67%, #0000 0 82.33%, var(--c1) 0;
+
+  background:
+    linear-gradient(45deg, var(--_g)),
+    linear-gradient(-45deg, var(--_g)),
+    conic-gradient(var(--c2) 75%, var(--c1) 0) calc(var(--s) / 4)
+      calc(var(--s) / 4);
+  background-size: var(--s) var(--s);
+
+  /* background: radial-gradient(
     ellipse at 25% 50%,
     rgba(37, 32, 23, 0.85) 0%,
     rgba(17, 16, 14, 0.9) 35%,
     rgba(9, 9, 9, 0.95) 75%
-  );
+  ); */
 }
 
 .header {
@@ -248,7 +261,8 @@ body {
 }
 
 .brand-caption {
-  font-family: "Rubik";
+  font-family: "Rubik", sans-serif;
+  opacity: 0.5;
   font-size: 1em;
   letter-spacing: 0.8em;
   margin-top: -1.7em;
@@ -293,7 +307,7 @@ body {
 
 .album-disc {
   position: absolute;
-  right: 2%;
+  right: -2%;
   top: 2.5%;
   width: 63.3333%;
   filter: grayscale(0.7);
@@ -305,10 +319,39 @@ body {
   mask-image: radial-gradient(circle, transparent 6%, #000 6.5%);
 }
 
+.album-disc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(0, 0, 0, 0.2) 0.5px, transparent 0.8px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.16) 0.4px, transparent 0.7px),
+    repeating-radial-gradient(
+      circle at center,
+      transparent 0 3px,
+      rgba(255, 255, 255, 0.06) 3px 4px
+    );
+  background-size:
+    3px 3px,
+    5px 5px,
+    100% 100%;
+  background-position:
+    0 0,
+    1px 2px,
+    center;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.18),
+    inset 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
 .album-disc::after {
   content: "";
   position: absolute;
   inset: 38%;
+  z-index: 2;
   border-radius: 50%;
   border: 2px double rgba(255, 255, 255, 0.65);
   background: conic-gradient(
@@ -333,7 +376,7 @@ body {
 
 .album-cover {
   position: absolute;
-  left: 0;
+  left: 20px;
   top: 0;
   width: 66.6667%;
   height: 100%;
@@ -347,9 +390,12 @@ body {
   position: absolute;
   left: 0;
   top: 0;
-  width: 40px;
+  width: 20px;
   height: 100%;
   background-color: rgba(255, 255, 255, 0.3);
+  border-left: 3px outset rgba(255, 255, 255, 0.3);
+  border-top: 3px outset rgba(255, 255, 255, 0.3);
+  border-bottom: 3px outset rgba(255, 255, 255, 0.3);
   background-image: repeating-linear-gradient(
     90deg,
     rgba(255, 255, 255, 0.4) 0 1px,
@@ -573,8 +619,8 @@ body:not(.no-lyrics) .album-icon {
 
 #progress {
   height: 100%;
-  width: 0%;
-  background: var(--gold);
+  width: 100%;
+  background: linear-gradient(to right, var(--gold), var(--purple));
 }
 
 .playback-status {
