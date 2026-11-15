@@ -261,11 +261,11 @@ albumCover.addEventListener("error", () => {
   }
 });
 
-artistImage.addEventListener("error", () => {
-  if (artistImage.src !== new URL(DEFAULT_ARTWORK, document.baseURI).href) {
-    artistImage.src = DEFAULT_ARTWORK;
-  }
-});
+// artistImage.addEventListener("error", () => {
+//   if (artistImage.src !== new URL(DEFAULT_ARTWORK, document.baseURI).href) {
+//     artistImage.src = DEFAULT_ARTWORK;
+//   }
+// });
 
 nextArtwork.addEventListener("error", () => {
   if (nextArtwork.src !== new URL(DEFAULT_ARTWORK, document.baseURI).href) {
