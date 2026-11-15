@@ -261,11 +261,6 @@ function updateMetadata() {
         key === currentMediaKey && renderLyrics(text);
       });
   }
-
-  const x = metadata;
-
-  const { metadataType, images, title, artist, albumName, ...rest } = x;
-  logs.textContent = JSON.stringify(rest);
 }
 
 artwork.addEventListener("error", () => {
