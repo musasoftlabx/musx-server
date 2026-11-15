@@ -30,21 +30,21 @@ const nextTitle = document.getElementById("nextTitle");
 const nextArtist = document.getElementById("nextArtist");
 const nextAlbum = document.getElementById("nextAlbum");
 
-// const artistMarquee = document.getElementById("artistMarquee");
-// const artistResizeObserver = new ResizeObserver(() => {
-//   const overflow = Math.max(0, artist.scrollWidth - artistMarquee.clientWidth);
-//   artistMarquee.classList.toggle(
-//     "is-overflowing",
-//     artistMarquee.clientWidth > 0 && overflow > 0,
-//   );
-//   artistMarquee.style.setProperty("--artist-marquee-offset", `${-overflow}px`);
-//   artistMarquee.style.setProperty(
-//     "--artist-marquee-duration",
-//     `${Math.max(4, overflow / 30 + 2)}s`,
-//   );
-// });
-// artistResizeObserver.observe(artistMarquee);
-// artistResizeObserver.observe(artist);
+const artistMarquee = document.getElementById("artistMarquee");
+const artistResizeObserver = new ResizeObserver(() => {
+  const overflow = Math.max(0, artist.scrollWidth - artistMarquee.clientWidth);
+  artistMarquee.classList.toggle(
+    "is-overflowing",
+    artistMarquee.clientWidth > 0 && overflow > 0,
+  );
+  artistMarquee.style.setProperty("--artist-marquee-offset", `${-overflow}px`);
+  artistMarquee.style.setProperty(
+    "--artist-marquee-duration",
+    `${Math.max(4, overflow / 30 + 2)}s`,
+  );
+});
+artistResizeObserver.observe(artistMarquee);
+artistResizeObserver.observe(artist);
 
 const DEFAULT_ARTWORK = "artwork.png";
 let nextArtworkUrl = null;
