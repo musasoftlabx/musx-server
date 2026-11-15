@@ -70,12 +70,28 @@
             <h1 id="title">title</h1>
 
             <div class="artist-detail">
-              <svg class="artist-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <!-- `${item.url
+                            .split('/')
+                            .slice(0, -1)
+                            .join('/')}/artist.jpg` -->
+              <img
+                id="albumCover"
+                class="artist-image"
+                src="artwork.png"
+                alt=""
+                aria-hidden="true"
+              />
+              <!-- <svg class="artist-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0"
                 />
-              </svg>
-              <h3 id="artist">artist</h3>
+              </svg> -->
+              <div id="artistMarquee" class="artist-marquee">
+                <h3 id="artist">
+                  artist artist artist artist artist artist artist artist artist
+                  artist artist artist
+                </h3>
+              </div>
             </div>
 
             <div class="album-detail">

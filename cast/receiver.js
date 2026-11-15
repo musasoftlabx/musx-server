@@ -12,6 +12,7 @@ playerManager.setPlaybackConfig(playbackConfig);
 
 const artwork = document.getElementById("artwork");
 const albumCover = document.getElementById("albumCover");
+const artistImage = document.getElementById("artistImage");
 const title = document.getElementById("title");
 const artist = document.getElementById("artist");
 const album = document.getElementById("album");
@@ -28,6 +29,22 @@ const nextArtwork = document.getElementById("nextArtwork");
 const nextTitle = document.getElementById("nextTitle");
 const nextArtist = document.getElementById("nextArtist");
 const nextAlbum = document.getElementById("nextAlbum");
+
+const artistMarquee = document.getElementById("artistMarquee");
+const artistResizeObserver = new ResizeObserver(() => {
+  const overflow = Math.max(0, artist.scrollWidth - artistMarquee.clientWidth);
+  artistMarquee.classList.toggle(
+    "is-overflowing",
+    artistMarquee.clientWidth > 0 && overflow > 0,
+  );
+  artistMarquee.style.setProperty("--artist-marquee-offset", `${-overflow}px`);
+  artistMarquee.style.setProperty(
+    "--artist-marquee-duration",
+    `${Math.max(4, overflow / 30 + 2)}s`,
+  );
+});
+artistResizeObserver.observe(artistMarquee);
+artistResizeObserver.observe(artist);
 
 const DEFAULT_ARTWORK = "artwork.png";
 let nextArtworkUrl = null;
@@ -213,6 +230,7 @@ function updateMetadata() {
   artwork.src = imageUrl || DEFAULT_ARTWORK;
   albumCover.src = artwork.src;
   ambientArt.src = artwork.src;
+  artistImage.src = "https://musasoftlabs.com/Music/Tanzania/Zuchu/artist.jpg";
 
   // MEDIA_STATUS fires often; only reload lyrics when the track changes
   const key = media.contentId || media.contentUrl || metadata.title;
@@ -240,6 +258,12 @@ artwork.addEventListener("error", () => {
 albumCover.addEventListener("error", () => {
   if (albumCover.src !== new URL(DEFAULT_ARTWORK, document.baseURI).href) {
     albumCover.src = DEFAULT_ARTWORK;
+  }
+});
+
+artistImage.addEventListener("error", () => {
+  if (artistImage.src !== new URL(DEFAULT_ARTWORK, document.baseURI).href) {
+    artistImage.src = DEFAULT_ARTWORK;
   }
 });
 

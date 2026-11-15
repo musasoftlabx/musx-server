@@ -19,10 +19,25 @@ interface QueueItem {
 }
 
 function element() {
+  const classes = new Set<string>();
+  const properties = new Map<string, string>();
   return {
     src: "artwork.png",
     textContent: "",
     hidden: false,
+    clientWidth: 100,
+    scrollWidth: 100,
+    classList: {
+      toggle(name: string, enabled: boolean) {
+        if (enabled) classes.add(name);
+        else classes.delete(name);
+      },
+      contains: (name: string) => classes.has(name),
+    },
+    style: {
+      setProperty: (name: string, value: string) => properties.set(name, value),
+      getPropertyValue: (name: string) => properties.get(name),
+    },
     addEventListener() {},
   };
 }
@@ -32,6 +47,7 @@ function receiver() {
     [...markup.matchAll(/\bid="([^"]+)"/g)].map((match) => [match[1], element()])
   );
   const listeners = new Map<string, (() => void)[]>();
+  const resizers: (() => void)[] = [];
   const state = { items: [] as QueueItem[], currentIndex: 0 };
   const queue = {
     getItems: () => state.items,
@@ -49,6 +65,12 @@ function receiver() {
   };
   const context = { getPlayerManager: () => playerManager, start() {} };
   const sandbox = {
+    ResizeObserver: class {
+      constructor(callback: () => void) {
+        resizers.push(callback);
+      }
+      observe() {}
+    },
     document: {
       getElementById: (id: string) => nodes.get(id) ?? null,
       baseURI: "https://receiver.test/cast/index.html",
@@ -71,6 +93,7 @@ function receiver() {
     nodes,
     state,
     start: () => runInNewContext(source, sandbox),
+    resize: () => resizers.forEach((callback) => callback()),
     mediaStatus: () => {
       for (const listener of listeners.get("MEDIA_STATUS") ?? []) listener();
     },
@@ -122,4 +145,27 @@ test("next album text still updates when its optional element is present", () =>
   app.mediaStatus();
   expect(app.nodes.get("nextAlbum")?.textContent).toBe("Album 2");
   expect(app.nodes.get("nextArtwork")?.src).toBe("two.jpg");
+});
+
+test("artist marquee activates only on overflow and adapts to text and viewport changes", () => {
+  const app = receiver();
+  app.start();
+  const viewport = app.nodes.get("artistMarquee")!;
+  const artist = app.nodes.get("artist")!;
+  app.resize();
+  expect(viewport.classList.contains("is-overflowing")).toBe(false);
+
+  artist.scrollWidth = 340;
+  app.resize();
+  expect(viewport.classList.contains("is-overflowing")).toBe(true);
+  expect(viewport.style.getPropertyValue("--artist-marquee-offset")).toBe("-240px");
+
+  viewport.clientWidth = 250;
+  app.resize();
+  expect(viewport.style.getPropertyValue("--artist-marquee-offset")).toBe("-90px");
+
+  artist.scrollWidth = 80;
+  app.resize();
+  expect(viewport.classList.contains("is-overflowing")).toBe(false);
+  expect(viewport.style.getPropertyValue("--artist-marquee-offset")).toBe("0px");
 });
