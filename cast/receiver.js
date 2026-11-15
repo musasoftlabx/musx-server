@@ -225,9 +225,6 @@ function updateMetadata() {
   setText(artist, metadata.artist, "Unknown Artist");
   setText(album, metadata.albumName, "");
 
-  const { metadataType, images, title, artist, albumName, ...rest } = metadata;
-  logs.textContent = JSON.stringify(rest);
-
   const imageUrl = metadata.images?.[0]?.url;
 
   artwork.src = imageUrl || DEFAULT_ARTWORK;
@@ -253,6 +250,9 @@ function updateMetadata() {
         key === currentMediaKey && renderLyrics(text);
       });
   }
+
+  const { metadataType, images, title, artist, albumName, ...rest } = metadata;
+  logs.textContent = JSON.stringify(rest);
 }
 
 artwork.addEventListener("error", () => {
