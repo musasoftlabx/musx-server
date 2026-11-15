@@ -215,6 +215,7 @@ body {
 }
 
 .artist-image,
+.artist-icon,
 .album-icon {
   width: 1em;
   height: 1em;
@@ -240,6 +241,7 @@ body {
   flex: 1;
   letter-spacing: 3px;
   min-width: 0;
+  max-width: 28vw;
   overflow: hidden;
 }
 

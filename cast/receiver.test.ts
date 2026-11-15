@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
-import { runInNewContext } from "node:vm";
+import { createContext, runInContext } from "node:vm";
 
 const source = readFileSync(new URL("./receiver.js", import.meta.url), "utf8");
 const markup = readFileSync(new URL("./index.html", import.meta.url), "utf8")
@@ -21,12 +21,14 @@ interface QueueItem {
 function element() {
   const classes = new Set<string>();
   const properties = new Map<string, string>();
+  const events = new Map<string, (() => void)[]>();
   return {
     src: "artwork.png",
     textContent: "",
     hidden: false,
     clientWidth: 100,
     scrollWidth: 100,
+    naturalWidth: 0,
     classList: {
       toggle(name: string, enabled: boolean) {
         if (enabled) classes.add(name);
@@ -35,10 +37,17 @@ function element() {
       contains: (name: string) => classes.has(name),
     },
     style: {
+      display: "",
       setProperty: (name: string, value: string) => properties.set(name, value),
       getPropertyValue: (name: string) => properties.get(name),
     },
-    addEventListener() {},
+    addEventListener(type: string, listener: () => void) {
+      events.set(type, [...(events.get(type) ?? []), listener]);
+    },
+    dispatch: (type: string) => events.get(type)?.forEach((listener) => listener()),
+    removeAttribute(name: string) {
+      if (name === "src") this.src = "";
+    },
   };
 }
 
@@ -65,6 +74,7 @@ function receiver() {
   };
   const context = { getPlayerManager: () => playerManager, start() {} };
   const sandbox = {
+    URL,
     ResizeObserver: class {
       constructor(callback: () => void) {
         resizers.push(callback);
@@ -89,11 +99,14 @@ function receiver() {
       },
     },
   };
+  const vmContext = createContext(sandbox);
   return {
     nodes,
     state,
-    start: () => runInNewContext(source, sandbox),
+    start: () => runInContext(source, vmContext),
     resize: () => resizers.forEach((callback) => callback()),
+    updateArtistImage: (url: string | null) =>
+      runInContext("updateArtistImage", vmContext)(url),
     mediaStatus: () => {
       for (const listener of listeners.get("MEDIA_STATUS") ?? []) listener();
     },
@@ -168,4 +181,33 @@ test("artist marquee activates only on overflow and adapts to text and viewport 
   app.resize();
   expect(viewport.classList.contains("is-overflowing")).toBe(false);
   expect(viewport.style.getPropertyValue("--artist-marquee-offset")).toBe("0px");
+});
+
+test("artist photo replaces the icon only after loading and falls back after failure", () => {
+  const app = receiver();
+  app.start();
+  const image = app.nodes.get("artistImage")!;
+  const icon = app.nodes.get("artistIcon")!;
+  app.updateArtistImage("https://music.test/Artist/track.flac?token=123");
+  expect(image.src).toBe("https://music.test/Artist/artist.jpg");
+  expect(image.hidden).toBe(true);
+  expect(icon.style.display).toBe("");
+  image.naturalWidth = 100;
+  image.dispatch("load");
+  expect(image.hidden).toBe(false);
+  expect(icon.style.display).toBe("none");
+
+  app.updateArtistImage("https://music.test/Artist/another.mp3");
+  expect(image.hidden).toBe(false);
+  expect(icon.style.display).toBe("none");
+  app.updateArtistImage("https://music.test/Other/track.m4a");
+  expect(image.hidden).toBe(true);
+  expect(icon.style.display).toBe("");
+  image.naturalWidth = 0;
+  image.dispatch("error");
+  expect(image.hidden).toBe(true);
+  expect(icon.style.display).toBe("");
+  app.updateArtistImage(null);
+  expect(image.src).toBe("");
+  expect(icon.style.display).toBe("");
 });

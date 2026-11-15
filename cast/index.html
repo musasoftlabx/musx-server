@@ -21,7 +21,7 @@
       <header class="header">
         <div class="brand-container">
           <div class="brand">Muzix.</div>
-          <div class="brand-caption">PLAYER</div>
+          <div class="brand-caption">player</div>
         </div>
 
         <div id="logs"></div>
@@ -68,10 +68,16 @@
               <img
                 id="artistImage"
                 class="artist-image"
-                src="artwork.png"
+                hidden
                 alt=""
                 aria-hidden="true"
               />
+
+              <svg id="artistIcon" class="artist-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0"
+                />
+              </svg>
 
               <div id="artistMarquee" class="artist-marquee">
                 <h3 id="artist">artist</h3>

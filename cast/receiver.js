@@ -13,6 +13,7 @@ playerManager.setPlaybackConfig(playbackConfig);
 const artwork = document.getElementById("artwork");
 const albumCover = document.getElementById("albumCover");
 const artistImage = document.getElementById("artistImage");
+const artistIcon = document.getElementById("artistIcon");
 const title = document.getElementById("title");
 const artist = document.getElementById("artist");
 const album = document.getElementById("album");
@@ -48,6 +49,19 @@ artistResizeObserver.observe(artist);
 
 const DEFAULT_ARTWORK = "artwork.png";
 let nextArtworkUrl = null;
+let artistImageUrl = null;
+
+function updateArtistImage(contentUrl) {
+  const imageUrl = contentUrl
+    ? new URL("artist.jpg", new URL(contentUrl, document.baseURI)).href
+    : null;
+  if (imageUrl === artistImageUrl) return;
+  artistImageUrl = imageUrl;
+  artistImage.hidden = true;
+  artistIcon.style.display = "";
+  if (imageUrl) artistImage.src = imageUrl;
+  else artistImage.removeAttribute("src");
+}
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) {
@@ -230,10 +244,7 @@ function updateMetadata() {
   artwork.src = imageUrl || DEFAULT_ARTWORK;
   albumCover.src = artwork.src;
   ambientArt.src = artwork.src;
-  artistImage.src = `${media?.contentUrl
-    .split("/")
-    .slice(0, -1)
-    .join("/")}/artist.jpg`;
+  updateArtistImage(media.contentUrl);
 
   // MEDIA_STATUS fires often; only reload lyrics when the track changes
   const key = media.contentId || media.contentUrl || metadata.title;
@@ -267,11 +278,17 @@ albumCover.addEventListener("error", () => {
   }
 });
 
-// artistImage.addEventListener("error", () => {
-//   if (artistImage.src !== new URL(DEFAULT_ARTWORK, document.baseURI).href) {
-//     artistImage.src = DEFAULT_ARTWORK;
-//   }
-// });
+artistImage.addEventListener("load", () => {
+  if (artistImageUrl && artistImage.naturalWidth > 0) {
+    artistImage.hidden = false;
+    artistIcon.style.display = "none";
+  }
+});
+
+artistImage.addEventListener("error", () => {
+  artistImage.hidden = true;
+  artistIcon.style.display = "";
+});
 
 nextArtwork.addEventListener("error", () => {
   if (nextArtwork.src !== new URL(DEFAULT_ARTWORK, document.baseURI).href) {
