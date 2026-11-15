@@ -228,10 +228,12 @@ body {
 
 .artist-image {
   border-radius: 10%;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 0.5px solid rgba(255, 255, 255, 0.5);
   object-fit: cover;
   margin-right: 8px;
   margin-top: -1px;
+  width: 2em;
+  height: 2em;
 }
 
 .artist-marquee {
