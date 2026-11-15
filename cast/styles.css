@@ -227,6 +227,12 @@ body {
   stroke-width: 1.7;
 }
 
+.artist-icon {
+  width: 1.7em;
+  height: 1.7em;
+  flex-basis: 1.5em;
+}
+
 .artist-image {
   border-radius: 10%;
   border: 0.5px solid rgba(255, 255, 255, 0.5);
