@@ -675,6 +675,7 @@ body:not(.no-lyrics) #title {
 body:not(.no-lyrics) .brand-container {
   margin-left: -0.5em;
   transform: scale(0.7);
+  margin-top: -0.5em;
 }
 
 body:not(.no-lyrics) .track-info {
