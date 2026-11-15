@@ -225,7 +225,7 @@ function updateMetadata() {
   setText(artist, metadata.artist, "Unknown Artist");
   setText(album, metadata.albumName, "");
 
-  logs.textContent = JSON.stringify(metadata.extraPayload);
+  logs.textContent = JSON.stringify(metadata);
 
   // {
   //   metadata.albumName
