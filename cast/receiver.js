@@ -320,7 +320,7 @@ playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () =>
 playerManager.addEventListener(
   cast.framework.events.EventType.BUFFERING,
   (state) => {
-    logs.textContent = state.toString();
+    logs.textContent = JSON.stringify(state);
     updatePlaybackState("BUFFERING");
   },
 );
