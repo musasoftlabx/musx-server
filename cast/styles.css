@@ -257,6 +257,8 @@ body:not(.no-lyrics) .artist-icon {
   color: var(--muted);
   font-family: "Rubik", sans-serif;
   letter-spacing: 0.25em;
+  text-decoration: underline dotted;
+  text-underline-offset: 4px;
   margin: 0;
   margin-left: 2px;
 }
