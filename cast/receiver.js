@@ -98,9 +98,8 @@ function updatePlaybackState(state) {
       else playbackState.textContent = "PAUSED";
       break;
     case states.BUFFERING:
-      state.isBuffering
-        ? (playbackState.textContent = "BUFFERING")
-        : (playbackState.textContent = "NOW PLAYING");
+      if (state.isBuffering) playbackState.textContent = "BUFFERING";
+      else playbackState.textContent = "NOW PLAYING";
       break;
     case states.FINISHED:
       if (state.endedReason === cast.framework.messages.EndedReason.ENDED)
