@@ -81,35 +81,6 @@ function setText(element, value, fallback) {
   element.textContent = value || fallback;
 }
 
-function updateNextTrack() {
-  const queue = playerManager.getQueueManager();
-  const items = queue?.getItems() ?? [];
-  const currentItem = queue?.getCurrentItem();
-  const currentIndex =
-    currentItem?.itemId != null
-      ? items.findIndex((item) => item.itemId === currentItem.itemId)
-      : (queue?.getCurrentItemIndex() ?? -1);
-  const next = currentIndex >= 0 ? items[currentIndex + 1] : null;
-  nextTrack.hidden = !next;
-  if (!next) return;
-  const media = next.media || {};
-  const metadata = media.metadata || {};
-
-  setText(nextTitle, metadata?.title, "Unknown Track");
-  setText(nextArtist, metadata?.artist, "Unknown Artist");
-  if (nextAlbum) setText(nextAlbum, metadata?.albumName, "");
-  const imageUrl =
-    metadata.images?.find((image) => image?.url)?.url ||
-    metadata.posterUrl ||
-    media.customData?.artwork ||
-    media.customData?.image ||
-    DEFAULT_ARTWORK;
-  if (nextArtworkUrl !== imageUrl) {
-    nextArtworkUrl = imageUrl;
-    nextArtwork.src = imageUrl;
-  }
-}
-
 const API_BASE = "https://musasoftlabs.com";
 
 let currentMediaKey = null;
@@ -277,7 +248,7 @@ function updatePlaybackState(state) {
 // Metadata updates
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
-  (event) => {
+  () => {
     const media = playerManager.getMediaInformation();
 
     if (!media) return;
@@ -311,9 +282,37 @@ playerManager.addEventListener(
     }
   },
 );
+
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
-  updateNextTrack,
+  () => {
+    const queue = playerManager.getQueueManager();
+    const items = queue?.getItems() ?? [];
+    const currentItem = queue?.getCurrentItem();
+    const currentIndex =
+      currentItem?.itemId != null
+        ? items.findIndex((item) => item.itemId === currentItem.itemId)
+        : (queue?.getCurrentItemIndex() ?? -1);
+    const next = currentIndex >= 0 ? items[currentIndex + 1] : null;
+    nextTrack.hidden = !next;
+    if (!next) return;
+    const media = next.media || {};
+    const metadata = media.metadata || {};
+
+    setText(nextTitle, metadata?.title, "Unknown Track");
+    setText(nextArtist, metadata?.artist, "Unknown Artist");
+    if (nextAlbum) setText(nextAlbum, metadata?.albumName, "");
+    const imageUrl =
+      metadata.images?.find((image) => image?.url)?.url ||
+      metadata.posterUrl ||
+      media.customData?.artwork ||
+      media.customData?.image ||
+      DEFAULT_ARTWORK;
+    if (nextArtworkUrl !== imageUrl) {
+      nextArtworkUrl = imageUrl;
+      nextArtwork.src = imageUrl;
+    }
+  },
 );
 
 // Playback updates
@@ -322,6 +321,12 @@ playerManager.addEventListener(cast.framework.events.EventType.PLAYING, () =>
 );
 playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () =>
   updatePlaybackState("PAUSED"),
+);
+playerManager.addEventListener(cast.framework.events.EventType.STOP, () =>
+  updatePlaybackState("STOPPED"),
+);
+playerManager.addEventListener(cast.framework.events.EventType.BUFFERING, () =>
+  updatePlaybackState("BUFFERING"),
 );
 
 // Progress updates
