@@ -563,13 +563,17 @@ body:not(.no-lyrics) .artist-icon {
   color: transparent;
 }
 
-.pulse {
+.cast-icon {
   display: inline-block;
-  background: var(--gold);
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  width: 20px;
+  height: 20px;
   margin-right: 10px;
+  vertical-align: middle;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .player {
@@ -1059,17 +1063,21 @@ body:not(.no-lyrics) .album-icon {
     transition: opacity 0.5s ease;
   }
 
-  .pulse {
-    animation: pulse 1.8s ease-in-out infinite;
+  .cast-icon.is-animating .cast-wave {
+    animation: cast-signal 1.8s ease-in-out infinite both;
   }
 
-  @keyframes pulse {
+  .cast-icon.is-animating .cast-wave-outer {
+    animation-delay: 0.25s;
+  }
+
+  @keyframes cast-signal {
     0%,
     100% {
-      box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6);
+      opacity: 0.25;
     }
     50% {
-      box-shadow: 0 0 0 6px rgba(212, 175, 55, 0);
+      opacity: 1;
     }
   }
 }

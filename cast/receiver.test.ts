@@ -105,7 +105,12 @@ function receiver() {
           IDLE: "idle",
         } },
         messages: {
-          PlayerState: { IDLE: "IDLE" },
+          PlayerState: {
+            IDLE: "IDLE",
+            PLAYING: "PLAYING",
+            PAUSED: "PAUSED",
+            BUFFERING: "BUFFERING",
+          },
           Command: { PLAY: 1, PAUSE: 2, SEEK: 4, STREAM_TRANSFER: 8 },
         },
       },
@@ -120,8 +125,8 @@ function receiver() {
     resize: () => resizers.forEach((callback) => callback()),
     updateArtistImage: (url: string | null) =>
       runInContext("updateArtistImage", vmContext)(url),
-    emit: (type: string) => {
-      for (const listener of listeners.get(type) ?? []) listener({ type });
+    emit: (type: string, data: { isBuffering?: boolean } = {}) => {
+      for (const listener of listeners.get(type) ?? []) listener({ type, ...data });
     },
     mediaStatus: () => {
       for (const listener of listeners.get("MEDIA_STATUS") ?? []) {
@@ -288,4 +293,48 @@ test("idle container is hidden when receiver starts with active media", () => {
   app.start();
   expect(app.nodes.get("idleContainer")?.hidden).toBe(true);
   expect(app.nodes.get("playerScreen")?.hidden).toBe(false);
+});
+
+test("cast waves animate during playing and buffering but stop on pause, finish, and error", () => {
+  const app = receiver();
+  const icon = app.nodes.get("castIcon")!;
+  app.start();
+  expect(icon.classList.contains("is-animating")).toBe(false);
+
+  app.state.playerState = "PLAYING";
+  app.emit("playing");
+  expect(icon.classList.contains("is-animating")).toBe(true);
+  app.emit("pause");
+  expect(icon.classList.contains("is-animating")).toBe(false);
+
+  app.state.playerState = "PAUSED";
+  app.emit("buffering", { isBuffering: true });
+  expect(icon.classList.contains("is-animating")).toBe(true);
+  app.emit("buffering", { isBuffering: false });
+  expect(icon.classList.contains("is-animating")).toBe(false);
+  app.emit("play");
+  expect(icon.classList.contains("is-animating")).toBe(false);
+
+  app.emit("playing");
+  app.emit("media_finished");
+  expect(icon.classList.contains("is-animating")).toBe(false);
+  app.emit("playing");
+  app.emit("ERROR");
+  expect(icon.classList.contains("is-animating")).toBe(false);
+});
+
+test("cast waves reflect current playback state at startup and on media status", () => {
+  const app = receiver();
+  const icon = app.nodes.get("castIcon")!;
+  app.state.playerState = "PLAYING";
+  app.start();
+  expect(icon.classList.contains("is-animating")).toBe(true);
+
+  for (const playerState of ["PAUSED", "BUFFERING", "IDLE", "PLAYING"]) {
+    app.state.playerState = playerState;
+    app.mediaStatus();
+    expect(icon.classList.contains("is-animating")).toBe(
+      playerState === "PLAYING" || playerState === "BUFFERING",
+    );
+  }
 });

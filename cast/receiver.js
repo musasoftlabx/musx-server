@@ -13,6 +13,7 @@ const progress = document.getElementById("progress");
 const elapsed = document.getElementById("elapsed");
 const total = document.getElementById("total");
 const playbackState = document.getElementById("playbackState");
+const castIcon = document.getElementById("castIcon");
 const idleContainer = document.getElementById("idleContainer");
 const playerScreen = document.getElementById("playerScreen");
 const ambientArt = document.getElementById("ambientArt");
@@ -89,8 +90,17 @@ function updateIdleContainer(finished = false) {
   playerScreen.hidden = !idleContainer.hidden;
 }
 
+function updateCastIcon(playerState = playerManager.getPlayerState()) {
+  const states = cast.framework.messages.PlayerState;
+  castIcon.classList.toggle(
+    "is-animating",
+    playerState === states.PLAYING || playerState === states.BUFFERING,
+  );
+}
+
 function updatePlaybackState(state) {
   const events = cast.framework.events.EventType;
+  const states = cast.framework.messages.PlayerState;
   updateIdleContainer(state.type === events.MEDIA_FINISHED);
   if (state.type === events.PAUSE || state.type === events.MEDIA_FINISHED) {
     document.body.classList.toggle("playback-paused", true);
@@ -102,24 +112,33 @@ function updatePlaybackState(state) {
 
   switch (state.type) {
     case events.PLAYING:
+      updateCastIcon(states.PLAYING);
       playbackState.textContent = "NOW PLAYING";
       break;
     case events.PAUSE:
+      updateCastIcon(states.PAUSED);
       if (state.ended) playbackState.textContent = "QUEUE FINISHED";
       else playbackState.textContent = "PAUSED";
       break;
     case events.BUFFERING:
+      updateCastIcon(
+        state.isBuffering ? states.BUFFERING : playerManager.getPlayerState(),
+      );
       if (state.isBuffering) playbackState.textContent = "BUFFERING";
       else playbackState.textContent = "NOW PLAYING";
       break;
     case events.MEDIA_FINISHED:
+      updateCastIcon(states.IDLE);
       if (state.endedReason === "END_OF_STREAM")
         playbackState.textContent = "QUEUE FINISHED";
       else playbackState.textContent = "QUEUE FINISHED WITH ERROR";
       break;
     case events.IDLE:
+      updateCastIcon(states.IDLE);
       playbackState.textContent = "READY TO PLAY";
       break;
+    default:
+      updateCastIcon();
   }
 }
 
@@ -275,6 +294,7 @@ playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
   (state) => {
     updateIdleContainer();
+    updateCastIcon();
     //logs.textContent = JSON.stringify(state);
 
     const media = playerManager.getMediaInformation();
@@ -391,7 +411,10 @@ playerManager.addEventListener(
 // Handle receiver errors
 playerManager.addEventListener(
   cast.framework.events.EventType.ERROR,
-  (event) => (playbackState.textContent = "PLAYBACK ERROR"),
+  () => {
+    updateCastIcon(cast.framework.messages.PlayerState.IDLE);
+    playbackState.textContent = "PLAYBACK ERROR";
+  },
 );
 
 // Configure supported controls
@@ -404,4 +427,5 @@ playerManager.setSupportedMediaCommands(
 
 // Start receiver
 updateIdleContainer();
+updateCastIcon();
 context.start();
