@@ -529,9 +529,7 @@ body:not(.no-lyrics) .artist-icon {
 #album {
   color: var(--muted);
   font-family: "Rubik", sans-serif;
-  letter-spacing: 0.25em;
-  text-decoration: underline wavy;
-  text-underline-offset: 4px;
+  letter-spacing: 0.2em;
   margin: 0;
   margin-left: 2px;
 }
