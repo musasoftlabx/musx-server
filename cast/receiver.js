@@ -87,7 +87,7 @@ function updatePlaybackState(state) {
     state.type === "PAUSE" || state.type === "MEDIA_FINISHED",
   );
 
-  //logs.textContent = JSON.stringify(states);
+  logs.textContent = JSON.stringify(states);
 
   switch (state.type) {
     case states.PLAYING:
@@ -265,7 +265,7 @@ ambientArt.addEventListener(
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
   (state) => {
-    logs.textContent = JSON.stringify(state);
+    //logs.textContent = JSON.stringify(state);
 
     const media = playerManager.getMediaInformation();
 
