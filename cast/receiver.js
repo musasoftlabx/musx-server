@@ -324,15 +324,12 @@ function updateProgress() {
 }
 
 function updatePlaybackState() {
-  const state = playerManager.getPlayerState();
+  //const state = playerManager.getPlayerState();
   //const states = cast.framework.messages.PlayerState;
   //document.body.classList.toggle("playback-paused", state === states.PAUSED);
-
-  logs.textContent = `${state}`;
+  //logs.textContent = `${state}`;
   //logs.textContent = `${state}: ${states[state]}`;
-
   // if (!playbackState) return;
-
   // if (state === states.PLAYING)
   //   playbackState.textContent = "NOW PLAYING";
   // else if (state === states.PAUSED)
