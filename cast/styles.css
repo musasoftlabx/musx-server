@@ -117,6 +117,19 @@ body {
     rgba(17, 16, 14, 0.9) 35%,
     rgba(9, 9, 9, 0.95) 75%
   ); */
+
+  background:
+    radial-gradient(
+      ellipse at 82% 32%,
+      rgba(168, 85, 247, 0.14),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 10% 100%,
+      rgba(212, 175, 55, 0.09),
+      transparent 50%
+    ),
+    #0d0b12;
 }
 
 .idle-container {
