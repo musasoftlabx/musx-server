@@ -2,14 +2,6 @@ const context = cast.framework.CastReceiverContext.getInstance();
 const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
 const playerManager = context.getPlayerManager();
 const playbackConfig = new cast.framework.PlaybackConfig();
-
-playbackConfig.licenseRequestHandler = (requestInfo) => {
-  requestInfo.withCredentials = true;
-  requestInfo.headers = requestInfo.headers || {};
-  requestInfo.headers["Content-Type"] = "application/json";
-};
-playerManager.setPlaybackConfig(playbackConfig);
-
 const artwork = document.getElementById("artwork");
 const albumCover = document.getElementById("albumCover");
 const artistImage = document.getElementById("artistImage");
@@ -30,7 +22,6 @@ const nextArtwork = document.getElementById("nextArtwork");
 const nextTitle = document.getElementById("nextTitle");
 const nextArtist = document.getElementById("nextArtist");
 const nextAlbum = document.getElementById("nextAlbum");
-
 const artistMarquee = document.getElementById("artistMarquee");
 const artistResizeObserver = new ResizeObserver(() => {
   const overflow = Math.max(0, artist.scrollWidth - artistMarquee.clientWidth);
@@ -44,12 +35,20 @@ const artistResizeObserver = new ResizeObserver(() => {
     `${Math.max(4, overflow / 30 + 2)}s`,
   );
 });
-artistResizeObserver.observe(artistMarquee);
-artistResizeObserver.observe(artist);
 
+const API_BASE = "https://musasoftlabs.com";
 const DEFAULT_ARTWORK = "artwork.png";
 let nextArtworkUrl = null;
 let artistImageUrl = null;
+let currentMediaKey = null;
+let lyricLines = [];
+let lyricsSynced = false;
+let lyricsOffset = 0;
+let activeLyricIndex = -1;
+
+playerManager.setPlaybackConfig(playbackConfig);
+artistResizeObserver.observe(artistMarquee);
+artistResizeObserver.observe(artist);
 
 function updateArtistImage(contentUrl) {
   const imageUrl = contentUrl
@@ -81,13 +80,14 @@ function setText(element, value, fallback) {
   element.textContent = value || fallback;
 }
 
-const API_BASE = "https://musasoftlabs.com";
-
-let currentMediaKey = null;
-let lyricLines = [];
-let lyricsSynced = false;
-let lyricsOffset = 0;
-let activeLyricIndex = -1;
+function updatePlaybackState(state) {
+  const states = cast.framework.messages.PlayerState;
+  document.body.classList.toggle("playback-paused", state === states.PAUSED);
+  if (state === states.PLAYING) playbackState.textContent = "NOW PLAYING";
+  else if (state === states.PAUSED) playbackState.textContent = "PAUSED";
+  else if (state === states.BUFFERING) playbackState.textContent = "BUFFERING";
+  else playbackState.textContent = "READY TO PLAY";
+}
 
 function parseLyrics(raw) {
   const lines = [];
@@ -235,15 +235,6 @@ ambientArt.addEventListener(
   },
   { once: true },
 );
-
-function updatePlaybackState(state) {
-  const states = cast.framework.messages.PlayerState;
-  document.body.classList.toggle("playback-paused", state === states.PAUSED);
-  if (state === states.PLAYING) playbackState.textContent = "NOW PLAYING";
-  else if (state === states.PAUSED) playbackState.textContent = "PAUSED";
-  else if (state === states.BUFFERING) playbackState.textContent = "BUFFERING";
-  else playbackState.textContent = "READY TO PLAY";
-}
 
 // Metadata updates
 playerManager.addEventListener(
