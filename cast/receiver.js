@@ -226,43 +226,6 @@ function syncLyrics(currentTime) {
   lyricsEl.style.transform = `translateY(${-Math.max(0, offsetY)}px)`;
 }
 
-function updateMetadata() {
-  const media = playerManager.getMediaInformation();
-
-  //logs.textContent = `${media?.contentUrl}: ${""}`;
-
-  if (!media) return;
-
-  const metadata = media.metadata || {};
-
-  setText(title, metadata.title, "Unknown Track");
-  setText(artist, metadata.artist, "Unknown Artist");
-  setText(album, metadata.albumName, "");
-
-  const imageUrl = metadata.images?.[0]?.url;
-
-  artwork.src = imageUrl || DEFAULT_ARTWORK;
-  albumCover.src = artwork.src;
-  ambientArt.src = artwork.src;
-  updateArtistImage(media.contentUrl);
-
-  // MEDIA_STATUS fires often; only reload lyrics when the track changes
-  const key = media.contentId || media.contentUrl || metadata.title;
-  if (key !== currentMediaKey) {
-    currentMediaKey = key;
-    renderLyrics(null);
-    fetch(media?.contentUrl.replace(".mp3", ".lrc"))
-      .then((res) => res.text())
-      .then((text) => {
-        if (text.includes("404") || text.includes("Not Found")) {
-          if (key === currentMediaKey) renderLyrics(null);
-          return;
-        }
-        key === currentMediaKey && renderLyrics(text);
-      });
-  }
-}
-
 artwork.addEventListener("error", () => {
   if (artwork.src !== location.origin + DEFAULT_ARTWORK) {
     artwork.src = DEFAULT_ARTWORK;
@@ -302,27 +265,6 @@ ambientArt.addEventListener(
   { once: true },
 );
 
-function updateProgress() {
-  const current = playerManager.getCurrentTimeSec();
-  const duration = playerManager.getDurationSec();
-
-  if (!Number.isFinite(duration) || duration <= 0) {
-    progress.style.width = "0%";
-    elapsed.textContent = formatTime(current);
-    total.textContent = "LIVE";
-    return;
-  }
-
-  const percentage = Math.min(100, Math.max(0, (current / duration) * 100));
-
-  progress.style.width = `${percentage}%`;
-
-  syncLyrics(current);
-
-  elapsed.textContent = formatTime(current);
-  total.textContent = formatTime(duration);
-}
-
 function updatePlaybackState(state) {
   const states = cast.framework.messages.PlayerState;
   document.body.classList.toggle("playback-paused", state === states.PAUSED);
@@ -335,7 +277,39 @@ function updatePlaybackState(state) {
 // Metadata updates
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
-  updateMetadata,
+  (event) => {
+    const media = playerManager.getMediaInformation();
+
+    if (!media) return;
+
+    const metadata = media.metadata || {};
+    const imageUrl = metadata.images?.[0]?.url;
+
+    setText(title, metadata.title, "Unknown Track");
+    setText(artist, metadata.artist, "Unknown Artist");
+    setText(album, metadata.albumName, "");
+
+    artwork.src = imageUrl || DEFAULT_ARTWORK;
+    albumCover.src = artwork.src;
+    ambientArt.src = artwork.src;
+    updateArtistImage(media.contentUrl);
+
+    // MEDIA_STATUS fires often; only reload lyrics when the track changes
+    const key = media.contentId || media.contentUrl || metadata.title;
+    if (key !== currentMediaKey) {
+      currentMediaKey = key;
+      renderLyrics(null);
+      fetch(media?.contentUrl.replace(".mp3", ".lrc"))
+        .then((res) => res.text())
+        .then((text) => {
+          if (text.includes("404") || text.includes("Not Found")) {
+            if (key === currentMediaKey) renderLyrics(null);
+            return;
+          }
+          key === currentMediaKey && renderLyrics(text);
+        });
+    }
+  },
 );
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
@@ -353,7 +327,26 @@ playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () =>
 // Progress updates
 playerManager.addEventListener(
   cast.framework.events.EventType.TIME_UPDATE,
-  updateProgress,
+  () => {
+    const current = playerManager.getCurrentTimeSec();
+    const duration = playerManager.getDurationSec();
+
+    if (!Number.isFinite(duration) || duration <= 0) {
+      progress.style.width = "0%";
+      elapsed.textContent = formatTime(current);
+      total.textContent = "LIVE";
+      return;
+    }
+
+    const percentage = Math.min(100, Math.max(0, (current / duration) * 100));
+
+    progress.style.width = `${percentage}%`;
+
+    syncLyrics(current);
+
+    elapsed.textContent = formatTime(current);
+    total.textContent = formatTime(duration);
+  },
 );
 
 // Handle receiver errors
@@ -367,7 +360,6 @@ playerManager.setSupportedMediaCommands(
   cast.framework.messages.Command.PLAY |
     cast.framework.messages.Command.PAUSE |
     cast.framework.messages.Command.SEEK |
-    cast.framework.messages.Command.STOP |
     cast.framework.messages.Command.STREAM_TRANSFER,
 );
 
