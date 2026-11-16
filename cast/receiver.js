@@ -84,10 +84,10 @@ function updatePlaybackState(state) {
   const states = cast.framework.messages.PlayerState;
   document.body.classList.toggle(
     "playback-paused",
-    state.type === "PAUSE" || state.type === states.FINISHED,
+    state.type === "PAUSE" || state.type === "MEDIA_FINISHED",
   );
 
-  logs.textContent = JSON.stringify(states);
+  //logs.textContent = JSON.stringify(states);
 
   switch (state.type) {
     case states.PLAYING:
@@ -105,8 +105,8 @@ function updatePlaybackState(state) {
     case states.FINISHED:
     case "MEDIA_FINISHED":
       if (state.endedReason === "END_OF_STREAM")
-        playbackState.textContent = "QUEUE FINISHED test";
-      else playbackState.textContent = "ISSUE";
+        playbackState.textContent = "QUEUE FINISHED";
+      else playbackState.textContent = "QUEUE FINISHED WITH ERROR";
       break;
     case states.IDLE:
       playbackState.textContent = "READY TO PLAY";
@@ -264,7 +264,9 @@ ambientArt.addEventListener(
 // Metadata updates
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
-  () => {
+  (state) => {
+    logs.textContent = JSON.stringify(state);
+
     const media = playerManager.getMediaInformation();
 
     if (!media) return;
@@ -337,7 +339,7 @@ playerManager.addEventListener(
   (state) => updatePlaybackState(state),
 );
 playerManager.addEventListener(cast.framework.events.EventType.PLAY, (state) =>
-  updatePlaybackState(state),
+  updatePlaybackState({ ...state, musa: true }),
 );
 playerManager.addEventListener(cast.framework.events.EventType.PAUSE, (state) =>
   updatePlaybackState(state),
