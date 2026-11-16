@@ -335,6 +335,9 @@ playerManager.addEventListener(
   cast.framework.events.EventType.PLAYING,
   (state) => updatePlaybackState(state),
 );
+playerManager.addEventListener(cast.framework.events.EventType.PLAY, (state) =>
+  updatePlaybackState(state),
+);
 playerManager.addEventListener(cast.framework.events.EventType.PAUSE, (state) =>
   updatePlaybackState(state),
 );
