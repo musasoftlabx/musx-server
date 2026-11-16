@@ -316,9 +316,9 @@ playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () =>
 // playerManager.addEventListener(cast.framework.events.EventType.STOP, () =>
 //   updatePlaybackState("STOPPED"),
 // );
-// playerManager.addEventListener(cast.framework.events.EventType.BUFFERING, () =>
-//   updatePlaybackState("BUFFERING"),
-// );
+playerManager.addEventListener(cast.framework.events.EventType.BUFFERING, () =>
+  updatePlaybackState("BUFFERING"),
+);
 
 // Progress updates
 playerManager.addEventListener(
