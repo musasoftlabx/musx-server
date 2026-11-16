@@ -356,32 +356,10 @@ playerManager.addEventListener(
   updateProgress,
 );
 
-// // Handle receiver errors
+// Handle receiver errors
 playerManager.addEventListener(
   cast.framework.events.EventType.ERROR,
-  (event) => {
-    playbackState.textContent = "PLAYBACK ERROR";
-
-    fetch("https://musasoftlabs.com:3000/castError", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: "Cast Receiver Error",
-      }),
-      // body: JSON.stringify({
-      //   error: event.error,
-      //   mediaInformation: playerManager.getMediaInformation(),
-      //   currentTimeSec: playerManager.getCurrentTimeSec(),
-      //   durationSec: playerManager.getDurationSec(),
-      // }),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log("Success:", data))
-      .catch((error) => console.error("Error:", error));
-  },
+  (event) => (playbackState.textContent = "PLAYBACK ERROR"),
 );
 
 // Configure supported controls
@@ -389,6 +367,7 @@ playerManager.setSupportedMediaCommands(
   cast.framework.messages.Command.PLAY |
     cast.framework.messages.Command.PAUSE |
     cast.framework.messages.Command.SEEK |
+    cast.framework.messages.Command.STOP |
     cast.framework.messages.Command.STREAM_TRANSFER,
 );
 
