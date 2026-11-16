@@ -248,8 +248,7 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 #title {
-  font-family: "Rubik";
-  font-weight: normal;
+  font-family: "Rubik-Bold", sans-serif;
   font-size: 35px;
   letter-spacing: 0.15em;
 }
