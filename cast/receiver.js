@@ -85,11 +85,12 @@ function updatePlaybackState(state) {
   document.body.classList.toggle("playback-paused", state === states.PAUSED);
 
   switch (state.type) {
-    case states.PLAYING:
+    case states.PLAY:
       playbackState.textContent = "NOW PLAYING";
       break;
-    case states.PAUSED:
-      playbackState.textContent = "PAUSED";
+    case states.PAUSE:
+      if (state.ended) playbackState.textContent = "QUEUE FINISHED";
+      else playbackState.textContent = "PAUSED";
       break;
     case states.BUFFERING:
       state.isBuffering
@@ -97,7 +98,9 @@ function updatePlaybackState(state) {
         : (playbackState.textContent = "PLAYING");
       break;
     case states.FINISHED:
-      playbackState.textContent = "FINISHED";
+      if (state.endedReason === cast.framework.messages.EndedReason.ENDED)
+        playbackState.textContent = "QUEUE FINISHED";
+      else playbackState.textContent = "ISSUE";
       break;
     case states.IDLE:
       playbackState.textContent = "READY TO PLAY";
@@ -329,12 +332,8 @@ playerManager.addEventListener(cast.framework.events.EventType.PLAY, () =>
 playerManager.addEventListener(cast.framework.events.EventType.PLAYING, () =>
   updatePlaybackState("PLAYING"),
 );
-playerManager.addEventListener(
-  cast.framework.events.EventType.PAUSE,
-  (state) => {
-    logs.textContent = JSON.stringify(state);
-    updatePlaybackState("PAUSED");
-  },
+playerManager.addEventListener(cast.framework.events.EventType.PAUSE, (state) =>
+  updatePlaybackState(state),
 );
 playerManager.addEventListener(
   cast.framework.events.EventType.BUFFERING,
