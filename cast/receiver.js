@@ -81,34 +81,31 @@ function setText(element, value, fallback) {
 }
 
 function updatePlaybackState(state) {
-  const states = cast.framework.messages.PlayerState;
   document.body.classList.toggle(
     "playback-paused",
     state.type === "PAUSE" || state.type === "MEDIA_FINISHED",
   );
 
-  logs.textContent = JSON.stringify(states);
+  logs.textContent = JSON.stringify(state);
 
   switch (state.type) {
-    case states.PLAYING:
-    case "PLAY":
+    case "PLAYING":
       playbackState.textContent = "NOW PLAYING";
       break;
     case "PAUSE":
       if (state.ended) playbackState.textContent = "QUEUE FINISHED";
       else playbackState.textContent = "PAUSED";
       break;
-    case states.BUFFERING:
+    case "BUFFERING":
       if (state.isBuffering) playbackState.textContent = "BUFFERING";
       else playbackState.textContent = "NOW PLAYING";
       break;
-    case states.FINISHED:
     case "MEDIA_FINISHED":
       if (state.endedReason === "END_OF_STREAM")
         playbackState.textContent = "QUEUE FINISHED";
       else playbackState.textContent = "QUEUE FINISHED WITH ERROR";
       break;
-    case states.IDLE:
+    case "IDLE":
       playbackState.textContent = "READY TO PLAY";
       break;
   }
