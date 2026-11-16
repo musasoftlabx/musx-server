@@ -415,8 +415,8 @@ body:not(.no-lyrics) .artist-icon {
 .album-cover {
   object-fit: cover;
   border-right: 10px outset rgba(255, 255, 255, 0.3);
-  border-top: 10px outset rgba(255, 255, 255, 0.3);
-  border-bottom: 10px outset rgba(255, 255, 255, 0.3);
+  border-top: 5px outset rgba(255, 255, 255, 0.3);
+  border-bottom: 5px outset rgba(255, 255, 255, 0.3);
   box-shadow: 8px 0 20px rgba(0, 0, 0, 0.9);
   rotate: -1deg;
 }
@@ -663,10 +663,15 @@ body:not(.no-lyrics) #title {
   margin-top: 12px;
 }
 
-.brand-container {
+body:not(.no-lyrics) .brand-container {
   transform: scale(0.7);
-  margin-top: -0.5em;
   margin-left: -1.5em;
+}
+
+.brand-container {
+  transform: scale(0.9);
+  margin-top: -0.5em;
+  margin-left: -0.5em;
 }
 
 body:not(.no-lyrics) .track-info {
