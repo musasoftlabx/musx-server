@@ -663,10 +663,10 @@ body:not(.no-lyrics) #title {
   margin-top: 12px;
 }
 
-body:not(.no-lyrics) .brand-container {
-  margin-left: -0.5em;
+.brand-container {
   transform: scale(0.7);
   margin-top: -0.5em;
+  margin-left: -1.5em;
 }
 
 body:not(.no-lyrics) .track-info {
