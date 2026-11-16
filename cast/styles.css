@@ -979,6 +979,7 @@ body:not(.no-lyrics) #album {
 
 body:not(.no-lyrics) .album-icon {
   font-size: 20px;
+  margin-left: -3px;
 }
 
 .footer {
@@ -1099,7 +1100,7 @@ body:not(.no-lyrics) .album-icon {
 
 @media (prefers-reduced-motion: reduce) {
   body:not(.no-lyrics) #title {
-    max-width: 100%;
+    max-width: 28vw;
     overflow: hidden;
     text-overflow: ellipsis;
   }
