@@ -84,9 +84,10 @@ function updatePlaybackState(state) {
   const states = cast.framework.messages.PlayerState;
   document.body.classList.toggle("playback-paused", state === states.PAUSED);
   if (state === states.PLAYING) playbackState.textContent = "NOW PLAYING";
-  else if (state === states.PAUSED) playbackState.textContent = "PAUSED";
-  else if (state === states.BUFFERING) playbackState.textContent = "BUFFERING";
-  else playbackState.textContent = "READY TO PLAY";
+  if (state === states.PAUSED) playbackState.textContent = "PAUSED";
+  if (state === states.BUFFERING) playbackState.textContent = "BUFFERING";
+  if (state === states.FINISHED) playbackState.textContent = "FINISHED";
+  if (state === states.IDLE) playbackState.textContent = "READY TO PLAY";
 }
 
 function parseLyrics(raw) {
@@ -315,6 +316,10 @@ playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () =>
 );
 playerManager.addEventListener(cast.framework.events.EventType.BUFFERING, () =>
   updatePlaybackState("BUFFERING"),
+);
+playerManager.addEventListener(
+  cast.framework.events.EventType.MEDIA_FINISHED,
+  () => updatePlaybackState("FINISHED"),
 );
 
 // Progress updates
