@@ -1036,7 +1036,7 @@ body:not(.no-lyrics) .footer {
   text-align: center;
   color: var(--gold);
   font-size: 11px;
-  font-family: "Rubik Bold", sans-serif;
+  font-family: "Abel", sans-serif;
   letter-spacing: 10px;
   background: linear-gradient(to right, var(--gold), #d8b4f9);
   -webkit-background-clip: text;
