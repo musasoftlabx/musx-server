@@ -323,7 +323,10 @@ function updateProgress() {
   total.textContent = formatTime(duration);
 }
 
-function updatePlaybackState() {
+function updatePlaybackState(state) {
+  const states = cast.framework.messages.PlayerState;
+  document.body.classList.toggle("playback-paused", state === states.PAUSED);
+
   //const state = playerManager.getPlayerState();
   //const states = cast.framework.messages.PlayerState;
   //document.body.classList.toggle("playback-paused", state === states.PAUSED);
@@ -338,7 +341,6 @@ function updatePlaybackState() {
   //   playbackState.textContent = "BUFFERING";
   // else playbackState.textContent = "READY TO PLAY";
 }
-//MEDIA_FINISHED
 
 // Metadata updates
 playerManager.addEventListener(
@@ -351,19 +353,12 @@ playerManager.addEventListener(
 );
 
 // Playback updates
-playerManager.addEventListener(cast.framework.events.EventType.PLAYING, () => {
-  const state = playerManager.getPlayerState();
-  const states = cast.framework.messages.PlayerState;
-  document.body.classList.toggle("playback-paused", state === states.PAUSED);
-  logs.textContent = `State: ${state}`;
-});
-
-playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () => {
-  const state = playerManager.getPlayerState();
-  const states = cast.framework.messages.PlayerState;
-  document.body.classList.toggle("playback-paused", state === states.PAUSED);
-  logs.textContent = `State: ${state}`;
-});
+playerManager.addEventListener(cast.framework.events.EventType.PLAYING, () =>
+  updatePlaybackState("PLAYING"),
+);
+playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () =>
+  updatePlaybackState("PAUSED"),
+);
 
 // Progress updates
 playerManager.addEventListener(
