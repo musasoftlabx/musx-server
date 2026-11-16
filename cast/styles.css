@@ -39,6 +39,12 @@
   font-style: normal;
   font-weight: normal;
 }
+@font-face {
+  font-family: "Sigmar";
+  src: url("./fonts/Sigmar.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
 
 :root {
   --gold: #d4af37;
@@ -945,8 +951,8 @@ body:not(.no-lyrics) .title-marquee {
 body:not(.no-lyrics) #title {
   width: max-content;
   white-space: nowrap;
-  font-family: "Rubik Bold", sans-serif;
-  font-size: clamp(26px, 1.8vw, 92px);
+  font-family: "Sigmar", sans-serif;
+  /* font-size: clamp(26px, 1.8vw, 92px); */
   margin: 0;
   background: linear-gradient(105deg, #e6ce81, #d6afea 85%);
   -webkit-background-clip: text;
