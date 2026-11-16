@@ -34,13 +34,6 @@
 }
 
 @font-face {
-  font-family: "LilyScriptOne";
-  src: url("./fonts/LilyScriptOne.ttf") format("truetype");
-  font-style: normal;
-  font-weight: bold;
-}
-
-@font-face {
   font-family: "RockSalt";
   src: url("./fonts/RockSalt.ttf") format("truetype");
   font-style: normal;
@@ -262,7 +255,7 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 #title {
-  font-family: "LilyScriptOne";
+  font-family: "Rubik";
   font-weight: normal;
   font-size: 35px;
   letter-spacing: 0.15em;
