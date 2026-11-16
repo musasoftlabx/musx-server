@@ -81,31 +81,33 @@ function setText(element, value, fallback) {
 }
 
 function updatePlaybackState(state) {
-  document.body.classList.toggle(
-    "playback-paused",
-    state.type === "PAUSE" || state.type === "MEDIA_FINISHED",
-  );
+  const events = cast.framework.events.EventType;
+  if (state.type === events.PAUSE || state.type === events.MEDIA_FINISHED) {
+    document.body.classList.toggle("playback-paused", true);
+  } else if (state.type === events.PLAYING) {
+    document.body.classList.toggle("playback-paused", false);
+  }
 
-  logs.textContent = JSON.stringify(state);
+  if (logs) logs.textContent = JSON.stringify(state);
 
   switch (state.type) {
-    case "PLAYING":
+    case events.PLAYING:
       playbackState.textContent = "NOW PLAYING";
       break;
-    case "PAUSE":
+    case events.PAUSE:
       if (state.ended) playbackState.textContent = "QUEUE FINISHED";
       else playbackState.textContent = "PAUSED";
       break;
-    case "BUFFERING":
+    case events.BUFFERING:
       if (state.isBuffering) playbackState.textContent = "BUFFERING";
       else playbackState.textContent = "NOW PLAYING";
       break;
-    case "MEDIA_FINISHED":
+    case events.MEDIA_FINISHED:
       if (state.endedReason === "END_OF_STREAM")
         playbackState.textContent = "QUEUE FINISHED";
       else playbackState.textContent = "QUEUE FINISHED WITH ERROR";
       break;
-    case "IDLE":
+    case events.IDLE:
       playbackState.textContent = "READY TO PLAY";
       break;
   }

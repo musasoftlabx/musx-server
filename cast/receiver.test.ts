@@ -55,7 +55,8 @@ function receiver() {
   const nodes = new Map(
     [...markup.matchAll(/\bid="([^"]+)"/g)].map((match) => [match[1], element()])
   );
-  const listeners = new Map<string, (() => void)[]>();
+  const listeners = new Map<string, ((event: { type: string }) => void)[]>();
+  const body = element();
   const resizers: (() => void)[] = [];
   const state = { items: [] as QueueItem[], currentIndex: 0 };
   const queue = {
@@ -68,7 +69,7 @@ function receiver() {
     setSupportedMediaCommands() {},
     getMediaInformation: () => null,
     getQueueManager: () => queue,
-    addEventListener(type: string, listener: () => void) {
+    addEventListener(type: string, listener: (event: { type: string }) => void) {
       listeners.set(type, [...(listeners.get(type) ?? []), listener]);
     },
   };
@@ -82,6 +83,7 @@ function receiver() {
       observe() {}
     },
     document: {
+      body,
       getElementById: (id: string) => nodes.get(id) ?? null,
       baseURI: "https://receiver.test/cast/index.html",
     },
@@ -94,6 +96,12 @@ function receiver() {
           MEDIA_STATUS: "MEDIA_STATUS",
           TIME_UPDATE: "TIME_UPDATE",
           ERROR: "ERROR",
+          PLAY: "play",
+          PLAYING: "playing",
+          PAUSE: "pause",
+          BUFFERING: "buffering",
+          MEDIA_FINISHED: "media_finished",
+          IDLE: "idle",
         } },
         messages: { Command: { PLAY: 1, PAUSE: 2, SEEK: 4, STREAM_TRANSFER: 8 } },
       },
@@ -102,13 +110,19 @@ function receiver() {
   const vmContext = createContext(sandbox);
   return {
     nodes,
+    body,
     state,
     start: () => runInContext(source, vmContext),
     resize: () => resizers.forEach((callback) => callback()),
     updateArtistImage: (url: string | null) =>
       runInContext("updateArtistImage", vmContext)(url),
+    emit: (type: string) => {
+      for (const listener of listeners.get(type) ?? []) listener({ type });
+    },
     mediaStatus: () => {
-      for (const listener of listeners.get("MEDIA_STATUS") ?? []) listener();
+      for (const listener of listeners.get("MEDIA_STATUS") ?? []) {
+        listener({ type: "MEDIA_STATUS" });
+      }
     },
   };
 }
@@ -210,4 +224,21 @@ test("artist photo replaces the icon only after loading and falls back after fai
   app.updateArtistImage(null);
   expect(image.src).toBe("");
   expect(icon.style.display).toBe("");
+});
+
+test("disc stays retracted after pause until playback actually resumes", () => {
+  const app = receiver();
+  app.start();
+  app.emit("pause");
+  expect(app.body.classList.contains("playback-paused")).toBe(true);
+  expect(app.nodes.get("playbackState")?.textContent).toBe("PAUSED");
+  app.emit("buffering");
+  expect(app.body.classList.contains("playback-paused")).toBe(true);
+  app.emit("play");
+  expect(app.body.classList.contains("playback-paused")).toBe(true);
+  app.emit("playing");
+  expect(app.body.classList.contains("playback-paused")).toBe(false);
+  expect(app.nodes.get("playbackState")?.textContent).toBe("NOW PLAYING");
+  app.emit("media_finished");
+  expect(app.body.classList.contains("playback-paused")).toBe(true);
 });

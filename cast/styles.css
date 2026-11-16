@@ -406,6 +406,7 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 .playback-paused .album-disc {
+  right: calc(35% - 20px);
   animation-play-state: paused;
 }
 
@@ -773,6 +774,7 @@ body:not(.no-lyrics) .album-icon {
 
   .album-disc {
     animation: disc-spin 12s linear infinite;
+    transition: right 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   @keyframes disc-spin {
