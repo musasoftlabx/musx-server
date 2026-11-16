@@ -26,18 +26,7 @@ const nextTitle = document.getElementById("nextTitle");
 const nextArtist = document.getElementById("nextArtist");
 const nextAlbum = document.getElementById("nextAlbum");
 const artistMarquee = document.getElementById("artistMarquee");
-const artistResizeObserver = new ResizeObserver(() => {
-  const overflow = Math.max(0, artist.scrollWidth - artistMarquee.clientWidth);
-  artistMarquee.classList.toggle(
-    "is-overflowing",
-    artistMarquee.clientWidth > 0 && overflow > 0,
-  );
-  artistMarquee.style.setProperty("--artist-marquee-offset", `${-overflow}px`);
-  artistMarquee.style.setProperty(
-    "--artist-marquee-duration",
-    `${Math.max(4, overflow / 30 + 2)}s`,
-  );
-});
+const titleMarquee = document.getElementById("titleMarquee");
 
 const API_BASE = "https://musasoftlabs.com";
 const DEFAULT_ARTWORK = "artwork.png";
@@ -50,8 +39,8 @@ let lyricsOffset = 0;
 let activeLyricIndex = -1;
 
 playerManager.setPlaybackConfig(playbackConfig);
-artistResizeObserver.observe(artistMarquee);
-artistResizeObserver.observe(artist);
+observeMarquee(artist, artistMarquee);
+observeMarquee(title, titleMarquee);
 
 function updateArtistImage(contentUrl) {
   const imageUrl = contentUrl
@@ -81,6 +70,23 @@ function formatTime(seconds) {
 
 function setText(element, value, fallback) {
   element.textContent = value || fallback;
+}
+
+function observeMarquee(text, viewport) {
+  const observer = new ResizeObserver(() => {
+    const overflow = Math.max(0, text.scrollWidth - viewport.clientWidth);
+    viewport.classList.toggle(
+      "is-overflowing",
+      viewport.clientWidth > 0 && overflow > 0,
+    );
+    viewport.style.setProperty("--marquee-offset", `${-overflow}px`);
+    viewport.style.setProperty(
+      "--marquee-duration",
+      `${Math.max(4, overflow / 30 + 2)}s`,
+    );
+  });
+  observer.observe(viewport);
+  observer.observe(text);
 }
 
 function updateIdleContainer(finished = false) {

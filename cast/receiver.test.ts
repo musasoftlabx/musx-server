@@ -194,16 +194,43 @@ test("artist marquee activates only on overflow and adapts to text and viewport 
   artist.scrollWidth = 340;
   app.resize();
   expect(viewport.classList.contains("is-overflowing")).toBe(true);
-  expect(viewport.style.getPropertyValue("--artist-marquee-offset")).toBe("-240px");
+  expect(viewport.style.getPropertyValue("--marquee-offset")).toBe("-240px");
 
   viewport.clientWidth = 250;
   app.resize();
-  expect(viewport.style.getPropertyValue("--artist-marquee-offset")).toBe("-90px");
+  expect(viewport.style.getPropertyValue("--marquee-offset")).toBe("-90px");
 
   artist.scrollWidth = 80;
   app.resize();
   expect(viewport.classList.contains("is-overflowing")).toBe(false);
-  expect(viewport.style.getPropertyValue("--artist-marquee-offset")).toBe("0px");
+  expect(viewport.style.getPropertyValue("--marquee-offset")).toBe("0px");
+});
+
+test("title marquee adapts to text and viewport changes independently of the artist", () => {
+  const app = receiver();
+  app.start();
+  const viewport = app.nodes.get("titleMarquee")!;
+  const title = app.nodes.get("title")!;
+
+  title.scrollWidth = 500;
+  viewport.clientWidth = 180;
+  app.resize();
+  expect(viewport.classList.contains("is-overflowing")).toBe(true);
+  expect(viewport.style.getPropertyValue("--marquee-offset")).toBe("-320px");
+  expect(app.nodes.get("artistMarquee")?.classList.contains("is-overflowing")).toBe(false);
+
+  viewport.clientWidth = 0;
+  app.resize();
+  expect(viewport.classList.contains("is-overflowing")).toBe(false);
+
+  viewport.clientWidth = 400;
+  app.resize();
+  expect(viewport.style.getPropertyValue("--marquee-offset")).toBe("-100px");
+
+  title.scrollWidth = 80;
+  app.resize();
+  expect(viewport.classList.contains("is-overflowing")).toBe(false);
+  expect(viewport.style.getPropertyValue("--marquee-offset")).toBe("0px");
 });
 
 test("artist photo replaces the icon only after loading and falls back after failure", () => {

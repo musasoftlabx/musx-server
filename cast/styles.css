@@ -506,6 +506,10 @@ body:not(.no-lyrics) .artist-icon {
   white-space: nowrap;
 }
 
+.title-marquee {
+  display: contents;
+}
+
 #title {
   font-family: "Rubik Bold", sans-serif;
   font-size: clamp(36px, 4.8vw, 92px);
@@ -928,14 +932,20 @@ h2,
   font-size: clamp(18px, 2.5vw, 30px);
 }
 
-body:not(.no-lyrics) #title {
-  white-space: nowrap;
+body:not(.no-lyrics) .title-marquee {
+  display: block;
+  min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  font-family: "Rubik Bold", sans-serif;
-  font-size: clamp(36px, 1.8vw, 92px);
   margin-top: 6px;
   margin-bottom: -6px;
+}
+
+body:not(.no-lyrics) #title {
+  width: max-content;
+  white-space: nowrap;
+  font-family: "Rubik Bold", sans-serif;
+  font-size: clamp(36px, 1.8vw, 92px);
+  margin: 0;
   background: linear-gradient(105deg, #e6ce81, #d6afea 85%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -962,9 +972,13 @@ body:not(.no-lyrics) .artist-image {
   font-size: 16px;
 }
 
-body:not(.no-lyrics) #album,
-body:not(.no-lyrics) .album-icon {
+body:not(.no-lyrics) #album {
   font-size: 13px;
+  margin-top: -2px;
+}
+
+body:not(.no-lyrics) .album-icon {
+  font-size: 20px;
 }
 
 .footer {
@@ -1030,19 +1044,19 @@ body:not(.no-lyrics) .album-icon {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .artist-marquee.is-overflowing #artist {
-    animation: artist-marquee var(--artist-marquee-duration) linear infinite
-      alternate;
+  .artist-marquee.is-overflowing #artist,
+  body:not(.no-lyrics) .title-marquee.is-overflowing #title {
+    animation: text-marquee var(--marquee-duration) linear infinite alternate;
   }
 
-  @keyframes artist-marquee {
+  @keyframes text-marquee {
     0%,
     15% {
       transform: translateX(0);
     }
     85%,
     100% {
-      transform: translateX(var(--artist-marquee-offset));
+      transform: translateX(var(--marquee-offset));
     }
   }
 
@@ -1084,6 +1098,12 @@ body:not(.no-lyrics) .album-icon {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  body:not(.no-lyrics) #title {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .lyrics-scroller,
   .lyric-line {
     transition: none;
