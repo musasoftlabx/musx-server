@@ -329,15 +329,16 @@ playerManager.addEventListener(cast.framework.events.EventType.PLAY, () =>
 playerManager.addEventListener(cast.framework.events.EventType.PLAYING, () =>
   updatePlaybackState("PLAYING"),
 );
-playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () =>
-  updatePlaybackState("PAUSED"),
+playerManager.addEventListener(
+  cast.framework.events.EventType.PAUSE,
+  (state) => {
+    logs.textContent = JSON.stringify(state);
+    updatePlaybackState("PAUSED");
+  },
 );
 playerManager.addEventListener(
   cast.framework.events.EventType.BUFFERING,
-  (state) => {
-    logs.textContent = JSON.stringify(state);
-    updatePlaybackState(state);
-  },
+  (state) => updatePlaybackState(state),
 );
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_FINISHED,
