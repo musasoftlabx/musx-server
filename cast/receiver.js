@@ -87,7 +87,7 @@ function updatePlaybackState(state) {
     state.type === "PAUSE" || state.type === states.FINISHED,
   );
 
-  logs.textContent = JSON.stringify(state);
+  logs.textContent = JSON.stringify(cast.framework.messages.EndedReason.ENDED);
 
   switch (state.type) {
     case states.PLAYING:
@@ -103,8 +103,9 @@ function updatePlaybackState(state) {
       else playbackState.textContent = "NOW PLAYING";
       break;
     case states.FINISHED:
-      if (state.endedReason === cast.framework.messages.EndedReason.ENDED)
-        playbackState.textContent = "QUEUE FINISHED";
+    case "MEDIA_FINISHED":
+      if (state.endedReason === "END_OF_STREAM")
+        playbackState.textContent = "QUEUE FINISHED test";
       else playbackState.textContent = "ISSUE";
       break;
     case states.IDLE:
