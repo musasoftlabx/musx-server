@@ -33,6 +33,13 @@
   font-weight: normal;
 }
 
+@font-face {
+  font-family: "Abel";
+  src: url("./fonts/Abel.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
 :root {
   --gold: #d4af37;
   --purple: #a855f7;
@@ -485,6 +492,7 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 .artist-marquee {
+  font-family: "Abel", sans-serif;
   flex: 1;
   letter-spacing: 3px;
   min-width: 0;
@@ -916,10 +924,13 @@ h2,
 }
 
 body:not(.no-lyrics) #title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-family: "Rubik Bold", sans-serif;
   font-size: clamp(36px, 1.8vw, 92px);
   margin-top: 12px;
-  margin-bottom: -8px;
+  margin-bottom: -6px;
   background: linear-gradient(105deg, #e6ce81, #d6afea 85%);
   -webkit-background-clip: text;
   background-clip: text;
