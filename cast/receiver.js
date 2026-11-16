@@ -83,11 +83,26 @@ function setText(element, value, fallback) {
 function updatePlaybackState(state) {
   const states = cast.framework.messages.PlayerState;
   document.body.classList.toggle("playback-paused", state === states.PAUSED);
-  if (state === states.PLAYING) playbackState.textContent = "NOW PLAYING";
-  if (state === states.PAUSED) playbackState.textContent = "PAUSED";
-  if (state === states.BUFFERING) playbackState.textContent = "BUFFERING";
-  if (state === states.FINISHED) playbackState.textContent = "FINISHED";
-  if (state === states.IDLE) playbackState.textContent = "READY TO PLAY";
+
+  switch (state.type) {
+    case states.PLAYING:
+      playbackState.textContent = "NOW PLAYING";
+      break;
+    case states.PAUSED:
+      playbackState.textContent = "PAUSED";
+      break;
+    case states.BUFFERING:
+      state.isBuffering
+        ? (playbackState.textContent = "BUFFERING")
+        : (playbackState.textContent = "PLAYING");
+      break;
+    case states.FINISHED:
+      playbackState.textContent = "FINISHED";
+      break;
+    case states.IDLE:
+      playbackState.textContent = "READY TO PLAY";
+      break;
+  }
 }
 
 function parseLyrics(raw) {
@@ -321,12 +336,15 @@ playerManager.addEventListener(
   cast.framework.events.EventType.BUFFERING,
   (state) => {
     logs.textContent = JSON.stringify(state);
-    updatePlaybackState("BUFFERING");
+    updatePlaybackState(state);
   },
 );
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_FINISHED,
-  () => updatePlaybackState("FINISHED"),
+  (state) => {
+    logs.textContent = JSON.stringify(state);
+    updatePlaybackState("FINISHED");
+  },
 );
 
 // Progress updates
