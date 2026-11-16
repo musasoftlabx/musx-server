@@ -406,7 +406,7 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 .playback-paused .album-disc {
-  right: calc(5% - 20px);
+  right: calc(25% - 20px);
   animation-play-state: paused;
 }
 
