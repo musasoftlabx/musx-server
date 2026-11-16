@@ -13,13 +13,6 @@
 }
 
 @font-face {
-  font-family: "Abel";
-  src: url("./fonts/Abel.ttf") format("truetype");
-  font-style: normal;
-  font-weight: normal;
-}
-
-@font-face {
   font-family: "Rubik";
   src: url("./fonts/Rubik.ttf") format("truetype");
   font-style: normal;
@@ -263,10 +256,10 @@ body:not(.no-lyrics) .artist-icon {
 
 #album {
   color: var(--muted);
-  font-family: "Abel", sans-serif;
+  font-family: "Rubik", sans-serif;
+  letter-spacing: 0.25em;
   margin: 0;
   margin-left: 2px;
-  letter-spacing: 0.3em;
 }
 
 #album,
