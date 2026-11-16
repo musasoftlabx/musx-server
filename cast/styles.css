@@ -937,15 +937,14 @@ body:not(.no-lyrics) .title-marquee {
   min-width: 0;
   max-width: 33vw;
   overflow: hidden;
-  margin-top: 6px;
-  margin-bottom: -6px;
+  margin-top: 12px;
 }
 
 body:not(.no-lyrics) #title {
   width: max-content;
   white-space: nowrap;
   font-family: "Rubik Bold", sans-serif;
-  font-size: clamp(36px, 1.8vw, 92px);
+  font-size: clamp(26px, 1.8vw, 92px);
   margin: 0;
   background: linear-gradient(105deg, #e6ce81, #d6afea 85%);
   -webkit-background-clip: text;
@@ -1027,12 +1026,35 @@ body:not(.no-lyrics) .album-icon {
 }
 
 .footer-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
   font-family: "Rubik Bold", sans-serif;
-  letter-spacing: 0.75em;
+  letter-spacing: 0.16em;
+  line-height: 1.5;
   text-align: center;
-  color: #666666;
-  font-size: 10px;
-  margin-top: 25px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #bcb6c7;
+  font-size: clamp(11px, 0.8vw, 15px);
+  margin-top: 24px;
+}
+
+.footer-brand::before,
+.footer-brand::after {
+  content: "";
+  flex: 0 1 80px;
+  min-width: 16px;
+  height: 1px;
+}
+
+.footer-brand::before {
+  background: linear-gradient(to right, transparent, var(--gold));
+}
+
+.footer-brand::after {
+  background: linear-gradient(to right, var(--purple), transparent);
 }
 
 @media (max-aspect-ratio: 4/3) {
