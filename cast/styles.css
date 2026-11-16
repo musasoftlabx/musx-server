@@ -726,14 +726,13 @@ body:not(.no-lyrics) .album-icon {
   text-align: center;
   color: var(--gold);
   font-size: 11px;
-  letter-spacing: 4px;
-  margin-top: 24px;
+  font-family: "Rubik Bold", sans-serif;
+  letter-spacing: 10px;
 }
 
 .eyebrow {
   color: var(--gold);
   font-size: 11px;
-  letter-spacing: 5px;
 }
 
 .footer-brand {
