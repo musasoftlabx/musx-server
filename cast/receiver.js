@@ -84,6 +84,8 @@ function updatePlaybackState(state) {
   const states = cast.framework.messages.PlayerState;
   document.body.classList.toggle("playback-paused", state === states.PAUSED);
 
+  logs.textContent = JSON.stringify(state);
+
   switch (state.type) {
     case states.PLAY:
       playbackState.textContent = "NOW PLAYING";
@@ -95,7 +97,7 @@ function updatePlaybackState(state) {
     case states.BUFFERING:
       state.isBuffering
         ? (playbackState.textContent = "BUFFERING")
-        : (playbackState.textContent = "PLAYING");
+        : (playbackState.textContent = "NOW PLAYING");
       break;
     case states.FINISHED:
       if (state.endedReason === cast.framework.messages.EndedReason.ENDED)
@@ -326,11 +328,8 @@ playerManager.addEventListener(
 );
 
 // Playback updates
-playerManager.addEventListener(cast.framework.events.EventType.PLAY, () =>
-  updatePlaybackState("PLAYING"),
-);
-playerManager.addEventListener(cast.framework.events.EventType.PLAYING, () =>
-  updatePlaybackState("PLAYING"),
+playerManager.addEventListener(cast.framework.events.EventType.PLAY, (state) =>
+  updatePlaybackState(state),
 );
 playerManager.addEventListener(cast.framework.events.EventType.PAUSE, (state) =>
   updatePlaybackState(state),
@@ -341,10 +340,7 @@ playerManager.addEventListener(
 );
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_FINISHED,
-  (state) => {
-    logs.textContent = JSON.stringify(state);
-    updatePlaybackState("FINISHED");
-  },
+  (state) => updatePlaybackState(state),
 );
 
 // Progress updates
