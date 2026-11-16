@@ -567,7 +567,8 @@ body:not(.no-lyrics) .artist-icon {
   display: inline-block;
   width: 20px;
   height: 20px;
-  margin-right: 10px;
+  margin-right: 5px;
+  margin-top: -2px;
   vertical-align: middle;
   fill: none;
   stroke: currentColor;
@@ -933,7 +934,7 @@ body:not(.no-lyrics) #title {
   text-overflow: ellipsis;
   font-family: "Rubik Bold", sans-serif;
   font-size: clamp(36px, 1.8vw, 92px);
-  margin-top: 12px;
+  margin-top: 6px;
   margin-bottom: -6px;
   background: linear-gradient(105deg, #e6ce81, #d6afea 85%);
   -webkit-background-clip: text;
