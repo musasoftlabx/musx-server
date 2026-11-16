@@ -605,6 +605,7 @@ body:not(.no-lyrics) .artist-icon {
   aspect-ratio: 3 / 2;
   flex-shrink: 0;
   filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.7));
+  margin-top: 20px;
 }
 
 .album-disc {
@@ -748,6 +749,7 @@ body:not(.no-lyrics) .artist-icon {
 
 .no-lyrics .artwork-container {
   width: min(57vw, 72vh, 60%);
+  margin-top: unset;
 }
 
 .no-lyrics .lyrics-panel {
