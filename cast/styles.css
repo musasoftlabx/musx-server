@@ -263,9 +263,10 @@ body:not(.no-lyrics) .artist-icon {
 
 #album {
   color: var(--muted);
+  font-family: "Abel", sans-serif;
   margin: 0;
   margin-left: 2px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.3em;
 }
 
 #album,
