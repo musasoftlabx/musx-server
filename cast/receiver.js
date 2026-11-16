@@ -358,6 +358,13 @@ playerManager.addEventListener(cast.framework.events.EventType.PLAYING, () => {
   logs.textContent = `State: ${state}`;
 });
 
+playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () => {
+  const state = playerManager.getPlayerState();
+  const states = cast.framework.messages.PlayerState;
+  document.body.classList.toggle("playback-paused", state === states.PAUSED);
+  logs.textContent = `State: ${state}`;
+});
+
 // Progress updates
 playerManager.addEventListener(
   cast.framework.events.EventType.TIME_UPDATE,
