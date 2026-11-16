@@ -317,8 +317,12 @@ playerManager.addEventListener(cast.framework.events.EventType.PLAYING, () =>
 playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () =>
   updatePlaybackState("PAUSED"),
 );
-playerManager.addEventListener(cast.framework.events.EventType.BUFFERING, () =>
-  updatePlaybackState("BUFFERING"),
+playerManager.addEventListener(
+  cast.framework.events.EventType.BUFFERING,
+  (state) => {
+    logs.textContent = state.toString();
+    updatePlaybackState("BUFFERING");
+  },
 );
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_FINISHED,
