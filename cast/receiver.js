@@ -84,16 +84,17 @@ function updatePlaybackState(state) {
   const states = cast.framework.messages.PlayerState;
   document.body.classList.toggle(
     "playback-paused",
-    state.type === states.PAUSED || state.type === states.FINISHED,
+    state.type === "PAUSE" || state.type === states.FINISHED,
   );
 
   logs.textContent = JSON.stringify(state);
 
   switch (state.type) {
     case states.PLAYING:
+    case "PLAY":
       playbackState.textContent = "NOW PLAYING";
       break;
-    case states.PAUSED:
+    case "PAUSE":
       if (state.ended) playbackState.textContent = "QUEUE FINISHED";
       else playbackState.textContent = "PAUSED";
       break;
