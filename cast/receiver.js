@@ -87,7 +87,7 @@ function updatePlaybackState(state) {
     state.type === "PAUSE" || state.type === states.FINISHED,
   );
 
-  logs.textContent = JSON.stringify(cast.framework.messages.EndedReason.ENDED);
+  logs.textContent = JSON.stringify(states);
 
   switch (state.type) {
     case states.PLAYING:
