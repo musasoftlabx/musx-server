@@ -517,8 +517,8 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 #title {
-  font-family: "Sigmar", sans-serif;
-  font-size: 24px;
+  font-family: "Rubik Bold", sans-serif;
+  font-size: clamp(36px, 4.8vw, 92px);
   letter-spacing: 0.15em;
   background: linear-gradient(105deg, #e6ce81, #d6afea 85%);
   -webkit-background-clip: text;
@@ -530,7 +530,7 @@ body:not(.no-lyrics) .artist-icon {
   color: var(--muted);
   font-family: "Rubik", sans-serif;
   letter-spacing: 0.25em;
-  text-decoration: underline dotted;
+  text-decoration: underline wavy;
   text-underline-offset: 4px;
   margin: 0;
   margin-left: 2px;
