@@ -935,6 +935,7 @@ h2,
 body:not(.no-lyrics) .title-marquee {
   display: block;
   min-width: 0;
+  max-width: 30vw;
   overflow: hidden;
   margin-top: 6px;
   margin-bottom: -6px;
@@ -1100,7 +1101,7 @@ body:not(.no-lyrics) .album-icon {
 
 @media (prefers-reduced-motion: reduce) {
   body:not(.no-lyrics) #title {
-    max-width: 28vw;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
