@@ -58,7 +58,7 @@ function receiver() {
   const listeners = new Map<string, ((event: { type: string }) => void)[]>();
   const body = element();
   const resizers: (() => void)[] = [];
-  const state = { items: [] as QueueItem[], currentIndex: 0 };
+  const state = { items: [] as QueueItem[], currentIndex: 0, playerState: "IDLE" };
   const queue = {
     getItems: () => state.items,
     getCurrentItem: () => state.items[state.currentIndex],
@@ -68,6 +68,7 @@ function receiver() {
     setPlaybackConfig() {},
     setSupportedMediaCommands() {},
     getMediaInformation: () => null,
+    getPlayerState: () => state.playerState,
     getQueueManager: () => queue,
     addEventListener(type: string, listener: (event: { type: string }) => void) {
       listeners.set(type, [...(listeners.get(type) ?? []), listener]);
@@ -103,7 +104,10 @@ function receiver() {
           MEDIA_FINISHED: "media_finished",
           IDLE: "idle",
         } },
-        messages: { Command: { PLAY: 1, PAUSE: 2, SEEK: 4, STREAM_TRANSFER: 8 } },
+        messages: {
+          PlayerState: { IDLE: "IDLE" },
+          Command: { PLAY: 1, PAUSE: 2, SEEK: 4, STREAM_TRANSFER: 8 },
+        },
       },
     },
   };
@@ -241,4 +245,47 @@ test("disc stays retracted after pause until playback actually resumes", () => {
   expect(app.nodes.get("playbackState")?.textContent).toBe("NOW PLAYING");
   app.emit("media_finished");
   expect(app.body.classList.contains("playback-paused")).toBe(true);
+});
+
+test("idle container follows initial state, media status, and playback completion", () => {
+  const app = receiver();
+  const container = app.nodes.get("idleContainer")!;
+  const screen = app.nodes.get("playerScreen")!;
+  app.start();
+  expect(container.hidden).toBe(false);
+  expect(screen.hidden).toBe(true);
+
+  for (const playerState of ["PLAYING", "PAUSED", "BUFFERING"]) {
+    app.state.playerState = playerState;
+    app.mediaStatus();
+    expect(container.hidden).toBe(true);
+    expect(screen.hidden).toBe(false);
+  }
+
+  app.emit("media_finished");
+  expect(container.hidden).toBe(false);
+  expect(screen.hidden).toBe(true);
+
+  app.state.playerState = "PLAYING";
+  app.emit("playing");
+  expect(container.hidden).toBe(true);
+  expect(screen.hidden).toBe(false);
+
+  app.state.playerState = "IDLE";
+  app.mediaStatus();
+  expect(container.hidden).toBe(false);
+  expect(screen.hidden).toBe(true);
+
+  app.state.playerState = "PAUSED";
+  app.emit("pause");
+  expect(container.hidden).toBe(true);
+  expect(screen.hidden).toBe(false);
+});
+
+test("idle container is hidden when receiver starts with active media", () => {
+  const app = receiver();
+  app.state.playerState = "PLAYING";
+  app.start();
+  expect(app.nodes.get("idleContainer")?.hidden).toBe(true);
+  expect(app.nodes.get("playerScreen")?.hidden).toBe(false);
 });

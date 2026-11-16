@@ -13,30 +13,88 @@
   </head>
 
   <body class="no-lyrics">
+    <div
+      id="logs"
+      hidden
+      style="
+        background: rgba(0, 0, 0, 0.8);
+        font-size: 10px;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        z-index: 1000;
+      "
+    ></div>
+
     <audio id="audio" autoplay></audio>
+
     <div class="ambient" aria-hidden="true">
       <img id="ambientArt" src="artwork.png" alt="" />
     </div>
-    <main class="screen">
+
+    <section
+      id="idleContainer"
+      class="idle-container"
+      role="status"
+      aria-labelledby="idleTitle"
+      hidden
+    >
+      <header class="idle-header">
+        <span class="brand idle-brand">Muzix.</span>
+        <div class="idle-status">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 8V5h18v14h-8M3 12a9 9 0 0 1 9 9M3 16a5 5 0 0 1 5 5" />
+            <circle cx="3" cy="21" r="1" />
+          </svg>
+          <span>Ready to play</span>
+        </div>
+      </header>
+
+      <div class="idle-stage">
+        <div class="idle-copy">
+          <p class="idle-eyebrow">WELCOME TO YOUR SOUNDTRACK</p>
+          <h1 id="idleTitle" class="idle-title">
+            Your music.<br />
+            <span>A bigger stage.</span>
+          </h1>
+          <p class="idle-description">
+            Open Muzix on your phone and choose a track. We'll take it from
+            here.
+          </p>
+        </div>
+
+        <div class="idle-art" aria-hidden="true">
+          <div class="idle-disc">
+            <span class="idle-disc-wordmark">Muzix.</span>
+            <svg class="idle-disc-wave" viewBox="0 0 80 32">
+              <path
+                d="M8 13v6m8-12v18m8-21v24m8-18v12m8-21v30m8-24v18m8-15v12m8-18v24m8-15v6"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <footer class="idle-footer">
+        <span class="idle-remote">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6" y="2" width="12" height="20" rx="3" />
+            <path d="M10 18h4" />
+          </svg>
+          Your phone is the remote.
+        </span>
+        <span class="idle-footer-note">Settle in. Press play.</span>
+      </footer>
+    </section>
+
+    <main id="playerScreen" class="screen">
       <header class="header">
         <div class="brand-container">
           <div class="brand">Muzix.</div>
           <div class="brand-caption">player</div>
         </div>
-
-        <!-- <div
-          id="logs"
-          style="
-            background: rgba(0, 0, 0, 0.8);
-            font-size: 10px;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            z-index: 1000;
-          "
-        ></div> -->
 
         <aside id="nextTrack" class="next-track" aria-label="Next track" hidden>
           <img

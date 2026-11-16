@@ -13,6 +13,8 @@ const progress = document.getElementById("progress");
 const elapsed = document.getElementById("elapsed");
 const total = document.getElementById("total");
 const playbackState = document.getElementById("playbackState");
+const idleContainer = document.getElementById("idleContainer");
+const playerScreen = document.getElementById("playerScreen");
 const ambientArt = document.getElementById("ambientArt");
 const lyricsEl = document.getElementById("lyrics");
 const lyricsMode = document.getElementById("lyricsMode");
@@ -80,8 +82,16 @@ function setText(element, value, fallback) {
   element.textContent = value || fallback;
 }
 
+function updateIdleContainer(finished = false) {
+  idleContainer.hidden =
+    !finished &&
+    playerManager.getPlayerState() !== cast.framework.messages.PlayerState.IDLE;
+  playerScreen.hidden = !idleContainer.hidden;
+}
+
 function updatePlaybackState(state) {
   const events = cast.framework.events.EventType;
+  updateIdleContainer(state.type === events.MEDIA_FINISHED);
   if (state.type === events.PAUSE || state.type === events.MEDIA_FINISHED) {
     document.body.classList.toggle("playback-paused", true);
   } else if (state.type === events.PLAYING) {
@@ -264,6 +274,7 @@ ambientArt.addEventListener(
 playerManager.addEventListener(
   cast.framework.events.EventType.MEDIA_STATUS,
   (state) => {
+    updateIdleContainer();
     //logs.textContent = JSON.stringify(state);
 
     const media = playerManager.getMediaInformation();
@@ -392,4 +403,5 @@ playerManager.setSupportedMediaCommands(
 );
 
 // Start receiver
+updateIdleContainer();
 context.start();
