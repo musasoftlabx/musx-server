@@ -313,12 +313,12 @@ playerManager.addEventListener(cast.framework.events.EventType.PLAYING, () =>
 playerManager.addEventListener(cast.framework.events.EventType.PAUSE, () =>
   updatePlaybackState("PAUSED"),
 );
-playerManager.addEventListener(cast.framework.events.EventType.STOP, () =>
-  updatePlaybackState("STOPPED"),
-);
-playerManager.addEventListener(cast.framework.events.EventType.BUFFERING, () =>
-  updatePlaybackState("BUFFERING"),
-);
+// playerManager.addEventListener(cast.framework.events.EventType.STOP, () =>
+//   updatePlaybackState("STOPPED"),
+// );
+// playerManager.addEventListener(cast.framework.events.EventType.BUFFERING, () =>
+//   updatePlaybackState("BUFFERING"),
+// );
 
 // Progress updates
 playerManager.addEventListener(
