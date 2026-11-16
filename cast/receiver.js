@@ -355,7 +355,7 @@ playerManager.addEventListener(cast.framework.events.EventType.PLAYING, () => {
   const state = playerManager.getPlayerState();
   const states = cast.framework.messages.PlayerState;
   document.body.classList.toggle("playback-paused", state === states.PAUSED);
-  playbackState.textContent = "NOW PLAYING";
+  playbackState.textContent = "PLAYING";
 });
 
 // Progress updates
