@@ -574,6 +574,14 @@ body:not(.no-lyrics) .artist-icon {
   color: transparent;
 }
 
+body.no-lyrics #title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+}
+
 #album {
   color: var(--muted);
   font-family: "RalewayDots", sans-serif;
