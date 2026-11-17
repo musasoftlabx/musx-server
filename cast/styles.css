@@ -645,6 +645,11 @@ body.no-lyrics #title {
   opacity: 0.4;
 }
 
+.cast-screen-fill {
+  fill: currentColor;
+  stroke: none;
+}
+
 .player {
   flex: 1;
   min-height: 0;
