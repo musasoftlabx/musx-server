@@ -45,6 +45,18 @@
   font-style: normal;
   font-weight: normal;
 }
+@font-face {
+  font-family: "RalewayDots";
+  src: url("./fonts/RalewayDots.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+@font-face {
+  font-family: "Jura-Regular";
+  src: url("./fonts/Jura-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
 
 :root {
   --gold: #d4af37;
@@ -530,7 +542,7 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 #title {
-  font-family: "Rubik Bold", sans-serif;
+  font-family: "RalewayDots", sans-serif;
   font-size: clamp(26px, 1.8vw, 92px);
   letter-spacing: 0.15em;
   background: linear-gradient(105deg, #e6ce81, #d6afea 85%);

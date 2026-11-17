@@ -117,17 +117,17 @@ export default async function* ({ set }: Pick<Context, "set">) {
     }
   }
 
-  const paths = DB.query<
-    {
-      id: number;
-      path: string;
-      artwork: string;
-      waveform: string;
-      title: string;
-      artists: string;
-    },
-    SQLQueryBindings[]
-  >(`SELECT id, path, artwork, waveform, title, artists FROM tracks`).all();
+  // const paths = DB.query<
+  //   {
+  //     id: number;
+  //     path: string;
+  //     artwork: string;
+  //     waveform: string;
+  //     title: string;
+  //     artists: string;
+  //   },
+  //   SQLQueryBindings[]
+  // >(`SELECT id, path, artwork, waveform, title, artists FROM tracks`).all();
 
   // ? Loop through library to extract or update artworks
   // for await (const { id, path, artwork } of paths) {
@@ -157,28 +157,28 @@ export default async function* ({ set }: Pick<Context, "set">) {
   // }
 
   // ? Loop through library to extract or update waveforms
-  for await (const { path, waveform } of paths) {
-    const trackPath = `${musicDirectory}/${path
-      .replaceAll("$", "\\$")
-      .replaceAll("`", "\\`")}`;
-    const waveformPath = `./Waveform/${waveform}`;
+  // for await (const { path, waveform } of paths) {
+  //   const trackPath = `${musicDirectory}/${path
+  //     .replaceAll("$", "\\$")
+  //     .replaceAll("`", "\\`")}`;
+  //   const waveformPath = `./Waveform/${waveform}`;
 
-    // ? Execute ffmpeg to construct waveform
-    if (!existsSync(waveformPath))
-      try {
-        execSync(
-          `ffmpeg -v error -hide_banner -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`,
-        );
-      } catch (err) {
-        if (err instanceof Error) {
-          DB.run(`INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`, [
-            path,
-            "WAVEFORM_EXTRACTION",
-            null,
-          ]);
-        }
-      }
-  }
+  //   // ? Execute ffmpeg to construct waveform
+  //   if (!existsSync(waveformPath))
+  //     try {
+  //       execSync(
+  //         `ffmpeg -v error -hide_banner -y -i "${trackPath}" -filter_complex showwavespic -frames:v 1 "${waveformPath}"`,
+  //       );
+  //     } catch (err) {
+  //       if (err instanceof Error) {
+  //         DB.run(`INSERT INTO scanErrors VALUES (NULL,?,?,?,DateTime('now'))`, [
+  //           path,
+  //           "WAVEFORM_EXTRACTION",
+  //           null,
+  //         ]);
+  //       }
+  //     }
+  // }
 
   // ? Delete from DB if file not found
   // for await (const { id, path, artwork, waveform, title, artists } of paths) {
