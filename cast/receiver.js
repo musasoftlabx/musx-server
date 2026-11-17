@@ -314,8 +314,10 @@ playerManager.addEventListener(
     setText(title, metadata.title, "Unknown Track");
     setText(artist, metadata.artist, "Unknown Artist");
     setText(album, metadata.albumName, "");
-    albumChip.textContent =
-      metadata.title && metadata.title === metadata.albumName ? "SINGLE" : "ALBUM";
+    const isSingle =
+      Boolean(metadata.title) && metadata.title === metadata.albumName;
+    albumChip.textContent = isSingle ? "SINGLE" : "ALBUM";
+    album.hidden = isSingle;
 
     artwork.src = imageUrl || DEFAULT_ARTWORK;
     albumCover.src = artwork.src;

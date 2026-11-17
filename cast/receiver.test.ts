@@ -148,19 +148,22 @@ function receiver() {
   };
 }
 
-test("album chip switches between single and album as metadata changes", () => {
+test("single metadata hides the album name and album metadata restores it", () => {
   const app = receiver();
   app.start();
   const update = (title?: string, albumName?: string) => {
     app.setMedia({ title, albumName });
     app.mediaStatus();
-    return app.nodes.get("albumChip")?.textContent;
+    return {
+      chip: app.nodes.get("albumChip")?.textContent,
+      albumHidden: app.nodes.get("album")?.hidden,
+    };
   };
-  expect(update("Song", "Song")).toBe("SINGLE");
-  expect(update("Song", "Release")).toBe("ALBUM");
-  expect(update("Next song", "Next song")).toBe("SINGLE");
-  expect(update()).toBe("ALBUM");
-  expect(update("", "")).toBe("ALBUM");
+  expect(update("Song", "Song")).toEqual({ chip: "SINGLE", albumHidden: true });
+  expect(update("Song", "Release")).toEqual({ chip: "ALBUM", albumHidden: false });
+  expect(update("Next song", "Next song")).toEqual({ chip: "SINGLE", albumHidden: true });
+  expect(update()).toEqual({ chip: "ALBUM", albumHidden: false });
+  expect(update("", "")).toEqual({ chip: "ALBUM", albumHidden: false });
 });
 
 function track(itemId: number, url: string): QueueItem {
