@@ -566,8 +566,7 @@ body:not(.no-lyrics) .artist-icon {
 
 #title {
   font-family: "Jura-Bold", sans-serif;
-  /* font-size: 36px; */
-  font-size: clamp(26px, 1.8vw, 92px);
+  font-size: clamp(36px, 2.8vw, 92px);
   letter-spacing: 0.15em;
   background: linear-gradient(105deg, #e6ce81, #d6afea 85%);
   -webkit-background-clip: text;
@@ -628,7 +627,7 @@ body:not(.no-lyrics) .artist-icon {
   width: 20px;
   height: 20px;
   margin-right: 5px;
-  margin-top: -2px;
+  margin-top: -1px;
   vertical-align: middle;
   fill: none;
   stroke: currentColor;
