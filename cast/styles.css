@@ -529,18 +529,11 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 .artist-marquee {
-  font-family: "Abel", sans-serif;
   flex: 1;
   letter-spacing: 3px;
   min-width: 0;
   max-width: 30vw;
   overflow: hidden;
-}
-
-#artist {
-  margin: 0;
-  width: max-content;
-  white-space: nowrap;
 }
 
 .title-marquee {
@@ -564,6 +557,13 @@ body:not(.no-lyrics) .artist-icon {
   letter-spacing: 0.2em;
   margin: 0;
   margin-left: 2px;
+}
+
+#artist {
+  font-family: "RalewayDots", sans-serif;
+  margin: 0;
+  width: max-content;
+  white-space: nowrap;
 }
 
 #album,
