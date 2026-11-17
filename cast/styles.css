@@ -553,7 +553,7 @@ body:not(.no-lyrics) .artist-icon {
 
 #album {
   color: var(--muted);
-  font-family: "Jura-Regular", sans-serif;
+  font-family: "RalewayDots", sans-serif;
   letter-spacing: 0.2em;
   margin: 0;
   margin-left: 2px;

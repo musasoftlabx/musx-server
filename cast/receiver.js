@@ -44,7 +44,7 @@ observeMarquee(title, titleMarquee);
 
 function updateArtistImage(contentUrl) {
   const imageUrl = contentUrl
-    ? new URL("artist.jpg", new URL(contentUrl, document.baseURI)).href
+    ? `${contentUrl.split("/").slice(0, -1).join("/")}/artist.jpg` //new URL("artist.jpg", new URL(contentUrl, document.baseURI)).href
     : null;
   if (imageUrl === artistImageUrl) return;
   artistImageUrl = imageUrl;
@@ -415,13 +415,10 @@ playerManager.addEventListener(
 );
 
 // Handle receiver errors
-playerManager.addEventListener(
-  cast.framework.events.EventType.ERROR,
-  () => {
-    updateCastIcon(cast.framework.messages.PlayerState.IDLE);
-    playbackState.textContent = "PLAYBACK ERROR";
-  },
-);
+playerManager.addEventListener(cast.framework.events.EventType.ERROR, () => {
+  updateCastIcon(cast.framework.messages.PlayerState.IDLE);
+  playbackState.textContent = "PLAYBACK ERROR";
+});
 
 // Configure supported controls
 playerManager.setSupportedMediaCommands(
