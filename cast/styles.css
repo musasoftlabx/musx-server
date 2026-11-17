@@ -494,13 +494,31 @@ body {
   font-size: 16px;
 }
 
+.album-detail {
+  align-items: stretch;
+}
+
+.album-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #333333;
+  font-family: "Rubik Bold", sans-serif;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
 body:not(.no-lyrics) .artist-icon {
   margin-left: -0.5vw;
 }
 
 .artist-image,
-.artist-icon,
-.album-icon {
+.artist-icon {
   width: 1em;
   height: 1em;
   flex: 0 0 1em;
@@ -554,6 +572,7 @@ body:not(.no-lyrics) .artist-icon {
 #album {
   color: var(--muted);
   font-family: "RalewayDots", sans-serif;
+  font-size: 15px;
   letter-spacing: 0.2em;
   margin: 0;
   margin-left: 2px;
@@ -564,11 +583,6 @@ body:not(.no-lyrics) .artist-icon {
   margin: 0;
   width: max-content;
   white-space: nowrap;
-}
-
-#album,
-.album-icon {
-  font-size: 15px;
 }
 
 .logo {
@@ -966,8 +980,7 @@ h2 {
 }
 
 h2,
-.artist-image,
-.album-icon {
+.artist-image {
   font-size: clamp(18px, 2.5vw, 30px);
 }
 
@@ -1013,12 +1026,6 @@ body:not(.no-lyrics) .artist-image {
 
 body:not(.no-lyrics) #album {
   font-size: 13px;
-  margin-top: -2px;
-}
-
-body:not(.no-lyrics) .album-icon {
-  font-size: 20px;
-  margin-left: -3px;
 }
 
 body:not(.no-lyrics) .footer {
