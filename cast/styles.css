@@ -542,7 +542,8 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 #title {
-  font-family: "RalewayDots", sans-serif;
+  font-family: "Jura-Regular", sans-serif;
+  /* font-size: 36px; */
   font-size: clamp(26px, 1.8vw, 92px);
   letter-spacing: 0.15em;
   background: linear-gradient(105deg, #e6ce81, #d6afea 85%);
