@@ -52,16 +52,22 @@
   font-weight: normal;
 }
 @font-face {
+  font-family: "Jura-Light";
+  src: url("./fonts/Jura-Light.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 300;
+}
+@font-face {
   font-family: "Jura-Regular";
   src: url("./fonts/Jura-Regular.ttf") format("truetype");
   font-style: normal;
-  font-weight: normal;
+  font-weight: 400;
 }
 @font-face {
   font-family: "Jura-Bold";
   src: url("./fonts/Jura-Bold.ttf") format("truetype");
   font-style: normal;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 :root {
@@ -1063,7 +1069,7 @@ body:not(.no-lyrics) .footer {
   text-align: center;
   color: var(--gold);
   font-size: 11px;
-  font-family: "Abel", sans-serif;
+  font-family: "Jura-Light", sans-serif;
   letter-spacing: 10px;
   background: linear-gradient(to right, var(--gold), #d8b4f9);
   -webkit-background-clip: text;
