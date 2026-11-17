@@ -18,6 +18,11 @@ interface QueueItem {
   };
 }
 
+interface MediaInformation {
+  contentUrl: string;
+  metadata: { title?: string; albumName?: string };
+}
+
 function element() {
   const classes = new Set<string>();
   const properties = new Map<string, string>();
@@ -29,7 +34,9 @@ function element() {
     clientWidth: 100,
     scrollWidth: 100,
     naturalWidth: 0,
+    replaceChildren() {},
     classList: {
+      add: (name: string) => classes.add(name),
       toggle(name: string, enabled: boolean) {
         if (enabled) classes.add(name);
         else classes.delete(name);
@@ -52,6 +59,7 @@ function element() {
 }
 
 function receiver() {
+  let media: MediaInformation | null = null;
   const nodes = new Map(
     [...markup.matchAll(/\bid="([^"]+)"/g)].map((match) => [match[1], element()])
   );
@@ -67,7 +75,7 @@ function receiver() {
   const playerManager = {
     setPlaybackConfig() {},
     setSupportedMediaCommands() {},
-    getMediaInformation: () => null,
+    getMediaInformation: () => media,
     getPlayerState: () => state.playerState,
     getQueueManager: () => queue,
     addEventListener(type: string, listener: (event: { type: string }) => void) {
@@ -77,6 +85,7 @@ function receiver() {
   const context = { getPlayerManager: () => playerManager, start() {} };
   const sandbox = {
     URL,
+    fetch: async () => ({ text: async () => "Not Found" }),
     ResizeObserver: class {
       constructor(callback: () => void) {
         resizers.push(callback);
@@ -121,6 +130,9 @@ function receiver() {
     nodes,
     body,
     state,
+    setMedia: (metadata: MediaInformation["metadata"]) => {
+      media = { contentUrl: "https://receiver.test/track.mp3", metadata };
+    },
     start: () => runInContext(source, vmContext),
     resize: () => resizers.forEach((callback) => callback()),
     updateArtistImage: (url: string | null) =>
@@ -135,6 +147,21 @@ function receiver() {
     },
   };
 }
+
+test("album chip switches between single and album as metadata changes", () => {
+  const app = receiver();
+  app.start();
+  const update = (title?: string, albumName?: string) => {
+    app.setMedia({ title, albumName });
+    app.mediaStatus();
+    return app.nodes.get("albumChip")?.textContent;
+  };
+  expect(update("Song", "Song")).toBe("SINGLE");
+  expect(update("Song", "Release")).toBe("ALBUM");
+  expect(update("Next song", "Next song")).toBe("SINGLE");
+  expect(update()).toBe("ALBUM");
+  expect(update("", "")).toBe("ALBUM");
+});
 
 function track(itemId: number, url: string): QueueItem {
   return {
