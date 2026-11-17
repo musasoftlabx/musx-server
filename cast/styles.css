@@ -57,6 +57,12 @@
   font-style: normal;
   font-weight: normal;
 }
+@font-face {
+  font-family: "Jura-Bold";
+  src: url("./fonts/Jura-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: bold;
+}
 
 :root {
   --gold: #d4af37;
@@ -542,7 +548,7 @@ body:not(.no-lyrics) .artist-icon {
 }
 
 #title {
-  font-family: "Jura-Regular", sans-serif;
+  font-family: "Jura-Bold", sans-serif;
   /* font-size: 36px; */
   font-size: clamp(26px, 1.8vw, 92px);
   letter-spacing: 0.15em;
@@ -554,7 +560,7 @@ body:not(.no-lyrics) .artist-icon {
 
 #album {
   color: var(--muted);
-  font-family: "Rubik", sans-serif;
+  font-family: "Jura-Regular", sans-serif;
   letter-spacing: 0.2em;
   margin: 0;
   margin-left: 2px;
