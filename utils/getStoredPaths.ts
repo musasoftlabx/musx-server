@@ -1,4 +1,4 @@
-import { DB } from "..";
+import { DB } from "../";
 import { SQLQueryBindings } from "bun:sqlite";
 
 type Track = {
