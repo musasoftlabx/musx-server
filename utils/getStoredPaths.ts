@@ -1,4 +1,5 @@
-import { DB } from "../index";
+import { Database } from "bun:sqlite";
+export const DB = new Database("muzix.db", { create: true });
 import { SQLQueryBindings } from "bun:sqlite";
 
 type Track = {
